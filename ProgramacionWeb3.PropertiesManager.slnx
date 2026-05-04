@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ProgramacionWeb3.PropertiesManager.Core/ProgramacionWeb3.PropertiesManager.Core.csproj" Id="b7d1d533-3128-4be0-8b1b-aaee429aad71" />
+  <Project Path="ProgramacionWeb3.PropertiesManager.Infrastructure/ProgramacionWeb3.PropertiesManager.Infrastructure.csproj" Id="a1694315-999d-4f36-90c7-7e43cc3c01b1" />
+  <Project Path="ProgramacionWeb3.PropertiesManager.Web/ProgramacionWeb3.PropertiesManager.Web.csproj" Id="c808ff13-069e-4487-bbd9-443efcbbdb8e" />
+</Solution>
