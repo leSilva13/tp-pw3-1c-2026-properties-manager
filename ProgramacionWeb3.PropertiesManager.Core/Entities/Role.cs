@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Entities
+namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 {
-    public class ExpenseType
+    public class Role
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Name { get; set; }
     }
 }

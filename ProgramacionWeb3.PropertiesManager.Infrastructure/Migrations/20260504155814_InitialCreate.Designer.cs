@@ -25,7 +25,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Role", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,9 +94,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.User", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Role", "Role")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)

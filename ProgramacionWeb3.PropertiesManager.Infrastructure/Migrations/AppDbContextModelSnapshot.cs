@@ -22,7 +22,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Address", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,10 +53,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("ProvinceId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Building", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,10 +88,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Buildings");
+                    b.ToTable("Buildings", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Expense", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Expense", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,10 +137,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("ExpenseTypeId");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.ExpenseDistribution", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseDistribution", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -160,10 +160,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("ExpenseDistributions");
+                    b.ToTable("ExpenseDistributions", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.ExpenseType", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +178,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExpenseTypes");
+                    b.ToTable("ExpenseTypes", (string)null);
 
                     b.HasData(
                         new
@@ -193,7 +193,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Owner", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -223,10 +223,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Owners");
+                    b.ToTable("Owners", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Province", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,7 +241,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Provinces");
+                    b.ToTable("Provinces", (string)null);
 
                     b.HasData(
                         new
@@ -366,7 +366,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Role", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -381,7 +381,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -401,7 +401,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Unit", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -437,10 +437,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Units");
+                    b.ToTable("Units", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.UnitBill", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.UnitBill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -473,10 +473,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("UnitBills");
+                    b.ToTable("UnitBills", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -510,12 +510,12 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Address", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Address", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Province", "Province")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", "Province")
                         .WithMany()
                         .HasForeignKey("ProvinceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -524,15 +524,15 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Province");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Building", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Address", "Address")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", "AdministratorUser")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.User", "AdministratorUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -543,15 +543,15 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("AdministratorUser");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Expense", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Expense", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Building", "Building")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
                         .WithMany()
                         .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.ExpenseType", "ExpenseType")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseType", "ExpenseType")
                         .WithMany()
                         .HasForeignKey("ExpenseTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -562,15 +562,15 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("ExpenseType");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.ExpenseDistribution", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseDistribution", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Expense", "Expense")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Expense", "Expense")
                         .WithMany("ExpenseDistributions")
                         .HasForeignKey("ExpenseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Unit", "Unit")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", "Unit")
                         .WithMany("ExpenseDistributions")
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -581,25 +581,25 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Owner", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", "User")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.User", "User")
                         .WithOne()
-                        .HasForeignKey("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Owner", "UserId")
+                        .HasForeignKey("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", "UserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Unit", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Building", "Building")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
                         .WithMany("Units")
                         .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Owner", "Owner")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", "Owner")
                         .WithMany("Units")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -609,9 +609,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.UnitBill", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.UnitBill", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Unit", "Unit")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", "Unit")
                         .WithMany()
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -620,9 +620,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.User", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.User", b =>
                 {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Role", "Role")
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -631,22 +631,22 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Building", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
                 {
                     b.Navigation("Units");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Expense", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Expense", b =>
                 {
                     b.Navigation("ExpenseDistributions");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Owner", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
                 {
                     b.Navigation("Units");
                 });
 
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Infrastructure.Entities.Unit", b =>
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", b =>
                 {
                     b.Navigation("ExpenseDistributions");
                 });

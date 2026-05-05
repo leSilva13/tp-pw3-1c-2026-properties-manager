@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Entities
+namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 {
-    public class Province
+    public class ExpenseType
     {
         [Key]
         public int Id { get; set; }

@@ -1,3 +1,4 @@
+using ProgramacionWeb3.PropertiesManager.Core;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,8 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddInfrastructure(connectionString);
+builder.Services.AddCore();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -23,6 +32,10 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapStaticAssets();
 app.MapRazorPages()

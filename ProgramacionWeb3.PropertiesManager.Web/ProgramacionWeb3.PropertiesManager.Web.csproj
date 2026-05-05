@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProgramacionWeb3.PropertiesManager.Core\ProgramacionWeb3.PropertiesManager.Core.csproj" />
     <ProjectReference Include="..\ProgramacionWeb3.PropertiesManager.Infrastructure\ProgramacionWeb3.PropertiesManager.Infrastructure.csproj" />
   </ItemGroup>
 

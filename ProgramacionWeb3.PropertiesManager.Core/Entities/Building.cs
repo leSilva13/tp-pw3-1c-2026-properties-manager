@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Entities
+namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 {
     public class Building
     {

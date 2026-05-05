@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProgramacionWeb3.PropertiesManager.Infrastructure.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Entities;
 
 namespace ProgramacionWeb3.PropertiesManager.Infrastructure
 {

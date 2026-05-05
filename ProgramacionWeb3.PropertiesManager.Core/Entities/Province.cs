@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Entities
+namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 {
-    public class Role
+    public class Province
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string Name { get; set; }
     }
 }

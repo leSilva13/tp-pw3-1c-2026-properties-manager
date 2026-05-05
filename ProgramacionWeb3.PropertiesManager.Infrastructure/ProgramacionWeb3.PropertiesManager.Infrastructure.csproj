@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ProgramacionWeb3.PropertiesManager.Core\ProgramacionWeb3.PropertiesManager.Core.csproj" />
+  </ItemGroup>
+
 </Project>
