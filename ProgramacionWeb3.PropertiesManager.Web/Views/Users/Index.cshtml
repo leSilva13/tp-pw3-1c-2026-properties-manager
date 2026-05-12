@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.User>
+
+@{
+    ViewData["Title"] = "Test Users List";
+}
+
+<h2>Database Connection Test</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Role ID</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Email</td>
+                <td>@user.RoleId</td>
+                <td>@user.CreationDate.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
