@@ -9,7 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public int Id { get; set; }
 
         [Required]
-        public int ExpensesDueDate { get; set; }
+        public int ExpensesDueDate { get; set; } //fecha de vencimiento de las expensas
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal TotalSurfaceArea { get; set; }
