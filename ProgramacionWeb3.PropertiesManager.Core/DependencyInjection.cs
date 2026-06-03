@@ -9,7 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
-
+            services.AddScoped<IUnitService, UnitService>();
             return services;
         }
     }
