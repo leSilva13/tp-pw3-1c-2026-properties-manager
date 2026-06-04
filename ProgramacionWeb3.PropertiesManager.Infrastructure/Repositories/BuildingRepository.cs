@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,11 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                     .ThenInclude(a => a.Locality)
                         .ThenInclude(l => l.Province)
                 .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

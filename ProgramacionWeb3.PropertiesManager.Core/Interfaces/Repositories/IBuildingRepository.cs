@@ -2,10 +2,12 @@
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
 {
-    internal interface IBuildingRepository : IBaseRepository<Building>
+    public interface IBuildingRepository : IBaseRepository<Building>
     {
         Task<IEnumerable<Building>> GetBuildingsByUserIdWithRelationshipsAsync(int userId);
 
         Task<Building?> GetBuildingByIdWithRelationshipsAsync(int id);
+
+        Task SaveAsync();
     }
 }
