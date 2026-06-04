@@ -22,7 +22,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                     .ThenInclude(a => a.Locality)
                         .ThenInclude(l => l.Province)
                 .Where(b => b.UserId == userId)
-                .OrderBy(b => b.Address)
+                .OrderBy(b => b.Id)
                 .ToListAsync();
         }
 
