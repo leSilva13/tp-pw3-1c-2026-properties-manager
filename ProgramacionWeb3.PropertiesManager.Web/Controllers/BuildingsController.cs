@@ -4,7 +4,7 @@ using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class BuildingsController : Controller
     {
         private readonly IBuildingService _buildingService;
