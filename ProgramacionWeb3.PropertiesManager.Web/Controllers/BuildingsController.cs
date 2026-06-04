@@ -15,15 +15,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         // GET: /Buildings o /Buildings/Index
-        public async Task<IActionResult> Index()
+        public  IActionResult Index()
         {
-            // TODO: Reemplazar por el ID real del usuario administrador logueado (desde Claims/Sesión)
-            int userIdLogueado = 1;
+           
 
-            // Llamamos a tu servicio que ya incluye Address, Locality y Province
-            var edificios = await _buildingService.ObtenerEdificiosPorUsuarioAsync(userIdLogueado);
-
-            return View(edificios);
+            return View();
         }
     }
 }
