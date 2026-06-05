@@ -23,7 +23,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             // Llamamos a tu servicio que ya incluye Address, Locality y Province
             var edificios = await _buildingService.ObtenerEdificiosPorUsuarioAsync(userIdLogueado);
 
-            return View();
+            return View(edificios);
         }
     }
 }

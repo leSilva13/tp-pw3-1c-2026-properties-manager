@@ -1,5 +1,4 @@
-﻿@page
-@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Building>
+﻿@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Building>
 
 @{
     ViewData["Title"] = "Mis Consorcios";
@@ -21,7 +20,8 @@
             </tr>
         </thead>
         <tbody>
-            @if (!Model.Any())
+            @* 1. Validamos que la lista 'Model' en sí misma no sea nula *@
+            @if (Model == null || !Model.Any())
             {
                 <tr>
                     <td colspan="4" class="text-center text-muted">No tienes consorcios registrados.</td>
@@ -32,32 +32,38 @@
                 @foreach (var edificio in Model)
                 {
                     <tr>
-                        <td>@edificio.Address?.Street @edificio.Address?.Number</td>
+                        @* 2. Validamos el nombre (si es nulo ponemos un texto por defecto) *@
+                        <td>@(edificio?.Id)</td>
+
                         <td>
-                            @if (edificio.Address != null)
+                            @* 3. Navegación 100% segura paso a paso para la dirección *@
+                            @if (edificio?.Address != null)
                             {
                                 <span>
                                     @edificio.Address.Street @edificio.Address.Number,
-                                    @(edificio.Address.Locality?.Name ?? ""),
-                                    @(edificio.Address.Locality?.Province?.Name ?? "")
+                                    @*@(edificio.Address.Locality?.Name ?? "Sin Localidad"),
+                                    @(edificio.Address.Locality?.Province?.Name ?? "Sin Provincia")*@
                                 </span>
                             }
                             else
                             {
-                                <span class="text-danger">Sin dirección asignada</span>
+                                <span class="text-muted">Sin dirección registrada</span>
                             }
                         </td>
-                       
-                        <td>
-                            <a asp-controller="Units"
-                               asp-action="Index"
-                               asp-route-buildingId="@edificio.Id"
-                               class="btn btn-info btn-sm text-white">
-                                <i class="bi bi-eye"></i> Ver unidades
-                            </a>
 
-                            <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm mx-1">Editar</a>
-                            <a asp-action="Delete" asp-route-id="@edificio.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                        <td>
+                            @if (edificio != null)
+                            {
+                                <a asp-controller="Units"
+                                   asp-action="Index"
+                                   asp-route-buildingId="@edificio.Id"
+                                   class="btn btn-info btn-sm text-white">
+                                    Ver unidades
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm mx-1">Editar</a>
+                                <a asp-action="Delete" asp-route-id="@edificio.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                            }
                         </td>
                     </tr>
                 }
