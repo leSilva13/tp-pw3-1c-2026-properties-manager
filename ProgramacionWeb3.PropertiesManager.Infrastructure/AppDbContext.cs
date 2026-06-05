@@ -8,7 +8,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<Building> Buildings { get; set; }
+        public DbSet<Building> Buildings { get; set; }  
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseDistribution> ExpenseDistributions { get; set; }
         public DbSet<ExpenseType> ExpenseTypes { get; set; }

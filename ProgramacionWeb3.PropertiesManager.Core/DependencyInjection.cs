@@ -12,6 +12,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core
 
             services.AddScoped<IBuildingService, BuildingService>();
 
+            services.AddScoped<IUnitService, UnitService>();
+
             return services;
         }
     }
