@@ -30,8 +30,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
         public async Task CrearEdificioAsync(Building building)
         {
-            await _buildingRepository.AddAsync(building); // Método heredado del BaseRepository
-            await _buildingRepository.SaveAsync();        // El repositorio ahora guarda sus propios cambios
+            await _buildingRepository.AddAsync(building); 
+            await _buildingRepository.SaveAsync();        
         }
 
         public async Task ActualizarEdificioAsync(Building building)

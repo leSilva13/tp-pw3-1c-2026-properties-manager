@@ -107,6 +107,19 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 new ExpenseType { Id = 1, Name = "Ordinary" },
                 new ExpenseType { Id = 2, Name = "Extraordinary" }
             );
+
+            // Seed para la entidad User
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Email = "admin@propertiesmanager.com",
+                    Password = "123", // TODO: En el futuro acá irá la contraseña hacheada
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1), // Es mejor fijar una fecha en el seed para evitar migraciones cambiantes
+                    RoleId = 2 // Acorde a tus roles, 2 es "Properties Administrator"
+                }
+            );
         }
     }
 }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
+using ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
@@ -11,10 +13,12 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
     public class BuildingsController : Controller
     {
         private readonly IBuildingService _buildingService;
+        private readonly IProvinceRepository _provinceRepository;
 
-        public BuildingsController(IBuildingService buildingService)
+        public BuildingsController(IBuildingService buildingService, IProvinceRepository provinceRepository)
         {
             _buildingService = buildingService;
+            _provinceRepository = provinceRepository;
         }
 
         // GET: /Buildings o /Buildings/Index
@@ -33,13 +37,20 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Create()
         {
             // 1. Simulación de carga de provincias (Reemplazar por tu repositorio/servicio real)
-            var listaProvincias = new List<Province> { new Province { Id = 1, Name = "Buenos Aires" } };
+            var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
+
 
             var viewModel = new BuildingFormViewModel
             {
-                Provinces = new SelectList(listaProvincias, "Id", "Name"),
-                //Localities = new SelectList(new List<Locality>(), "Id", "Name") // Arranca vacío hasta que elijan provincia
+                Provinces = new SelectList(listaProvincias, "Id", "Name")
+                //Localities = new SelectList(new List<Locality>(), "Id", "Name")
             };
+
+            viewModel.Building.IsActive = true;
+            viewModel.Building.CreationDate = DateTime.Now;
+
+            // Asignamos el ID de usuario administrador (Acordate de poner un ID que exista en tu tabla Users)
+            viewModel.Building.UserId = 1;
 
             return View(viewModel);
         }
@@ -48,6 +59,17 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BuildingFormViewModel viewModel)
         {
+            // Mapeamos el ID de la provincia seleccionada en el combo directamente a la dirección
+            if (viewModel.Building.Address != null)
+            {
+                viewModel.Building.Address.ProvinceId = viewModel.SelectedProvinceId;
+            }
+
+            // 🚀 LA SOLUCIÓN: Le decimos a .NET que no valide la entidad compleja "Province" 
+            // ni al "AdministratorUser", ya que se completan en el backend o la base de datos.
+            ModelState.Remove("Building.Address.Province");
+            ModelState.Remove("Building.AdministratorUser"); // Por las dudas, si también chillaba
+            ModelState.Remove("Building.Units");
             if (ModelState.IsValid)
             {
                 // Asignamos el usuario administrador logueado al edificio

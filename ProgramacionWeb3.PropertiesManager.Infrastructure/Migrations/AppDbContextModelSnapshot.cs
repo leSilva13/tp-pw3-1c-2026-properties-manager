@@ -53,7 +53,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("ProvinceId");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
@@ -88,7 +88,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Buildings", (string)null);
+                    b.ToTable("Buildings");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Expense", b =>
@@ -137,7 +137,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("ExpenseTypeId");
 
-                    b.ToTable("Expenses", (string)null);
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseDistribution", b =>
@@ -160,7 +160,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("ExpenseDistributions", (string)null);
+                    b.ToTable("ExpenseDistributions");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.ExpenseType", b =>
@@ -178,7 +178,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ExpenseTypes", (string)null);
+                    b.ToTable("ExpenseTypes");
 
                     b.HasData(
                         new
@@ -223,7 +223,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Owners", (string)null);
+                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", b =>
@@ -241,7 +241,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Provinces", (string)null);
+                    b.ToTable("Provinces");
 
                     b.HasData(
                         new
@@ -381,7 +381,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -437,7 +437,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Units", (string)null);
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.UnitBill", b =>
@@ -473,7 +473,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("UnitBills", (string)null);
+                    b.ToTable("UnitBills");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.User", b =>
@@ -510,7 +510,18 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@propertiesmanager.com",
+                            IsActive = true,
+                            Password = "123",
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Address", b =>
