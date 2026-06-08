@@ -1,5 +1,6 @@
 using ProgramacionWeb3.PropertiesManager.Core;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
+using ProgramacionWeb3.PropertiesManager.Web;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddCore();
+builder.Services.AddWeb();
 
 builder.Services.AddControllersWithViews();
 

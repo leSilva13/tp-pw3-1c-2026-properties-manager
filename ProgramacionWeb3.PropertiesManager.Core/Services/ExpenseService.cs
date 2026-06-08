@@ -13,30 +13,30 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             _uow = uow;
         }
 
-        public async Task<IEnumerable<Expense>> GetExpensesByBuildingAsync(int buildingId)
+        public async Task<IEnumerable<Expense>> ObtenerGastosPorEdificioAsync(int buildingId)
         {
             return await _uow.Expenses.GetByBuildingIdAsync(buildingId);
         }
 
-        public async Task<Expense?> GetExpenseByIdAsync(int id)
+        public async Task<Expense?> ObtenerGastoPorIdAsync(int id)
         {
             return await _uow.Expenses.GetByIdWithRelationshipsAsync(id);
         }
 
-        public async Task CreateExpenseAsync(Expense expense)
+        public async Task CrearGastoAsync(Expense expense)
         {
             expense.CreationDate = DateTime.Now;
             await _uow.Expenses.AddAsync(expense);
             await _uow.SaveAsync();
         }
 
-        public async Task UpdateExpenseAsync(Expense expense)
+        public async Task ActualizarGastoAsync(Expense expense)
         {
             _uow.Expenses.Update(expense);
             await _uow.SaveAsync();
         }
 
-        public async Task DeleteExpenseAsync(int id)
+        public async Task EliminarGastoAsync(int id)
         {
             var expense = await _uow.Expenses.GetByIdAsync(id);
             if (expense != null)

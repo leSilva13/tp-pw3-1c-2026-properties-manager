@@ -4,10 +4,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
     public interface IExpenseService
     {
-        Task<IEnumerable<Expense>> GetExpensesByBuildingAsync(int buildingId);
-        Task<Expense?> GetExpenseByIdAsync(int id);
-        Task CreateExpenseAsync(Expense expense);
-        Task UpdateExpenseAsync(Expense expense);
-        Task DeleteExpenseAsync(int id);
+        Task<IEnumerable<Expense>> ObtenerGastosPorEdificioAsync(int buildingId);
+        Task<Expense?> ObtenerGastoPorIdAsync(int id);
+        Task CrearGastoAsync(Expense expense);
+        Task ActualizarGastoAsync(Expense expense);
+        Task EliminarGastoAsync(int id);
     }
 }
