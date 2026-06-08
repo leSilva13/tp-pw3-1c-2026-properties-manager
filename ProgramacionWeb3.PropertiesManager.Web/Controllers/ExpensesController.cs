@@ -36,20 +36,21 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Index(int buildingId)
         {
             var gastos = await _expenseService.ObtenerGastosPorEdificioAsync(buildingId);
+            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
             ViewBag.BuildingId = buildingId;
-            ViewBag.BuildingLabel = $"Consorcio #{buildingId}";
+            ViewBag.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
             return View(gastos);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(int buildingId)
         {
-            var edificio = await _buildingRepository.GetByIdAsync(buildingId);
+            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
             if (edificio == null) return NotFound();
 
             var viewModel = await ConstruirViewModelAsync();
             viewModel.SelectedBuildingId = buildingId;
-            viewModel.BuildingLabel = $"Consorcio #{buildingId}";
+            viewModel.BuildingLabel = $"{edificio.Address.Street} {edificio.Address.Number}";
             return View(viewModel);
         }
 
@@ -82,9 +83,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 return RedirectToAction(nameof(Index), new { buildingId });
             }
 
+            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
             viewModel = await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
-            viewModel.BuildingLabel = $"Consorcio #{buildingId}";
+            viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
             return View(viewModel);
         }
 
@@ -94,11 +96,12 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null) return NotFound();
 
+            var edificio = await _buildingRepository.GetByIdWithAddressAsync(gasto.BuildingId);
             var viewModel = await ConstruirViewModelAsync();
             viewModel.Expense = gasto;
             viewModel.SelectedExpenseTypeId = gasto.ExpenseTypeId;
             viewModel.SelectedBuildingId = gasto.BuildingId;
-            viewModel.BuildingLabel = $"Consorcio #{gasto.BuildingId}";
+            viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
             viewModel.SelectedUnitIds = gasto.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new();
             viewModel.AvailableUnits = await _unitRepository.GetByBuildingIdAsync(gasto.BuildingId);
             return View(viewModel);
