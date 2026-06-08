@@ -1,0 +1,107 @@
+@model ProgramacionWeb3.PropertiesManager.Web.Models.ExpenseFormViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Editar Gasto";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title mb-0">Editar Gasto</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <input asp-for="Expense.Id" type="hidden" />
+                        <input asp-for="Expense.CreationDate" type="hidden" />
+                        <input asp-for="Expense.ReceiptPath" type="hidden" />
+
+                        <h4 class="mb-3 text-secondary border-bottom pb-2">Datos del Gasto</h4>
+
+                        <div class="mb-3">
+                            <label asp-for="Expense.Description" class="form-label">Descripción</label>
+                            <input asp-for="Expense.Description" class="form-control" required />
+                            <span asp-validation-for="Expense.Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Expense.Amount" class="form-label">Monto ($)</label>
+                                <input asp-for="Expense.Amount" type="number" step="0.01" class="form-control" required />
+                                <span asp-validation-for="Expense.Amount" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Expense.BillingDate" class="form-label">Fecha de Facturación</label>
+                                <input asp-for="Expense.BillingDate" type="date" class="form-control" required />
+                                <span asp-validation-for="Expense.BillingDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Expense.ExpenseMonth" class="form-label">Mes</label>
+                                <input asp-for="Expense.ExpenseMonth" type="number" min="1" max="12" class="form-control" required />
+                                <span asp-validation-for="Expense.ExpenseMonth" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Expense.ExpenseYear" class="form-label">Año</label>
+                                <input asp-for="Expense.ExpenseYear" type="number" min="2000" class="form-control" required />
+                                <span asp-validation-for="Expense.ExpenseYear" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-3 text-secondary border-bottom pb-2">Clasificación</h4>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo de Gasto</label>
+                                <select asp-for="SelectedExpenseTypeId" asp-items="Model.ExpenseTypes" class="form-select" required>
+                                    <option value="">-- Seleccione un tipo --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Edificio</label>
+                                <select asp-for="SelectedBuildingId" asp-items="Model.Buildings" class="form-select" required>
+                                    <option value="">-- Seleccione un edificio --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="Expense.IsGlobal" class="form-check-input" type="checkbox" />
+                                <label asp-for="Expense.IsGlobal" class="form-check-label">
+                                    Gasto Global (aplica a todas las unidades)
+                                </label>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-3 text-secondary border-bottom pb-2">Comprobante</h4>
+
+                        @if (!string.IsNullOrEmpty(Model.Expense.ReceiptPath))
+                        {
+                            <div class="mb-2">
+                                <span class="text-muted">Comprobante actual: </span>
+                                <a href="@Model.Expense.ReceiptPath" target="_blank">Ver comprobante</a>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label">Reemplazar comprobante (opcional)</label>
+                            <input type="file" name="receiptFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a asp-action="Index" asp-route-buildingId="@Model.Expense.BuildingId" class="btn btn-outline-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
