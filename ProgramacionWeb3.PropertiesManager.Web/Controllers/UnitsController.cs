@@ -38,11 +38,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Unit unit, string ownerFullName, string ownerEmail)
+        public async Task<IActionResult> Create(Unit unit)
         {
-            await _unitService.CrearUnidadConOwnerAsync(unit, ownerFullName, ownerEmail);
+            await _unitService.CrearUnidadAsync(unit);
 
-            return RedirectToAction("Index", new { id = unit.BuildingId });
+            return RedirectToAction("Index", new { buildingId = unit.BuildingId });
         }
 
         [HttpGet]
@@ -63,7 +63,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             await _unitService.ActualizarUnidadAsync(unit); //ojo solo edita el unit pero si deseo editar tmbien el owner debo crear otro servicio indicando eso
 
-            return RedirectToAction("Index", new { id = unit.BuildingId });
+            return RedirectToAction("Index", new { buildingId = unit.BuildingId });
         }
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
@@ -92,7 +92,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             await _unitService.EliminarUnidadAsync(id);
 
-            return RedirectToAction("Index", new { id = buildingId });
+            return RedirectToAction("Index", new { buildingId });
         }
     }
 }
