@@ -5,6 +5,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository Users { get; }
+        IExpenseRepository Expenses { get; }
 
         Task<int> SaveAsync();
     }
