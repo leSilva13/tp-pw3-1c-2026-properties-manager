@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
@@ -36,8 +35,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var buildingId = id;
 
             var building = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
-
-            string buildingName;
 
             var unitViewModel = new UnitFormViewModel
             {
