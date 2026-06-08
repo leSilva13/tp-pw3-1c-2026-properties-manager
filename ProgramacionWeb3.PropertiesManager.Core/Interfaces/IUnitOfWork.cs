@@ -6,6 +6,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces
     {
         IUserRepository Users { get; }
         IExpenseRepository Expenses { get; }
+        IExpenseDistributionRepository ExpenseDistributions { get; }
+        IUnitRepository Units { get; }
 
         Task<int> SaveAsync();
     }

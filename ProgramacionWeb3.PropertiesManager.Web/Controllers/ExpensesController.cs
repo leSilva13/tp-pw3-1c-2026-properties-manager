@@ -13,17 +13,20 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         private readonly IExpenseService _expenseService;
         private readonly IExpenseTypeRepository _expenseTypeRepository;
         private readonly IBuildingRepository _buildingRepository;
+        private readonly IUnitRepository _unitRepository;
         private readonly IFileService _fileService;
 
         public ExpensesController(
             IExpenseService expenseService,
             IExpenseTypeRepository expenseTypeRepository,
             IBuildingRepository buildingRepository,
+            IUnitRepository unitRepository,
             IFileService fileService)
         {
             _expenseService = expenseService;
             _expenseTypeRepository = expenseTypeRepository;
             _buildingRepository = buildingRepository;
+            _unitRepository = unitRepository;
             _fileService = fileService;
         }
 
@@ -57,7 +60,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 if (receiptFile != null && receiptFile.Length > 0)
                     viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
 
-                await _expenseService.CrearGastoAsync(viewModel.Expense);
+                var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
+                await _expenseService.CrearGastoAsync(viewModel.Expense, unitIds);
                 return RedirectToAction(nameof(Index), new { buildingId = viewModel.Expense.BuildingId });
             }
 
@@ -75,6 +79,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             viewModel.Expense = gasto;
             viewModel.SelectedExpenseTypeId = gasto.ExpenseTypeId;
             viewModel.SelectedBuildingId = gasto.BuildingId;
+            viewModel.SelectedUnitIds = gasto.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new();
+            viewModel.AvailableUnits = await _unitRepository.GetByBuildingIdAsync(gasto.BuildingId);
             return View(viewModel);
         }
 
@@ -97,7 +103,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                     viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
                 }
 
-                await _expenseService.ActualizarGastoAsync(viewModel.Expense);
+                var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
+                await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
                 return RedirectToAction(nameof(Index), new { buildingId = viewModel.Expense.BuildingId });
             }
 
@@ -123,6 +130,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             await _expenseService.EliminarGastoAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
+        {
+            var unidades = await _unitRepository.GetByBuildingIdAsync(buildingId);
+            return Json(unidades.Select(u => new { u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
         }
 
         private async Task<ExpenseFormViewModel> ConstruirViewModelAsync(ExpenseFormViewModel? viewModel = null)

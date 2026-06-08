@@ -16,6 +16,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IExpenseTypeRepository, ExpenseTypeRepository>();
             services.AddScoped<IBuildingRepository, BuildingRepository>();
+            services.AddScoped<IUnitRepository, UnitRepository>();
 
             return services;
         }

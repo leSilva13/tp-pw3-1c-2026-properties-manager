@@ -23,16 +23,44 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             return await _uow.Expenses.GetByIdWithRelationshipsAsync(id);
         }
 
-        public async Task CrearGastoAsync(Expense expense)
+        public async Task CrearGastoAsync(Expense expense, List<int>? unitIds = null)
         {
             expense.CreationDate = DateTime.Now;
             await _uow.Expenses.AddAsync(expense);
             await _uow.SaveAsync();
+
+            if (!expense.IsGlobal && unitIds != null && unitIds.Any())
+            {
+                foreach (var unitId in unitIds)
+                {
+                    await _uow.ExpenseDistributions.AddAsync(new ExpenseDistribution
+                    {
+                        ExpenseId = expense.Id,
+                        UnitId = unitId
+                    });
+                }
+                await _uow.SaveAsync();
+            }
         }
 
-        public async Task ActualizarGastoAsync(Expense expense)
+        public async Task ActualizarGastoAsync(Expense expense, List<int>? unitIds = null)
         {
             _uow.Expenses.Update(expense);
+
+            await _uow.ExpenseDistributions.DeleteByExpenseIdAsync(expense.Id);
+
+            if (!expense.IsGlobal && unitIds != null && unitIds.Any())
+            {
+                foreach (var unitId in unitIds)
+                {
+                    await _uow.ExpenseDistributions.AddAsync(new ExpenseDistribution
+                    {
+                        ExpenseId = expense.Id,
+                        UnitId = unitId
+                    });
+                }
+            }
+
             await _uow.SaveAsync();
         }
 

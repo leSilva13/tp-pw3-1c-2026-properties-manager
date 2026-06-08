@@ -69,10 +69,17 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input asp-for="Expense.IsGlobal" class="form-check-input" type="checkbox" />
+                                <input asp-for="Expense.IsGlobal" class="form-check-input" type="checkbox" id="chkIsGlobal" checked />
                                 <label asp-for="Expense.IsGlobal" class="form-check-label">
                                     Gasto Global (aplica a todas las unidades)
                                 </label>
+                            </div>
+                        </div>
+
+                        <div id="divUnidades" class="mb-3" style="display:none;">
+                            <label class="form-label">Unidades que aplica</label>
+                            <div id="listaUnidades" class="border rounded p-2">
+                                <span class="text-muted">Seleccioná primero un edificio.</span>
                             </div>
                         </div>
 
@@ -93,3 +100,40 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const chkGlobal = document.getElementById('chkIsGlobal');
+        const divUnidades = document.getElementById('divUnidades');
+        const selectEdificio = document.getElementById('SelectedBuildingId');
+
+        chkGlobal.addEventListener('change', toggleUnidades);
+        selectEdificio.addEventListener('change', cargarUnidades);
+
+        function toggleUnidades() {
+            divUnidades.style.display = chkGlobal.checked ? 'none' : 'block';
+            if (!chkGlobal.checked) cargarUnidades();
+        }
+
+        async function cargarUnidades() {
+            const buildingId = selectEdificio.value;
+            if (!buildingId) return;
+
+            const response = await fetch(`/Expenses/ObtenerUnidadesPorEdificio?buildingId=${buildingId}`);
+            const unidades = await response.json();
+            const lista = document.getElementById('listaUnidades');
+
+            if (unidades.length === 0) {
+                lista.innerHTML = '<span class="text-muted">Este edificio no tiene unidades.</span>';
+                return;
+            }
+
+            lista.innerHTML = unidades.map(u => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="SelectedUnitIds" value="${u.id}" id="unit_${u.id}" />
+                    <label class="form-check-label" for="unit_${u.id}">${u.nombre}</label>
+                </div>
+            `).join('');
+        }
+    </script>
+}
