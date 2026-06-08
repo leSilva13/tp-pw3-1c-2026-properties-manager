@@ -1,6 +1,8 @@
 using ProgramacionWeb3.PropertiesManager.Core;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,16 @@ builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddCore();
 
 builder.Services.AddControllersWithViews();
+// Cookie authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.Name = "PropertiesManager.Auth";
+    });
 
 var app = builder.Build();
 
@@ -31,6 +43,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

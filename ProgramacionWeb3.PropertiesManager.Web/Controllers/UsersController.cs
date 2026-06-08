@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly IAccountService _accountService;

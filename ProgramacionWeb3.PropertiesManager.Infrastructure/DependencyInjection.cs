@@ -10,7 +10,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                
+            options.UseSqlServer(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
