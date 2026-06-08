@@ -14,41 +14,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             _unitService = unitService;
         }
 
-        public IActionResult Index(int id)
+        public async Task<IActionResult> Index(int buildingId)
         {
-            var buildingId = id;
             ViewBag.buildingId = buildingId;
-            //datos mockeadoss  despues reemplazar por/ var units = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
-
-            var units = new List<Unit>
-            {
-                new Unit
-                {
-                    Id = 1,
-                    Floor = "1",
-                    ApartmentNumber = "A",
-                    AreaInMeters = 45,
-                    BuildingId = buildingId,
-                    Owner = new Owner
-                    {
-                        FullName = "José Martínez",
-                        Email = "jose@mail.com"
-                    }
-                },
-                new Unit
-                {
-                    Id = 2,
-                    Floor = "1",
-                    ApartmentNumber = "B",
-                    AreaInMeters = 50,
-                    BuildingId = buildingId,
-                    Owner = new Owner
-                    {
-                        FullName = "Ana López",
-                        Email = "ana@mail.com"
-                    }
-                }
-            };
+            var units = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
 
             return View(units);
         }
