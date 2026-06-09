@@ -8,11 +8,27 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
     {
         public BuildingRepository(AppDbContext dbContext) : base(dbContext) { }
 
-        public async Task<Building?> GetByIdWithAddressAsync(int id)
+        public async Task<IEnumerable<Building>> GetBuildingsByUserIdWithRelationshipsAsync(int userId)
         {
-            return await _dbContext.Set<Building>()
+            return await _dbContext.Buildings
                 .Include(b => b.Address)
+                    .ThenInclude(l => l.Province)
+                .Where(b => b.UserId == userId)
+                .OrderBy(b => b.Id)
+                .ToListAsync();
+        }
+
+        public async Task<Building?> GetBuildingByIdWithRelationshipsAsync(int id)
+        {
+            return await _dbContext.Buildings
+                .Include(b => b.Address)
+                    .ThenInclude(l => l.Province)
                 .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

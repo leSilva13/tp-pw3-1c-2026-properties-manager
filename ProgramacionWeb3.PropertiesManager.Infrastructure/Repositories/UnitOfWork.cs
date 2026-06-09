@@ -10,6 +10,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         public IExpenseRepository Expenses { get; private set; }
         public IExpenseDistributionRepository ExpenseDistributions { get; private set; }
         public IUnitRepository Units { get; private set; }
+        public IExpenseTypeRepository ExpenseTypes { get; private set; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -18,6 +19,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
             Expenses = new ExpenseRepository(_dbContext);
             ExpenseDistributions = new ExpenseDistributionRepository(_dbContext);
             Units = new UnitRepository(_dbContext);
+            ExpenseTypes = new ExpenseTypeRepository(_dbContext);
         }
 
         public async Task<int> SaveAsync() => await _dbContext.SaveChangesAsync();

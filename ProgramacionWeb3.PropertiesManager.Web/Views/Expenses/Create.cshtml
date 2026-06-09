@@ -6,6 +6,14 @@
 }
 
 <div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Buildings" asp-action="Index">Mis Consorcios</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-route-buildingId="@Model.SelectedBuildingId">@Model.BuildingLabel - Gastos</a></li>
+            <li class="breadcrumb-item active">Nuevo Gasto</li>
+        </ol>
+    </nav>
     <div class="row justify-content-center">
         <div class="col-md-8">
 
@@ -73,8 +81,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Comprobante (opcional)</label>
-                            <input type="file" name="receiptFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                            <label class="form-label">Comprobante (*)</label>
+                            <input type="file" name="receiptFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
+                            <span asp-validation-for="Expense.ReceiptPath" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">

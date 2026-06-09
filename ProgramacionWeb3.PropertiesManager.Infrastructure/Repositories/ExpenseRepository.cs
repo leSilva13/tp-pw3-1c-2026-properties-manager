@@ -13,6 +13,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
             return await _dbContext.Expenses
                 .Include(e => e.ExpenseType)
                 .Where(e => e.BuildingId == buildingId)
+                .OrderByDescending(e => e.BillingDate)
                 .ToListAsync();
         }
 

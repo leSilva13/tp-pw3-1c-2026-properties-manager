@@ -5,8 +5,6 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly AppDbContext _dbContext;
-
         public UserRepository(AppDbContext dbContext) : base(dbContext) {  }
 
         public Task<User?> GetByEmailAsync(string email)

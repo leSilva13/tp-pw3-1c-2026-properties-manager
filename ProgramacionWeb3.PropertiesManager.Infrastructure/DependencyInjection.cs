@@ -14,9 +14,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 options.UseSqlServer(connectionString));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IExpenseTypeRepository, ExpenseTypeRepository>();
             services.AddScoped<IBuildingRepository, BuildingRepository>();
-            services.AddScoped<IUnitRepository, UnitRepository>();
 
             return services;
         }

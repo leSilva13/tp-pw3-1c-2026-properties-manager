@@ -11,7 +11,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         public async Task<IEnumerable<Unit>> GetByBuildingIdAsync(int buildingId)
         {
             return await _dbContext.Units
-                .Where(u => u.BuildingId == buildingId)
+                .Include(unidad => unidad.Owner)
+                .Where(unidad => unidad.BuildingId == buildingId)
+                .OrderBy(unidad => unidad.Floor)
+                .ThenBy(unidad => unidad.ApartmentNumber)
                 .ToListAsync();
         }
     }

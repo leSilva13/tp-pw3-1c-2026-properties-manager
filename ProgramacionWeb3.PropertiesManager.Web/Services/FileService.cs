@@ -7,6 +7,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Services
     {
         private readonly IWebHostEnvironment _env;
         private const string ReceiptsFolder = "uploads/receipts";
+        private static readonly HashSet<string> _allowedExtensions = new() { ".pdf", ".jpg", ".jpeg", ".png" };
 
         public FileService(IWebHostEnvironment env)
         {
@@ -15,12 +16,14 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Services
 
         public async Task<string> SaveReceiptAsync(IFormFile file)
         {
-            var uploadsPath = Path.Combine(_env.WebRootPath, ReceiptsFolder);
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!_allowedExtensions.Contains(extension))
+                throw new InvalidOperationException($"Tipo de archivo no permitido. Use: PDF, JPG o PNG.");
 
+            var uploadsPath = Path.Combine(_env.WebRootPath, ReceiptsFolder);
             if (!Directory.Exists(uploadsPath))
                 Directory.CreateDirectory(uploadsPath);
 
-            var extension = Path.GetExtension(file.FileName);
             var fileName = $"{Guid.NewGuid()}{extension}";
             var fullPath = Path.Combine(uploadsPath, fileName);
 
@@ -32,11 +35,15 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Services
 
         public void DeleteReceipt(string? relativePath)
         {
-            if (string.IsNullOrEmpty(relativePath)) return;
-
-            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
-            if (File.Exists(fullPath))
+            var fullPath = GetReceiptPhysicalPath(relativePath);
+            if (fullPath != null && File.Exists(fullPath))
                 File.Delete(fullPath);
+        }
+
+        public string? GetReceiptPhysicalPath(string? relativePath)
+        {
+            if (string.IsNullOrEmpty(relativePath)) return null;
+            return Path.Combine(_env.WebRootPath, relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
         }
     }
 }

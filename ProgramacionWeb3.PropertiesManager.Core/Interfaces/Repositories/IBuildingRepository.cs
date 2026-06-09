@@ -4,6 +4,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
 {
     public interface IBuildingRepository : IBaseRepository<Building>
     {
-        Task<Building?> GetByIdWithAddressAsync(int id);
+        Task<IEnumerable<Building>> GetBuildingsByUserIdWithRelationshipsAsync(int userId);
+        Task<Building?> GetBuildingByIdWithRelationshipsAsync(int id);
+        Task SaveAsync();
     }
 }

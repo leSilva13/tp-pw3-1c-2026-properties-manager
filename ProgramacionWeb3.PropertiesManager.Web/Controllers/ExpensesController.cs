@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 using ProgramacionWeb3.PropertiesManager.Web.Services;
@@ -11,32 +11,26 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
     public class ExpensesController : Controller
     {
         private readonly IExpenseService _expenseService;
-        private readonly IExpenseTypeRepository _expenseTypeRepository;
-        private readonly IBuildingRepository _buildingRepository;
-        private readonly IUnitRepository _unitRepository;
+        private readonly IBuildingService _buildingService;
+        private readonly IUnitOfWork _uow;
         private readonly IFileService _fileService;
-        private readonly IWebHostEnvironment _env;
 
         public ExpensesController(
             IExpenseService expenseService,
-            IExpenseTypeRepository expenseTypeRepository,
-            IBuildingRepository buildingRepository,
-            IUnitRepository unitRepository,
-            IFileService fileService,
-            IWebHostEnvironment env)
+            IBuildingService buildingService,
+            IUnitOfWork uow,
+            IFileService fileService)
         {
             _expenseService = expenseService;
-            _expenseTypeRepository = expenseTypeRepository;
-            _buildingRepository = buildingRepository;
-            _unitRepository = unitRepository;
+            _buildingService = buildingService;
+            _uow = uow;
             _fileService = fileService;
-            _env = env;
         }
 
         public async Task<IActionResult> Index(int buildingId)
         {
             var gastos = await _expenseService.ObtenerGastosPorEdificioAsync(buildingId);
-            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
             ViewBag.BuildingId = buildingId;
             ViewBag.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
             return View(gastos);
@@ -45,7 +39,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int buildingId)
         {
-            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
             if (edificio == null) return NotFound();
 
             var viewModel = await ConstruirViewModelAsync();
@@ -66,10 +60,24 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             ModelState.Remove("Expense.Building");
             ModelState.Remove("Expense.ExpenseDistributions");
 
+            if (receiptFile == null || receiptFile.Length == 0)
+                ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
+
             if (ModelState.IsValid)
             {
-                if (receiptFile != null && receiptFile.Length > 0)
-                    viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
+                try
+                {
+                    viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile!);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError("receiptFile", ex.Message);
+                    var ed = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
+                    viewModel = await ConstruirViewModelAsync(viewModel);
+                    viewModel.SelectedBuildingId = buildingId;
+                    viewModel.BuildingLabel = ed != null ? $"{ed.Address.Street} {ed.Address.Number}" : $"Consorcio #{buildingId}";
+                    return View(viewModel);
+                }
 
                 var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
                 await _expenseService.CrearGastoAsync(viewModel.Expense, unitIds);
@@ -83,7 +91,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 return RedirectToAction(nameof(Index), new { buildingId });
             }
 
-            var edificio = await _buildingRepository.GetByIdWithAddressAsync(buildingId);
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
             viewModel = await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
             viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
@@ -96,14 +104,14 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null) return NotFound();
 
-            var edificio = await _buildingRepository.GetByIdWithAddressAsync(gasto.BuildingId);
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(gasto.BuildingId);
             var viewModel = await ConstruirViewModelAsync();
             viewModel.Expense = gasto;
             viewModel.SelectedExpenseTypeId = gasto.ExpenseTypeId;
             viewModel.SelectedBuildingId = gasto.BuildingId;
             viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
             viewModel.SelectedUnitIds = gasto.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new();
-            viewModel.AvailableUnits = await _unitRepository.GetByBuildingIdAsync(gasto.BuildingId);
+            viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(gasto.BuildingId);
             return View(viewModel);
         }
 
@@ -122,16 +130,34 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             {
                 if (receiptFile != null && receiptFile.Length > 0)
                 {
-                    _fileService.DeleteReceipt(viewModel.Expense.ReceiptPath);
-                    viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
+                    try
+                    {
+                        var oldPath = viewModel.Expense.ReceiptPath;
+                        viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
+                        var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
+                        await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
+                        _fileService.DeleteReceipt(oldPath);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        ModelState.AddModelError("receiptFile", ex.Message);
+                        viewModel = await ConstruirViewModelAsync(viewModel);
+                        viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
+                        viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
+                        return View(viewModel);
+                    }
+                }
+                else
+                {
+                    var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
+                    await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
                 }
 
-                var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
-                await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
                 return RedirectToAction(nameof(Index), new { buildingId = viewModel.Expense.BuildingId });
             }
 
             viewModel = await ConstruirViewModelAsync(viewModel);
+            viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
             viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
             return View(viewModel);
         }
@@ -141,6 +167,9 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null) return NotFound();
+
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(gasto.BuildingId);
+            ViewBag.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
             return View(gasto);
         }
 
@@ -150,10 +179,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             int buildingId = gasto?.BuildingId ?? 0;
-            if (gasto != null)
-                _fileService.DeleteReceipt(gasto.ReceiptPath);
+            var receiptPath = gasto?.ReceiptPath;
 
             await _expenseService.EliminarGastoAsync(id);
+            _fileService.DeleteReceipt(receiptPath);
+
             return RedirectToAction(nameof(Index), new { buildingId });
         }
 
@@ -163,8 +193,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null || string.IsNullOrEmpty(gasto.ReceiptPath)) return NotFound();
 
-            var filePath = Path.Combine(_env.WebRootPath, gasto.ReceiptPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-            if (!System.IO.File.Exists(filePath)) return NotFound();
+            var filePath = _fileService.GetReceiptPhysicalPath(gasto.ReceiptPath);
+            if (filePath == null || !System.IO.File.Exists(filePath)) return NotFound();
 
             var extension = Path.GetExtension(filePath).ToLowerInvariant();
             var contentType = extension switch
@@ -181,17 +211,15 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
         {
-            var unidades = await _unitRepository.GetByBuildingIdAsync(buildingId);
+            var unidades = await _uow.Units.GetByBuildingIdAsync(buildingId);
             return Json(unidades.Select(u => new { u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
         }
 
         private async Task<ExpenseFormViewModel> ConstruirViewModelAsync(ExpenseFormViewModel? viewModel = null)
         {
-            var tipos = await _expenseTypeRepository.GetAllAsync();
-
+            var tipos = await _uow.ExpenseTypes.GetAllAsync();
             viewModel ??= new ExpenseFormViewModel();
             viewModel.ExpenseTypes = new SelectList(tipos, "Id", "Name");
-
             return viewModel;
         }
     }

@@ -6,5 +6,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Services
     {
         Task<string> SaveReceiptAsync(IFormFile file);
         void DeleteReceipt(string? relativePath);
+        string? GetReceiptPhysicalPath(string? relativePath);
     }
 }
