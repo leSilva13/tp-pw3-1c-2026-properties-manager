@@ -31,9 +31,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             var gastos = await _expenseService.ObtenerGastosPorEdificioAsync(buildingId);
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
-            ViewBag.BuildingId = buildingId;
-            ViewBag.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
-            return View(gastos);
+            var viewModel = new ExpenseIndexViewModel
+            {
+                Gastos = gastos,
+                BuildingId = buildingId,
+                BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}"
+            };
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -169,8 +173,12 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             if (gasto == null) return NotFound();
 
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(gasto.BuildingId);
-            ViewBag.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
-            return View(gasto);
+            var viewModel = new ExpenseDeleteViewModel
+            {
+                Expense = gasto,
+                BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}"
+            };
+            return View(viewModel);
         }
 
         [HttpPost, ActionName("Delete")]

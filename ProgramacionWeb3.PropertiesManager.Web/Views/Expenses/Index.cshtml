@@ -1,4 +1,4 @@
-@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Expense>
+@model ProgramacionWeb3.PropertiesManager.Web.Models.ExpenseIndexViewModel
 
 @{
     ViewData["Title"] = "Gastos del Consorcio";
@@ -9,13 +9,13 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
             <li class="breadcrumb-item"><a asp-controller="Buildings" asp-action="Index">Mis Consorcios</a></li>
-            <li class="breadcrumb-item active">@ViewBag.BuildingLabel - Gastos</li>
+            <li class="breadcrumb-item active">@Model.BuildingLabel - Gastos</li>
         </ol>
     </nav>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>@ViewBag.BuildingLabel - Gastos</h2>
-        <a asp-action="Create" asp-route-buildingId="@ViewBag.BuildingId" class="btn btn-primary">Nuevo Gasto</a>
+        <h2>@Model.BuildingLabel - Gastos</h2>
+        <a asp-action="Create" asp-route-buildingId="@Model.BuildingId" class="btn btn-primary">Nuevo Gasto</a>
     </div>
 
     <table id="tablaGastos" class="table table-striped table-hover">
@@ -33,7 +33,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model == null || !Model.Any())
+            @if (!Model.Gastos.Any())
             {
                 <tr>
                     <td colspan="9" class="text-center text-muted">No hay gastos registrados para este consorcio.</td>
@@ -41,7 +41,7 @@
             }
             else
             {
-                @foreach (var gasto in Model)
+                @foreach (var gasto in Model.Gastos)
                 {
                     <tr>
                         <td>@gasto.ExpenseYear</td>

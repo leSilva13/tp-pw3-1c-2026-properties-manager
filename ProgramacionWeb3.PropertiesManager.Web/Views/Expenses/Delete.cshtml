@@ -1,4 +1,4 @@
-@model ProgramacionWeb3.PropertiesManager.Core.Entities.Expense
+@model ProgramacionWeb3.PropertiesManager.Web.Models.ExpenseDeleteViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
@@ -10,7 +10,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
             <li class="breadcrumb-item"><a asp-controller="Buildings" asp-action="Index">Mis Consorcios</a></li>
-            <li class="breadcrumb-item"><a asp-action="Index" asp-route-buildingId="@Model.BuildingId">@ViewBag.BuildingLabel - Gastos</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-route-buildingId="@Model.Expense.BuildingId">@Model.BuildingLabel - Gastos</a></li>
             <li class="breadcrumb-item active">Eliminar Gasto</li>
         </ol>
     </nav>
@@ -25,22 +25,22 @@
 
                     <dl class="row">
                         <dt class="col-sm-4">Descripción</dt>
-                        <dd class="col-sm-8">@Model.Description</dd>
+                        <dd class="col-sm-8">@Model.Expense.Description</dd>
 
                         <dt class="col-sm-4">Monto</dt>
-                        <dd class="col-sm-8">$@Model.Amount.ToString("N2")</dd>
+                        <dd class="col-sm-8">$@Model.Expense.Amount.ToString("N2")</dd>
 
                         <dt class="col-sm-4">Período</dt>
-                        <dd class="col-sm-8">@Model.ExpenseMonth/@Model.ExpenseYear</dd>
+                        <dd class="col-sm-8">@Model.Expense.ExpenseMonth/@Model.Expense.ExpenseYear</dd>
 
                         <dt class="col-sm-4">Tipo</dt>
-                        <dd class="col-sm-8">@(Model.ExpenseType?.Name ?? "-")</dd>
+                        <dd class="col-sm-8">@(Model.Expense.ExpenseType?.Name ?? "-")</dd>
                     </dl>
 
                     <form asp-action="Delete" method="post">
-                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" name="id" value="@Model.Expense.Id" />
                         <div class="d-flex justify-content-end mt-3">
-                            <a asp-action="Index" asp-route-buildingId="@Model.BuildingId" class="btn btn-outline-secondary me-2">Cancelar</a>
+                            <a asp-action="Index" asp-route-buildingId="@Model.Expense.BuildingId" class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-danger">Eliminar</button>
                         </div>
                     </form>
