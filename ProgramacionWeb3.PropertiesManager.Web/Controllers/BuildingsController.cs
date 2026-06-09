@@ -93,6 +93,28 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             // viewModel.Provinces = new SelectList(...);
             return View(viewModel);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("ID de edificio inválido.");
+            }
+
+            // Llamamos al servicio para que realice la baja lógica
+            bool exito = await _buildingService.BajaDeEdificioAsync(id);
+
+            if (!exito)
+            {
+                return NotFound("No se encontró el edificio que desea eliminar.");
+            }
+
+            // Redirigimos al Index, donde ahora el edificio ya no debería aparecer
+            return RedirectToAction(nameof(Index));
+        }
     }
 
 

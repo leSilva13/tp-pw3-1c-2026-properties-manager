@@ -21,7 +21,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                 .Include(b => b.Address)
                     //.ThenInclude(a => a.Locality)
                         .ThenInclude(l => l.Province)
-                .Where(b => b.UserId == userId)
+                .Where(b => b.UserId == userId && b.IsActive) // Solo edificios activos
                 .OrderBy(b => b.Id)
                 .ToListAsync();
         }
@@ -39,5 +39,12 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(Building edificio)
+        {
+            _dbContext.Buildings.Update(edificio);
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

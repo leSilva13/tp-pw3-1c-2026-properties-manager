@@ -40,14 +40,26 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             await _buildingRepository.SaveAsync();
         }
 
-        public async Task EliminarEdificioAsync(int id)
+        public async Task<bool> BajaDeEdificioAsync(int id)
         {
-            var building = await _buildingRepository.GetByIdAsync(id);
-            if (building != null)
+            // 1. Buscamos el edificio por su ID usando el repositorio
+            var edificio = await _buildingRepository.GetByIdAsync(id); // O el método que uses para buscar por ID
+
+            if (edificio == null)
             {
-                _buildingRepository.Delete(building);
-                await _buildingRepository.SaveAsync();
+                return false; // Retornamos false si el edificio no existe
             }
+
+            // 2. Aplicamos la lógica de negocio del "Borrado Lógico"
+            edificio.IsActive = false;
+
+            // 3. Actualizamos y guardamos el cambio en la base de datos
+            await _buildingRepository.UpdateAsync(edificio);
+            await _buildingRepository.SaveAsync();
+
+            return true;
         }
+
+        
     }
 }
