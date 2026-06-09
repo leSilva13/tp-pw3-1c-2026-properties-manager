@@ -12,6 +12,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task CrearEdificioAsync(Building building);
         Task ActualizarEdificioAsync(Building building);
         Task<bool> BajaDeEdificioAsync(int id);
+
        
 
 
