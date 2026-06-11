@@ -1,24 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
-using ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
     //[Authorize]
+    //TODO: Llevar todo al servicio
     public class BuildingsController : Controller
     {
         private readonly IBuildingService _buildingService;
-        private readonly IProvinceRepository _provinceRepository;
+        private readonly IProvinceService _provinceService;
 
-        public BuildingsController(IBuildingService buildingService, IProvinceRepository provinceRepository)
+        public BuildingsController(IBuildingService buildingService, IProvinceService provinceService)
         {
             _buildingService = buildingService;
-            _provinceRepository = provinceRepository;
+            _provinceService = provinceService;
         }
 
         // GET: /Buildings o /Buildings/Index
@@ -36,62 +34,35 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // 1. Simulación de carga de provincias (Reemplazar por tu repositorio/servicio real)
-            var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
-
-
-            var viewModel = new BuildingFormViewModel
-            {
-                Provinces = new SelectList(listaProvincias, "Id", "Name")
-                //Localities = new SelectList(new List<Locality>(), "Id", "Name")
-            };
-
-            viewModel.Building.IsActive = true;
-            viewModel.Building.CreationDate = DateTime.Now;
-
-            // Asignamos el ID de usuario administrador (Acordate de poner un ID que exista en tu tabla Users)
-            viewModel.Building.UserId = 1;
-
-            return View(viewModel);
+            ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name");
+            return View(new BuildingFormViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BuildingFormViewModel viewModel)
         {
-            // Mapeamos el ID de la provincia seleccionada en el combo directamente a la dirección
-            if (viewModel.Building.Address != null)
-            {
-                viewModel.Building.Address.ProvinceId = viewModel.SelectedProvinceId;
-            }
-
-            // 🚀 LA SOLUCIÓN: Le decimos a .NET que no valide la entidad compleja "Province" 
-            // ni al "AdministratorUser", ya que se completan en el backend o la base de datos.
-            ModelState.Remove("Building.Address.Province");
-            ModelState.Remove("Building.AdministratorUser"); // Por las dudas, si también chillaba
-            ModelState.Remove("Building.Units");
             if (ModelState.IsValid)
             {
-                // Asignamos el usuario administrador logueado al edificio
-                viewModel.Building.UserId = 1; // TODO: Reemplazar por ID real de sesión
-
-                // Asignamos la localidad elegida a la dirección del edificio
-                if (viewModel.Building.Address != null)
+                var buildingDto = new BuildingDto
                 {
-                    viewModel.Building.Address.ProvinceId = viewModel.SelectedProvinceId;
-                    //viewModel.Building.Address.LocalityId = viewModel.SelectedLocalityId;
+                    TotalSurfaceArea = viewModel.TotalSurfaceArea,
+                    ExpensesDueDate = viewModel.ExpensesDueDate,
+                    AdministratorUserId = 1, //GET CURRENT USER
+                    AddressDto = new AddressDto
+                    {
+                        Street = viewModel.AddressViewModel.Street,
+                        Number = viewModel.AddressViewModel.Number,
+                        ProvinceId = viewModel.AddressViewModel.ProvinceId,
+                    }
+                };
 
-                }
-
-                // Guardamos usando tu servicio asíncronico directo al repositorio
-                await _buildingService.CrearEdificioAsync(viewModel.Building);
+                await _buildingService.CrearEdificioAsync(buildingDto);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            // Si el modelo no es válido, volvemos a cargar las provincias para no romper la vista
-            var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
-            viewModel.Provinces = new SelectList(listaProvincias, "Id", "Name", viewModel.SelectedProvinceId);
+            ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name");
             return View(viewModel);
         }
 
@@ -110,59 +81,60 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             }
 
             // 2. Cargamos el combo de provincias (igual que en el Create)
-            var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
+            var listaProvincias = await _provinceService.GetAllAsync();
 
             // 3. Armamos el ViewModel mapeando los datos que ya existen en la base de datos
-            var viewModel = new BuildingFormViewModel
-            {
-                Building = edificio,
-                Provinces = new SelectList(listaProvincias, "Id", "Name", edificio.Address?.ProvinceId),
-                SelectedProvinceId = edificio.Address?.ProvinceId ?? 0
-            };
+            //var viewModel = new BuildingFormViewModel
+            //{
+            //    Building = edificio,
+            //    Provinces = new SelectList(listaProvincias, "Id", "Name", edificio.Address?.ProvinceId),
+            //    SelectedProvinceId = edificio.Address?.ProvinceId ?? 0
+            //};
 
-            return View(viewModel);
+            return View(new BuildingFormViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BuildingFormViewModel viewModel)
         {
-            // Seguridad: Nos aseguramos que el ID de la URL sea el mismo del objeto que se edita
-            if (id != viewModel.Building.Id) return BadRequest("Los IDs no coinciden.");
+            //// Seguridad: Nos aseguramos que el ID de la URL sea el mismo del objeto que se edita
+            //if (id != viewModel.Building.Id) return BadRequest("Los IDs no coinciden.");
 
-            // Asignamos la provincia seleccionada en el combo al objeto Address
-            if (viewModel.Building.Address != null)
-            {
-                viewModel.Building.Address.ProvinceId = viewModel.SelectedProvinceId;
-            }
+            //// Asignamos la provincia seleccionada en el combo al objeto Address
+            //if (viewModel.Building.Address != null)
+            //{
+            //    viewModel.Building.Address.ProvinceId = viewModel.SelectedProvinceId;
+            //}
 
-            // Limpiamos las validaciones de EF que no vienen del formulario (igual que en Create)
-            ModelState.Remove("Building.Address.Province");
-            ModelState.Remove("Building.AdministratorUser");
-            ModelState.Remove("Building.Units");
+            //// Limpiamos las validaciones de EF que no vienen del formulario (igual que en Create)
+            //ModelState.Remove("Building.Address.Province");
+            //ModelState.Remove("Building.AdministratorUser");
+            //ModelState.Remove("Building.Units");
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Mantenemos datos que el usuario no edita en este formulario para que no se pierdan o se vuelvan null
-                    viewModel.Building.IsActive = true;
-                    viewModel.Building.UserId = 1; // TODO: Mantener el ID real del dueño actual
+            //if (ModelState.IsValid)
+            //{
+            //    try
+            //    {
+            //        // Mantenemos datos que el usuario no edita en este formulario para que no se pierdan o se vuelvan null
+            //        viewModel.Building.IsActive = true;
+            //        viewModel.Building.UserId = 1; // TODO: Mantener el ID real del dueño actual
 
-                    // Llamamos al servicio para actualizar
-                    await _buildingService.ActualizarEdificioAsync(viewModel.Building);
+            //        // Llamamos al servicio para actualizar
+            //        await _buildingService.ActualizarEdificioAsync(viewModel.Building);
 
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Error al actualizar: " + ex.Message);
-                }
-            }
+            //        return RedirectToAction(nameof(Index));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        ModelState.AddModelError("", "Error al actualizar: " + ex.Message);
+            //    }
+            //}
 
-            // Si algo falló, recargamos las provincias para no romper la vista
-            var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
-            viewModel.Provinces = new SelectList(listaProvincias, "Id", "Name", viewModel.SelectedProvinceId);
+            //// Si algo falló, recargamos las provincias para no romper la vista
+            //var listaProvincias = await _provinceRepository.ObtenerTodasAsync();
+            //viewModel.Provinces = new SelectList(listaProvincias, "Id", "Name", viewModel.SelectedProvinceId);
+            //return View(viewModel);
             return View(viewModel);
         }
 

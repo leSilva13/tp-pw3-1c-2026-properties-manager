@@ -1,7 +1,8 @@
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,8 +29,21 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             return await _buildingRepository.GetBuildingByIdWithRelationshipsAsync(id);
         }
 
-        public async Task CrearEdificioAsync(Building building)
+        public async Task CrearEdificioAsync(BuildingDto buildingDto)
         {
+            var building = new Building
+            {
+                ExpensesDueDate = buildingDto.ExpensesDueDate,
+                TotalSurfaceArea = buildingDto.TotalSurfaceArea,
+                UserId = buildingDto.AdministratorUserId,
+                Address = new Address
+                {
+                    Street = buildingDto.AddressDto.Street,
+                    Number = buildingDto.AddressDto.Number,
+                    ProvinceId = buildingDto.AddressDto.ProvinceId,
+                }
+            };
+
             await _buildingRepository.AddAsync(building);
             await _buildingRepository.SaveAsync();
         }

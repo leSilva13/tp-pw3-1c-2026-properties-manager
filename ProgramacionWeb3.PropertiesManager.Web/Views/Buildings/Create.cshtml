@@ -2,6 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
+    var provinces = ViewBag.Provinces as IEnumerable<SelectListItem>;
     ViewData["Title"] = "Nuevo Edificio";
 }
 
@@ -20,14 +21,14 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Building.ExpensesDueDate" class="form-label">Día Vencimiento Expensas</label>
-                                <input asp-for="Building.ExpensesDueDate" type="number" min="1" max="31" class="form-control" placeholder="Ej: 10" required />
-                                <span asp-validation-for="Building.ExpensesDueDate" class="text-danger"></span>
+                                <label asp-for="ExpensesDueDate" class="form-label">Día Vencimiento Expensas</label>
+                                <input asp-for="ExpensesDueDate" type="number" min="1" max="31" class="form-control" placeholder="Ej: 10" required />
+                                <span asp-validation-for="ExpensesDueDate" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Building.TotalSurfaceArea" class="form-label">Superficie Total (m²)</label>
-                                <input asp-for="Building.TotalSurfaceArea" type="number" step="0.01" class="form-control" placeholder="Ej: 1450.50" required />
-                                <span asp-validation-for="Building.TotalSurfaceArea" class="text-danger"></span>
+                                <label asp-for="TotalSurfaceArea" class="form-label">Superficie Total (m²)</label>
+                                <input asp-for="TotalSurfaceArea" type="number" step="0.01" class="form-control" placeholder="Ej: 1450.50" required />
+                                <span asp-validation-for="TotalSurfaceArea" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -35,21 +36,21 @@
 
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label asp-for="Building.Address.Street" class="form-label">Calle</label>
-                                <input asp-for="Building.Address.Street" class="form-control" placeholder="Ej: Arieta" required />
-                                <span asp-validation-for="Building.Address.Street" class="text-danger"></span>
+                                <label asp-for="AddressViewModel.Street" class="form-label">Calle</label>
+                                <input asp-for="AddressViewModel.Street" class="form-control" placeholder="Ej: Arieta" required />
+                                <span asp-validation-for="AddressViewModel.Street" class="text-danger"></span>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label asp-for="Building.Address.Number" class="form-label">Número</label>
-                                <input asp-for="Building.Address.Number" type="number" class="form-control" placeholder="Ej: 2100" required />
-                                <span asp-validation-for="Building.Address.Number" class="text-danger"></span>
+                                <label asp-for="AddressViewModel.Number" class="form-label">Número</label>
+                                <input asp-for="AddressViewModel.Number" type="number" class="form-control" placeholder="Ej: 2100" required />
+                                <span asp-validation-for="AddressViewModel.Number" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Provincia</label>
-                                <select asp-for="SelectedProvinceId" asp-items="Model.Provinces" class="form-select" id="comboProvincia" required>
+                                <select asp-for="AddressViewModel.ProvinceId" asp-items="provinces" class="form-select" id="comboProvincia" required>
                                     <option value="">-- Seleccione una Provincia --</option>
                                 </select>
                             </div>
