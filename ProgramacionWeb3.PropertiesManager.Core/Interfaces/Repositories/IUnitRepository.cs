@@ -7,5 +7,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
         Task<Unit?> GetByUnitIdWithOwnerAndBuildingAsync(int id);
 
         Task<IEnumerable<Unit>> GetByBuildingIdAsync(int buildingId);
+
+        Task SaveAsync();
     }
 }

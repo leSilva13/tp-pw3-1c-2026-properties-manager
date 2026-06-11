@@ -1,0 +1,41 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Owner>
+
+
+<h1>OWNERS</h1>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No hay owners todavía!</p>
+    <p>Creá uno </p>
+    <a asp-action="crear">Agregar Owner</a>
+}
+else
+{
+    <a asp-controller="Owners" asp-action="Crear">Agregar Owner</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre completo</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var owner in Model)
+            {
+                <tr>
+                    <td>@owner.Id</td>
+                    <td>@owner.FullName</td>
+                    <td>@owner.Email</td>
+                    <td>
+                        <a asp-controller="Owners" asp-action="Editar" asp-route-id="@owner.Id">Editar</a>
+                        <a asp-controller="Owners" asp-action="Eliminar" asp-route-id="@owner.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

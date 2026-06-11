@@ -1,4 +1,5 @@
-﻿@model ProgramacionWeb3.PropertiesManager.Core.Entities.Unit
+﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.UnitFormViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <h1>Nueva Unidad</h1>
 
@@ -7,37 +8,38 @@
 
     <div>
         <label>Consorcio</label>
-        <input value="@ViewBag.BuildingName" disabled />
+        <input value="@Model.BuildingName" disabled />
     </div>
 
     <div>
-        <label>Piso</label>
+        <label asp-for="Floor">Piso</label>
         <input asp-for="Floor" />
+        <span asp-validation-for="Floor"></span>
     </div>
 
     <div>
-        <label>Departamento</label>
+        <label asp-for="ApartmentNumber">Departamento</label>
         <input asp-for="ApartmentNumber" />
+        <span asp-validation-for="ApartmentNumber"></span>
     </div>
 
     <div>
-        <label>Superficie</label>
+        <label asp-for="AreaInMeters">Superficie</label>
         <input asp-for="AreaInMeters" type="number" />
+        <span asp-validation-for="AreaInMeters"></span>
     </div>
 
     <div>
-        <label>Nombre completo del dueño</label>
-        <input name="OwnerFullName" />
-    </div>
-
-    <div>
-        <label>Email del dueño</label>
-        <input name="OwnerEmail" type="email" />
+        <label asp-for="OwnerId">Dueño</label>
+        <select asp-for="OwnerId" asp-items="Model.Owners">
+            <option value="">Seleccione un dueño</option>
+        </select>
+        <span asp-validation-for="OwnerId"></span>
     </div>
 
     <button type="submit">Guardar</button>
 
-    <a asp-controller="Units" asp-action="Index" asp-route-id="@Model.BuildingId">
+    <a asp-controller="Units" asp-action="Index" asp-route-buildingId="@Model.BuildingId">
         Cancelar
     </a>
 </form>

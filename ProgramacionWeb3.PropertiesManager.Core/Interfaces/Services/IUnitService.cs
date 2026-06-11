@@ -13,7 +13,5 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task ActualizarUnidadAsync(Unit unit);
 
         Task EliminarUnidadAsync(int unitId);
-
-        Task CrearUnidadConOwnerAsync(Unit unit, string ownerFullName, string ownerEmail);
     }
 }

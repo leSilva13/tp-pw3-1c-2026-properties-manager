@@ -15,5 +15,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             return await _dbContext.Owners.FirstOrDefaultAsync(o => o.Email == email);
         }
+
+        public async Task SaveAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

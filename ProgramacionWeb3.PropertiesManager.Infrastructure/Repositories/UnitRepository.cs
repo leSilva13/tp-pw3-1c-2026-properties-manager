@@ -25,5 +25,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                 .ThenBy(unidad => unidad.ApartmentNumber)
                 .ToListAsync();
         }
+
+        public async Task SaveAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
