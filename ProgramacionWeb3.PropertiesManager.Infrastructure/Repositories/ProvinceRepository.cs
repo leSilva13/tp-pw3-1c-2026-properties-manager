@@ -1,9 +1,6 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
 {
