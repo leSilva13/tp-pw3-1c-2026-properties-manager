@@ -1,0 +1,21 @@
+﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.OwnerFormViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h1>Crear Owner</h1>
+
+<form asp-controller="Owners" asp-action="Crear" method="post">
+    <div>
+        <label asp-for="FullName">Ingrese su nombre completo</label>
+        <input asp-for="FullName" />
+        <span asp-validation-for="FullName"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email">Ingrese su email</label>
+        <input asp-for="Email" type="email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+
+    <button type="submit">Guardar</button>
+    <a asp-controller="Owners" asp-action="Index">Cancelar</a>
+</form>

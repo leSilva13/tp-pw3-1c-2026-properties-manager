@@ -1,6 +1,10 @@
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
@@ -8,6 +12,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
     {
         private readonly IBuildingRepository _buildingRepository;
 
+        // Inyección directa del repositorio de Consorcios
         public BuildingService(IBuildingRepository buildingRepository)
         {
             _buildingRepository = buildingRepository;
@@ -44,5 +49,25 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 await _buildingRepository.SaveAsync();
             }
         }
+
+        public async Task<bool> BajaDeEdificioAsync(int id)
+        {
+            // 1. Buscamos el edificio por su ID usando el repositorio
+            var edificio = await _buildingRepository.GetByIdAsync(id); // O el método que uses para buscar por ID
+
+            if (edificio == null)
+            {
+                return false; // Retornamos false si el edificio no existe
+            }
+
+            // 2. Aplicamos la lógica de negocio del "Borrado Lógico"
+            edificio.IsActive = false;
+
+            // 3. Actualizamos y guardamos el cambio en la base de datos
+            await _buildingRepository.UpdateAsync(edificio);
+            await _buildingRepository.SaveAsync();
+
+            return true;
+        }        
     }
 }

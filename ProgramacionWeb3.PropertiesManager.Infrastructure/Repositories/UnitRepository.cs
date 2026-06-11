@@ -8,6 +8,14 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
     {
         public UnitRepository(AppDbContext dbContext) : base(dbContext) { }
 
+        public async Task<Unit?> GetByUnitIdWithOwnerAndBuildingAsync(int id)
+        {
+            return await _dbContext.Units
+                .Include(unidad => unidad.Owner)
+                .Include(unidad => unidad.Building)
+                .FirstOrDefaultAsync(unidad => unidad.Id == id);
+        }
+
         public async Task<IEnumerable<Unit>> GetByBuildingIdAsync(int buildingId)
         {
             return await _dbContext.Units
@@ -16,6 +24,11 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                 .OrderBy(unidad => unidad.Floor)
                 .ThenBy(unidad => unidad.ApartmentNumber)
                 .ToListAsync();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

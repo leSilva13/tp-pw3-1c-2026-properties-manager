@@ -8,11 +8,14 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         [Key]
         public int Id { get; set; }
 
+        // sugiero agregar Name para identificar visualmente el consorcio en pantallas y breadcrumbs.
+
+
         [Required]
         public int ExpensesDueDate { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal TotalSurfaceArea { get; set; }
+        public decimal TotalSurfaceArea { get; set; } //sugiero cambiar a entero
 
         [Required]
         public bool IsActive { get; set; } = true;

@@ -7,5 +7,6 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
         Task<IEnumerable<Building>> GetBuildingsByUserIdWithRelationshipsAsync(int userId);
         Task<Building?> GetBuildingByIdWithRelationshipsAsync(int id);
         Task SaveAsync();
+        Task UpdateAsync(Building edificio);
     }
 }

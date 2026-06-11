@@ -18,7 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")] 
-        public decimal AreaInMeters { get; set; }
+        public decimal AreaInMeters { get; set; } 
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 

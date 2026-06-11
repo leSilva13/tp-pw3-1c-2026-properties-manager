@@ -9,7 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces
         IExpenseDistributionRepository ExpenseDistributions { get; }
         IUnitRepository Units { get; }
         IExpenseTypeRepository ExpenseTypes { get; }
-
+        IOwnerRepository Owners { get; }
         Task<int> SaveAsync();
     }
 }

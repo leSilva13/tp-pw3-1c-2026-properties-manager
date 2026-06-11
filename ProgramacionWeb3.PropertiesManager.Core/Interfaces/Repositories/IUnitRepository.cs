@@ -5,5 +5,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
     public interface IUnitRepository : IBaseRepository<Unit>
     {
         Task<IEnumerable<Unit>> GetByBuildingIdAsync(int buildingId);
+        Task<Unit?> GetByUnitIdWithOwnerAndBuildingAsync(int id);
+        Task SaveAsync();
     }
 }

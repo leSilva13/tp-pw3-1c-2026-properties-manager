@@ -1,4 +1,7 @@
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
@@ -9,5 +12,6 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task CrearEdificioAsync(Building building);
         Task ActualizarEdificioAsync(Building building);
         Task EliminarEdificioAsync(int id);
+        Task<bool> BajaDeEdificioAsync(int id);
     }
 }
