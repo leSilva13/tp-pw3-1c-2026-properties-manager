@@ -10,7 +10,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
 
         [Required]
         [StringLength(100)]
-        public string FullName { get; set; }
+        public string FullName { get; set; } //se podria poner name y surname pero tambien ta bien full
 
         [Required]
         [EmailAddress]

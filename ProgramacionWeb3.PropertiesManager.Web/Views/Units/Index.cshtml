@@ -1,0 +1,32 @@
+﻿
+@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Unit>
+<h1>Unidades Index</h1>
+
+<a asp-controller="Units" asp-action="Create" asp-route-id="@ViewBag.buildingId">Nueva Unidad</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>Unidad</th>
+            <th>Dueño</th>
+            <th>Email</th>
+            <th>Superficie</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var unit in Model)
+        {
+            <tr>
+                <td>@unit.Floor@unit.ApartmentNumber</td>
+                <td>@unit.Owner?.FullName</td>
+                <td>@unit.Owner?.Email</td>
+                <td>@unit.AreaInMeters</td>
+                <td>
+                    <a asp-controller="Units" asp-action="Edit" asp-route-id="@unit.Id">Editar</a>
+                    <a asp-controller="Units" asp-action="Delete" asp-route-id="@unit.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

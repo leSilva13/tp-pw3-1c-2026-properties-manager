@@ -1,0 +1,43 @@
+﻿@model ProgramacionWeb3.PropertiesManager.Core.Entities.Unit
+
+<h1>Nueva Unidad</h1>
+
+<form asp-controller="Units" asp-action="Create" method="post">
+    <input type="hidden" asp-for="BuildingId" />
+
+    <div>
+        <label>Consorcio</label>
+        <input value="@ViewBag.BuildingName" disabled />
+    </div>
+
+    <div>
+        <label>Piso</label>
+        <input asp-for="Floor" />
+    </div>
+
+    <div>
+        <label>Departamento</label>
+        <input asp-for="ApartmentNumber" />
+    </div>
+
+    <div>
+        <label>Superficie</label>
+        <input asp-for="AreaInMeters" type="number" />
+    </div>
+
+    <div>
+        <label>Nombre completo del dueño</label>
+        <input name="OwnerFullName" />
+    </div>
+
+    <div>
+        <label>Email del dueño</label>
+        <input name="OwnerEmail" type="email" />
+    </div>
+
+    <button type="submit">Guardar</button>
+
+    <a asp-controller="Units" asp-action="Index" asp-route-id="@Model.BuildingId">
+        Cancelar
+    </a>
+</form>

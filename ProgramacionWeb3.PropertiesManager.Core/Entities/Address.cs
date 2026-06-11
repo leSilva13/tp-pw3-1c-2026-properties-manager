@@ -22,17 +22,16 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         [Column(TypeName = "decimal(18, 10)")]
         public decimal Longitude { get; set; }
 
-        [Required]
+       [Required]
         public int ProvinceId { get; set; }
 
         [ForeignKey("ProvinceId")]
         public virtual Province Province { get; set; }
 
-        //TODO ??
         //[Required]
-        //public int LocalityId { get; set; }
+       // public int LocalityId { get; set; }
 
         //[ForeignKey("LocalityId")]
-        //public virtual Locality Locality { get; set; }
+       // public virtual Locality Locality { get; set; }
     }
 }

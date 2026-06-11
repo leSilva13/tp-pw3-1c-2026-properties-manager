@@ -10,6 +10,11 @@ namespace ProgramacionWeb3.PropertiesManager.Core
         {
             services.AddScoped<IAccountService, AccountService>();
 
+            services.AddScoped<IBuildingService, BuildingService>();
+
+            services.AddScoped<IUnitService, UnitService>();
+
+
             return services;
         }
     }
