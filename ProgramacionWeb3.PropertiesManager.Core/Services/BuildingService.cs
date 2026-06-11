@@ -1,7 +1,7 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Entities;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
+using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,14 +30,24 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
         public async Task CrearEdificioAsync(Building building)
         {
-            await _buildingRepository.AddAsync(building); 
-            await _buildingRepository.SaveAsync();        
+            await _buildingRepository.AddAsync(building);
+            await _buildingRepository.SaveAsync();
         }
 
         public async Task ActualizarEdificioAsync(Building building)
         {
             _buildingRepository.Update(building);
             await _buildingRepository.SaveAsync();
+        }
+
+        public async Task EliminarEdificioAsync(int id)
+        {
+            var building = await _buildingRepository.GetByIdAsync(id);
+            if (building != null)
+            {
+                _buildingRepository.Delete(building);
+                await _buildingRepository.SaveAsync();
+            }
         }
 
         public async Task<bool> BajaDeEdificioAsync(int id)
@@ -58,8 +68,6 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             await _buildingRepository.SaveAsync();
 
             return true;
-        }
-
-        
+        }        
     }
 }

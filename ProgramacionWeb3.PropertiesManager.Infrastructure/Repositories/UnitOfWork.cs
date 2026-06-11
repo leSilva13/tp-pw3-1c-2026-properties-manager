@@ -7,6 +7,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
     {
         private readonly AppDbContext _dbContext;
         public IUserRepository Users { get; private set; }
+        public IExpenseRepository Expenses { get; private set; }
+        public IExpenseDistributionRepository ExpenseDistributions { get; private set; }
+        public IExpenseTypeRepository ExpenseTypes { get; private set; }
         public IUnitRepository Units { get; private set; }
         public IOwnerRepository Owners { get; private set; }
 
@@ -14,7 +17,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             _dbContext = context;
             Users = new UserRepository(_dbContext);
+            Expenses = new ExpenseRepository(_dbContext);
+            ExpenseDistributions = new ExpenseDistributionRepository(_dbContext);
             Units = new UnitRepository(_dbContext);
+            ExpenseTypes = new ExpenseTypeRepository(_dbContext);
             Owners = new OwnerRepository(_dbContext);
         }
 

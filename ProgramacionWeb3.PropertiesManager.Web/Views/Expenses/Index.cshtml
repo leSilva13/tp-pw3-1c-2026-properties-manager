@@ -1,0 +1,94 @@
+@model ProgramacionWeb3.PropertiesManager.Web.Models.ExpenseIndexViewModel
+
+@{
+    ViewData["Title"] = "Gastos del Consorcio";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Buildings" asp-action="Index">Mis Consorcios</a></li>
+            <li class="breadcrumb-item active">@Model.BuildingLabel - Gastos</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>@Model.BuildingLabel - Gastos</h2>
+        <a asp-action="Create" asp-route-buildingId="@Model.BuildingId" class="btn btn-primary">Nuevo Gasto</a>
+    </div>
+
+    <table id="tablaGastos" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Mes</th>
+                <th>Nombre</th>
+                <th>Tipo Gasto</th>
+                <th>Fecha</th>
+                <th>Monto ($)</th>
+                <th>Global</th>
+                <th>Comprobante</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Gastos.Any())
+            {
+                <tr>
+                    <td colspan="9" class="text-center text-muted">No hay gastos registrados para este consorcio.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var gasto in Model.Gastos)
+                {
+                    <tr>
+                        <td>@gasto.ExpenseYear</td>
+                        <td>@gasto.ExpenseMonth</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@gasto.Id">@gasto.Description</a>
+                        </td>
+                        <td>@(gasto.ExpenseType?.Name ?? "-")</td>
+                        <td>@gasto.BillingDate.ToString("dd/MM/yyyy")</td>
+                        <td>$@gasto.Amount.ToString("N2")</td>
+                        <td>
+                            @if (gasto.IsGlobal)
+                            {
+                                <span class="badge bg-success">Global</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Específico</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(gasto.ReceiptPath))
+                            {
+                                <a asp-action="DescargarComprobante" asp-route-id="@gasto.Id">Descargar</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@gasto.Id" class="btn btn-warning btn-sm">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@gasto.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/expenses-index.js"></script>
+}

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
@@ -30,8 +30,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             return await _dbContext.Buildings
                 .Include(b => b.Address)
-                   // .ThenInclude(a => a.Locality)
-                        .ThenInclude(l => l.Province)
+                    .ThenInclude(l => l.Province)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 

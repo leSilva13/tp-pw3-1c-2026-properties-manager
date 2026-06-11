@@ -9,6 +9,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core
         public static IServiceCollection AddCore(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IBuildingService, BuildingService>();
+            services.AddScoped<IExpenseService, ExpenseService>();
 
             services.AddScoped<IBuildingService, BuildingService>();
 

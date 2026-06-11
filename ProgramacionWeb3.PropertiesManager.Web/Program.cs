@@ -1,5 +1,6 @@
 using ProgramacionWeb3.PropertiesManager.Core;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
+using ProgramacionWeb3.PropertiesManager.Web;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddCore();
+builder.Services.AddWeb();
 
 builder.Services.AddControllersWithViews();
 
@@ -32,6 +34,16 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "expensesIndex",
+    pattern: "Expenses/Index/{buildingId:int}",
+    defaults: new { controller = "Expenses", action = "Index" });
+
+app.MapControllerRoute(
+    name: "expensesCreate",
+    pattern: "Expenses/Create/{buildingId:int}",
+    defaults: new { controller = "Expenses", action = "Create" });
 
 app.MapControllerRoute(
     name: "default",
