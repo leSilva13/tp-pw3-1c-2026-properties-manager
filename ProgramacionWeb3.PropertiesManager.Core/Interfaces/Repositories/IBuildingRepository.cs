@@ -9,5 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
         Task<Building?> GetBuildingByIdWithRelationshipsAsync(int id);
 
         Task SaveAsync();
+
+        Task UpdateAsync(Building edificio);
     }
 }
