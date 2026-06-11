@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
@@ -21,12 +22,17 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             this._buildingService = buildingService;
         }
 
-        public async Task<IActionResult> Index(int buildingId)
+        public async Task<IActionResult> Index(int id)
         {
-            ViewBag.buildingId = buildingId;
-            var units = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+            var buildingId = id;    
+            var building = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
 
-            return View(units);
+            ViewBag.BuildingId = buildingId;
+            ViewBag.BuildingName = ObtenerBuildingName(building, buildingId);
+
+            var unitsDto = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+
+            return View(unitsDto);
         }
 
         [HttpGet]
@@ -51,12 +57,16 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                unitFVM.Owners = await ObtenerOwnersSelectListAsync();
+                var building = await _buildingService.ObtenerEdificioPorIdAsync(unitFVM.BuildingId);
+
+                unitFVM.BuildingName = ObtenerBuildingName(building, unitFVM.BuildingId);
+
+                unitFVM.Owners = await ObtenerOwnersSelectListAsync(unitFVM.OwnerId);
 
                 return View(unitFVM);
             }
 
-            var unit = new Unit
+            var unitDto = new UnitDto
             {
                 BuildingId = unitFVM.BuildingId,
                 Floor = unitFVM.Floor,
@@ -65,31 +75,31 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 OwnerId = unitFVM.OwnerId
             };
 
-            await _unitService.CrearUnidadAsync(unit);
+            await _unitService.CrearUnidadAsync(unitDto);
 
-            return RedirectToAction("Index", new { buildingId = unit.BuildingId });
+            return RedirectToAction("Index", new { id = unitDto.BuildingId });
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var unit = await _unitService.ObtenerUnidadParaEditarAsync(id);
+            var unitDto = await _unitService.ObtenerUnidadParaEditarAsync(id);
 
-            if (unit == null)
+            if (unitDto == null)
             {
                 return NotFound();
             }
 
             var unitViewModel = new UnitFormViewModel
             {
-                Id = unit.Id,
-                BuildingId = unit.BuildingId,
-                BuildingName = ObtenerBuildingName(unit.Building, unit.BuildingId),
-                Floor = unit.Floor,
-                ApartmentNumber = unit.ApartmentNumber,
-                AreaInMeters = unit.AreaInMeters,
-                OwnerId = unit.OwnerId ?? 0,
-                Owners = await ObtenerOwnersSelectListAsync(unit.OwnerId)
+                Id = unitDto.Id,
+                BuildingId = unitDto.BuildingId,
+                BuildingName = unitDto.BuildingName,
+                Floor = unitDto.Floor,
+                ApartmentNumber = unitDto.ApartmentNumber,
+                AreaInMeters = unitDto.AreaInMeters,    
+                OwnerId = unitDto.OwnerId ?? 0,
+                Owners = await ObtenerOwnersSelectListAsync(unitDto.OwnerId)
             };
 
             return View(unitViewModel);
@@ -101,12 +111,16 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                var building = await _buildingService.ObtenerEdificioPorIdAsync(unitFVM.BuildingId);
+
+                unitFVM.BuildingName = ObtenerBuildingName(building, unitFVM.BuildingId);
+
                 unitFVM.Owners = await ObtenerOwnersSelectListAsync(unitFVM.OwnerId);
 
                 return View(unitFVM);
             }
 
-            var unit = new Unit
+            var unitDto = new UnitDto
             {
                 Id = unitFVM.Id,
                 BuildingId = unitFVM.BuildingId,
@@ -116,29 +130,34 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 OwnerId = unitFVM.OwnerId
             };
 
-            await _unitService.ActualizarUnidadAsync(unit);
+            await _unitService.ActualizarUnidadAsync(unitDto);
 
-            return RedirectToAction("Index", new { buildingId = unit.BuildingId });
+            return RedirectToAction("Index", new { id = unitDto.BuildingId });
 
         }
-
-
-
-
-
-
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var unit = await _unitService.ObtenerUnidadParaEditarAsync(id);
+            var unitDto = await _unitService.ObtenerUnidadParaEditarAsync(id);
 
-            if (unit == null)
+            if (unitDto == null)
             {
                 return NotFound();
             }
 
-            return View(unit);
+            var unitViewModel = new UnitFormViewModel
+            {
+                Id = unitDto.Id,
+                BuildingId = unitDto.BuildingId,
+                BuildingName = unitDto.BuildingName,
+                Floor = unitDto.Floor,
+                ApartmentNumber = unitDto.ApartmentNumber,
+                AreaInMeters = unitDto.AreaInMeters,
+                OwnerId = unitDto.OwnerId ?? 0
+            };
+
+            return View(unitViewModel);
         }
 
 
@@ -146,18 +165,18 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var unit = await _unitService.ObtenerUnidadParaEditarAsync(id);
+            var unitDto = await _unitService.ObtenerUnidadParaEditarAsync(id);
 
-            if (unit == null)
+            if (unitDto == null)
             {
                 return NotFound();
             }
 
-            var buildingId = unit.BuildingId;
+            var buildingId = unitDto.BuildingId;
 
             await _unitService.EliminarUnidadAsync(id);
 
-            return RedirectToAction("Index", new { buildingId });
+            return RedirectToAction("Index", new { id = buildingId });
         }
 
 

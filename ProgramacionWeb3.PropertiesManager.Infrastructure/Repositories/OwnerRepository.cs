@@ -13,7 +13,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
 
         public async Task<Owner?> GetByEmailAsync(string email)
         {
-            return await _dbContext.Owners.FirstOrDefaultAsync(o => o.Email == email);
+            return await _dbContext.Owners.FirstOrDefaultAsync(owner => owner.Email == email);
         }
 
         public async Task SaveAsync()

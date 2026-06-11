@@ -1,16 +1,16 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Entities;
+﻿using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
     public interface IUnitService
     {
-        Task<IEnumerable<Unit>> ObtenerUnidadesPorConsorcioAsync(int buildingId);
+        Task<IEnumerable<UnitDto>> ObtenerUnidadesPorConsorcioAsync(int buildingId);
 
-        Task<Unit?> ObtenerUnidadParaEditarAsync(int unitId);
+        Task<UnitDto?> ObtenerUnidadParaEditarAsync(int unitId);
 
-        Task CrearUnidadAsync(Unit unit);
+        Task CrearUnidadAsync(UnitDto unitDto);
 
-        Task ActualizarUnidadAsync(Unit unit);
+        Task ActualizarUnidadAsync(UnitDto unitDto);
 
         Task EliminarUnidadAsync(int unitId);
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
@@ -18,15 +19,22 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var owners = await _ownerService.ObtenerOwnersAsync();
+            var ownersDto = await _ownerService.ObtenerOwnersAsync();
 
-            return View(owners);
+            var ownersViewModel = ownersDto.Select(ownerDto => new OwnerFormViewModel
+            {
+                Id = ownerDto.Id,
+                FullName = ownerDto.FullName,
+                Email = ownerDto.Email
+            });
+
+            return View(ownersViewModel);
         }
 
         [HttpGet]
         public IActionResult Crear()
         {
-            return View();
+            return View(new OwnerFormViewModel());
         }
 
         [HttpPost]
@@ -34,16 +42,23 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("No se pudo");
                 return View(ownerFVM);
             }
-            var owner = new Owner
+
+            var ownerDto = new OwnerDto
             {
                 FullName = ownerFVM.FullName,
                 Email = ownerFVM.Email
             };
 
-            await _ownerService.CrearOwnerAsync(owner);
+            var creado = await _ownerService.CrearOwnerAsync(ownerDto);
+
+            if (!creado)
+            {
+                ModelState.AddModelError("Email" , "Ya existe un Owner con ese email");
+
+                return View(ownerFVM);
+            }
 
             return RedirectToAction("Index");
         }
@@ -51,18 +66,18 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
         {
-            var ownerObtenido = await _ownerService.ObtenerOwnerPorIdAsync(id);
+            var ownerObtenidoDto = await _ownerService.ObtenerOwnerPorIdAsync(id);
 
-            if (ownerObtenido == null)
+            if (ownerObtenidoDto == null)
             {
                 return NotFound();
             }
 
             var viewModel = new OwnerFormViewModel
             {
-                Id = ownerObtenido.Id,
-                FullName = ownerObtenido.FullName,
-                Email = ownerObtenido.Email
+                Id = ownerObtenidoDto.Id,
+                FullName = ownerObtenidoDto.FullName,
+                Email = ownerObtenidoDto.Email
             };
 
             return View(viewModel);
@@ -73,30 +88,44 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("No se pudo");
                 return View(ownerFVM);
             }
-            var owner = new Owner
+
+            var ownerDto = new OwnerDto
             {
                 Id = ownerFVM.Id,
                 FullName = ownerFVM.FullName,
                 Email = ownerFVM.Email
             };
-            await _ownerService.ActualizarOwnerAsync(owner);
+
+            var actualizado = await _ownerService.ActualizarOwnerAsync(ownerDto);
+
+            if (!actualizado)
+            {
+                ModelState.AddModelError("Email", "Ya existe otro Owner con ese email");
+
+                return View(ownerFVM);
+            }
+
             return RedirectToAction("Index");
         }
 
         [HttpGet]
        public async Task<IActionResult> Eliminar(int id)
         {
-            var owner = await _ownerService.ObtenerOwnerPorIdAsync(id);
+            var ownerDto = await _ownerService.ObtenerOwnerPorIdAsync(id);
 
-            if (owner == null)
+            if (ownerDto == null)
             {
                 return NotFound();
             }
-
-            return View(owner);
+            var viewModel = new OwnerFormViewModel
+            {
+                Id = ownerDto.Id,
+                FullName = ownerDto.FullName,
+                Email = ownerDto.Email
+            };
+            return View(viewModel);
         }
 
         [HttpPost]

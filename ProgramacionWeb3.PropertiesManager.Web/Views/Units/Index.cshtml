@@ -1,16 +1,27 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.Entities.Unit>
+@model IEnumerable<ProgramacionWeb3.PropertiesManager.Core.DTOs.UnitDto>
 
 <h1>UNIDADES</h1>
+<nav>
+    <a asp-controller="Buildings" asp-action="Index">
+        Mis Consorcios
+    </a>
+
+    <span> &gt; </span>
+
+    <span>@ViewBag.BuildingName</span>
+
+    <span> &gt; Unidades</span>
+</nav>
 
 @if (Model == null || !Model.Any())
 {
     <p>No hay Unidades todavía!</p>
     <p>Creá uno </p>
-    <a asp-controller="Units" asp-action="Create" asp-route-id="@ViewBag.buildingId">Nueva Unidad</a>
+    <a asp-controller="Units" asp-action="Create" asp-route-id="@ViewBag.BuildingId">Nueva Unidad</a>
 } else
 {
-    <a asp-controller="Units" asp-action="Create" asp-route-id="@ViewBag.buildingId">Nueva Unidad</a>
+    <a asp-controller="Units" asp-action="Create" asp-route-id="@ViewBag.BuildingId">Nueva Unidad</a>
     <table>
         <thead>
             <tr>
@@ -29,8 +40,8 @@
 
                     <td>@unit.Id</td>
                     <td>@unit.Floor@unit.ApartmentNumber</td>
-                    <td>@unit.Owner?.FullName</td>
-                    <td>@unit.Owner?.Email</td>
+                    <td>@unit.OwnerFullName</td>
+                    <td>@unit.OwnerEmail</td>
                     <td>@unit.AreaInMeters</td>
                     <td>
                         <a asp-controller="Units" asp-action="Edit" asp-route-id="@unit.Id">Editar</a>
