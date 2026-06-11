@@ -1,0 +1,16 @@
+﻿@model ProgramacionWeb3.PropertiesManager.Core.Entities.Owner
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h1>Eliminar Owner</h1>
+
+<p>¿Seguro que querés eliminar este owner?</p>
+
+<p>@Model.FullName</p>
+<p>@Model.Email</p>
+
+<form asp-controller="Owners" asp-action="Eliminar" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit">Eliminar</button>
+    <a asp-controller="Owners" asp-action="Index">Cancelar</a>
+</form>
