@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
-using ProgramacionWeb3.PropertiesManager.Web.Services;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
@@ -12,30 +10,31 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
     {
         private readonly IExpenseService _expenseService;
         private readonly IBuildingService _buildingService;
-        private readonly IUnitOfWork _uow;
-        private readonly IFileService _fileService;
+        private readonly IExpenseTypeService _expenseTypeService;
+        private readonly IUnitService _unitService;
+
+        private const long MaxReceiptBytes = 5 * 1024 * 1024; // 5 MB
 
         public ExpensesController(
             IExpenseService expenseService,
             IBuildingService buildingService,
-            IUnitOfWork uow,
-            IFileService fileService)
+            IExpenseTypeService expenseTypeService,
+            IUnitService unitService)
         {
             _expenseService = expenseService;
             _buildingService = buildingService;
-            _uow = uow;
-            _fileService = fileService;
+            _expenseTypeService = expenseTypeService;
+            _unitService = unitService;
         }
 
         public async Task<IActionResult> Index(int buildingId)
         {
             var gastos = await _expenseService.ObtenerGastosPorEdificioAsync(buildingId);
-            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
             var viewModel = new ExpenseIndexViewModel
             {
                 Gastos = gastos,
                 BuildingId = buildingId,
-                BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}"
+                BuildingLabel = await ObtenerEtiquetaEdificioAsync(buildingId)
             };
             return View(viewModel);
         }
@@ -56,50 +55,36 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int buildingId, ExpenseFormViewModel viewModel, IFormFile? receiptFile, string? submitAction)
         {
-            viewModel.Expense.ExpenseTypeId = viewModel.SelectedExpenseTypeId;
-            viewModel.Expense.BuildingId = buildingId;
             viewModel.SelectedBuildingId = buildingId;
 
-            ModelState.Remove("Expense.ExpenseType");
-            ModelState.Remove("Expense.Building");
-            ModelState.Remove("Expense.ExpenseDistributions");
+            ValidarComprobante(receiptFile, requerido: true);
 
-            if (receiptFile == null || receiptFile.Length == 0)
-                ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile!);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    ModelState.AddModelError("receiptFile", ex.Message);
-                    var ed = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
-                    viewModel = await ConstruirViewModelAsync(viewModel);
-                    viewModel.SelectedBuildingId = buildingId;
-                    viewModel.BuildingLabel = ed != null ? $"{ed.Address.Street} {ed.Address.Number}" : $"Consorcio #{buildingId}";
-                    return View(viewModel);
-                }
-
-                var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
-                await _expenseService.CrearGastoAsync(viewModel.Expense, unitIds);
-
-                if (submitAction == "saveAndCreate")
-                {
-                    TempData["SuccessMessage"] = $"Gasto \"{viewModel.Expense.Description}\" creado con éxito.";
-                    return RedirectToAction(nameof(Create), new { buildingId });
-                }
-
-                return RedirectToAction(nameof(Index), new { buildingId });
+                await RecargarViewModelAsync(viewModel, buildingId);
+                return View(viewModel);
             }
 
-            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
-            viewModel = await ConstruirViewModelAsync(viewModel);
-            viewModel.SelectedBuildingId = buildingId;
-            viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{buildingId}";
-            return View(viewModel);
+            var dto = MapearADto(viewModel, buildingId);
+            try
+            {
+                using var contenido = receiptFile!.OpenReadStream();
+                await _expenseService.CrearGastoAsync(dto, contenido, receiptFile.FileName);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("receiptFile", ex.Message);
+                await RecargarViewModelAsync(viewModel, buildingId);
+                return View(viewModel);
+            }
+
+            if (submitAction == "saveAndCreate")
+            {
+                TempData["SuccessMessage"] = $"Gasto \"{viewModel.Description}\" creado con éxito.";
+                return RedirectToAction(nameof(Create), new { buildingId });
+            }
+
+            return RedirectToAction(nameof(Index), new { buildingId });
         }
 
         [HttpGet]
@@ -108,14 +93,21 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null) return NotFound();
 
-            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(gasto.BuildingId);
-            var viewModel = await ConstruirViewModelAsync();
-            viewModel.Expense = gasto;
-            viewModel.SelectedExpenseTypeId = gasto.ExpenseTypeId;
-            viewModel.SelectedBuildingId = gasto.BuildingId;
-            viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
-            viewModel.SelectedUnitIds = gasto.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new();
-            //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(gasto.BuildingId);
+            var viewModel = new ExpenseFormViewModel
+            {
+                Id = gasto.Id,
+                Description = gasto.Description,
+                Amount = gasto.Amount,
+                ExpenseMonth = gasto.ExpenseMonth,
+                ExpenseYear = gasto.ExpenseYear,
+                IsGlobal = gasto.IsGlobal,
+                BillingDate = gasto.BillingDate,
+                ReceiptPath = gasto.ReceiptPath,
+                SelectedExpenseTypeId = gasto.ExpenseTypeId,
+                SelectedBuildingId = gasto.BuildingId,
+                SelectedUnitIds = gasto.UnitIds
+            };
+            await RecargarViewModelAsync(viewModel, gasto.BuildingId);
             return View(viewModel);
         }
 
@@ -123,47 +115,35 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ExpenseFormViewModel viewModel, IFormFile? receiptFile)
         {
-            viewModel.Expense.ExpenseTypeId = viewModel.SelectedExpenseTypeId;
-            viewModel.Expense.BuildingId = viewModel.SelectedBuildingId;
+            ValidarComprobante(receiptFile, requerido: false);
 
-            ModelState.Remove("Expense.ExpenseType");
-            ModelState.Remove("Expense.Building");
-            ModelState.Remove("Expense.ExpenseDistributions");
+            if (!ModelState.IsValid)
+            {
+                await RecargarViewModelAsync(viewModel, viewModel.SelectedBuildingId);
+                return View(viewModel);
+            }
 
-            if (ModelState.IsValid)
+            var dto = MapearADto(viewModel, viewModel.SelectedBuildingId);
+            try
             {
                 if (receiptFile != null && receiptFile.Length > 0)
                 {
-                    try
-                    {
-                        var oldPath = viewModel.Expense.ReceiptPath;
-                        viewModel.Expense.ReceiptPath = await _fileService.SaveReceiptAsync(receiptFile);
-                        var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
-                        await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
-                        _fileService.DeleteReceipt(oldPath);
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        ModelState.AddModelError("receiptFile", ex.Message);
-                        viewModel = await ConstruirViewModelAsync(viewModel);
-                        //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
-                        viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
-                        return View(viewModel);
-                    }
+                    using var contenido = receiptFile.OpenReadStream();
+                    await _expenseService.ActualizarGastoAsync(dto, contenido, receiptFile.FileName);
                 }
                 else
                 {
-                    var unitIds = viewModel.Expense.IsGlobal ? null : viewModel.SelectedUnitIds;
-                    await _expenseService.ActualizarGastoAsync(viewModel.Expense, unitIds);
+                    await _expenseService.ActualizarGastoAsync(dto, null, null);
                 }
-
-                return RedirectToAction(nameof(Index), new { buildingId = viewModel.Expense.BuildingId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("receiptFile", ex.Message);
+                await RecargarViewModelAsync(viewModel, viewModel.SelectedBuildingId);
+                return View(viewModel);
             }
 
-            viewModel = await ConstruirViewModelAsync(viewModel);
-            //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
-            viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
-            return View(viewModel);
+            return RedirectToAction(nameof(Index), new { buildingId = viewModel.SelectedBuildingId });
         }
 
         [HttpGet]
@@ -172,11 +152,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             if (gasto == null) return NotFound();
 
-            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(gasto.BuildingId);
             var viewModel = new ExpenseDeleteViewModel
             {
                 Expense = gasto,
-                BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}"
+                BuildingLabel = await ObtenerEtiquetaEdificioAsync(gasto.BuildingId)
             };
             return View(viewModel);
         }
@@ -187,10 +166,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
             int buildingId = gasto?.BuildingId ?? 0;
-            var receiptPath = gasto?.ReceiptPath;
 
             await _expenseService.EliminarGastoAsync(id);
-            _fileService.DeleteReceipt(receiptPath);
 
             return RedirectToAction(nameof(Index), new { buildingId });
         }
@@ -198,11 +175,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> DescargarComprobante(int id)
         {
-            var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
-            if (gasto == null || string.IsNullOrEmpty(gasto.ReceiptPath)) return NotFound();
-
-            var filePath = _fileService.GetReceiptPhysicalPath(gasto.ReceiptPath);
-            if (filePath == null || !System.IO.File.Exists(filePath)) return NotFound();
+            var filePath = await _expenseService.ObtenerRutaComprobanteAsync(id);
+            if (filePath == null) return NotFound();
 
             var extension = Path.GetExtension(filePath).ToLowerInvariant();
             var contentType = extension switch
@@ -219,17 +193,63 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
         {
-            //var unidades = await _uow.Units.GetByBuildingIdAsync(buildingId);
-            //return Json(unidades.Select(u => new { u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
-            return null;
+            var unidades = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+            return Json(unidades.Select(u => new { id = u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
+        }
+
+        private void ValidarComprobante(IFormFile? receiptFile, bool requerido)
+        {
+            if (receiptFile == null || receiptFile.Length == 0)
+            {
+                if (requerido)
+                    ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
+                return;
+            }
+
+            if (receiptFile.Length > MaxReceiptBytes)
+                ModelState.AddModelError("receiptFile", "El comprobante supera el tamaño máximo permitido (5 MB).");
+        }
+
+        private static ExpenseDto MapearADto(ExpenseFormViewModel viewModel, int buildingId)
+        {
+            return new ExpenseDto
+            {
+                Id = viewModel.Id,
+                Description = viewModel.Description ?? string.Empty,
+                Amount = viewModel.Amount,
+                ExpenseMonth = viewModel.ExpenseMonth,
+                ExpenseYear = viewModel.ExpenseYear,
+                IsGlobal = viewModel.IsGlobal,
+                BillingDate = viewModel.BillingDate,
+                ReceiptPath = viewModel.ReceiptPath,
+                ExpenseTypeId = viewModel.SelectedExpenseTypeId,
+                BuildingId = buildingId,
+                UnitIds = viewModel.IsGlobal ? new List<int>() : viewModel.SelectedUnitIds
+            };
         }
 
         private async Task<ExpenseFormViewModel> ConstruirViewModelAsync(ExpenseFormViewModel? viewModel = null)
         {
-            //var tipos = await _uow.ExpenseTypes.GetAllAsync();
-            //viewModel ??= new ExpenseFormViewModel();
-            //viewModel.ExpenseTypes = new SelectList(tipos, "Id", "Name");
+            var tipos = await _expenseTypeService.ObtenerTiposDeGastoAsync();
+            viewModel ??= new ExpenseFormViewModel();
+            viewModel.ExpenseTypes = new SelectList(tipos, "Id", "Name");
             return viewModel;
+        }
+
+        private async Task RecargarViewModelAsync(ExpenseFormViewModel viewModel, int buildingId)
+        {
+            await ConstruirViewModelAsync(viewModel);
+            viewModel.SelectedBuildingId = buildingId;
+            viewModel.AvailableUnits = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+            viewModel.BuildingLabel = await ObtenerEtiquetaEdificioAsync(buildingId);
+        }
+
+        private async Task<string> ObtenerEtiquetaEdificioAsync(int buildingId)
+        {
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
+            return edificio != null
+                ? $"{edificio.Address.Street} {edificio.Address.Number}"
+                : $"Consorcio #{buildingId}";
         }
     }
 }

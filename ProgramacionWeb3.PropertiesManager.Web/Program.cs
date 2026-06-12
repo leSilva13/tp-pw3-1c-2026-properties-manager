@@ -19,7 +19,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
-builder.Services.AddInfrastructure(connectionString);
+// Los comprobantes se guardan fuera de wwwroot (no se sirven como estáticos);
+// se acceden solo a través de la acción Expenses/DescargarComprobante.
+string filesBasePath = builder.Environment.ContentRootPath;
+
+builder.Services.AddInfrastructure(connectionString, filesBasePath);
 builder.Services.AddCore();
 builder.Services.AddWeb();
 
