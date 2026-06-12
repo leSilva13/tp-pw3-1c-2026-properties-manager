@@ -1,5 +1,6 @@
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
@@ -7,10 +8,12 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class UnitService : IUnitService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IUnitRepository _unitRepository;
 
-        public UnitService(IUnitRepository unitRepository)
+        public UnitService(IUnitOfWork unitOfWork, IUnitRepository unitRepository)
         {
+            _unitOfWork = unitOfWork;
             _unitRepository = unitRepository;
         }
 
@@ -69,7 +72,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             };
 
             await _unitRepository.AddAsync(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task ActualizarUnidadAsync(UnitDto unitDto)
@@ -88,7 +91,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             unit.OwnerId = unitDto.OwnerId;
 
             _unitRepository.Update(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task EliminarUnidadAsync(int unitId)
@@ -101,7 +104,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             unit.IsActive = false;
 
             _unitRepository.Update(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         private string obtenerUnitName(Unit unit)

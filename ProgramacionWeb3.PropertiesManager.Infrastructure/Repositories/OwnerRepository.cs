@@ -1,21 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
 {
-    public class OwnerRepository : BaseRepository<Owner>, IOwnerRepository  
+    public class OwnerRepository : BaseRepository<Owner>, IOwnerRepository
     {
-        public OwnerRepository(AppDbContext dbContext) : base(dbContext) { }
+        private readonly AppDbContext _dbContext;
+        
+        public OwnerRepository(AppDbContext dbContext) : base(dbContext) { _dbContext = dbContext; }
 
-        public async Task<Owner?> GetByEmailAsync(string email)
-        {
-            return await _dbContext.Owners.FirstOrDefaultAsync(owner => owner.Email == email);
-        }
+        public async Task<Owner?> GetByEmailAsync(string email) => await _dbContext.Owners.FirstOrDefaultAsync(x => x.Email == email);
 
-        //esto poner en el uof
     }
 }

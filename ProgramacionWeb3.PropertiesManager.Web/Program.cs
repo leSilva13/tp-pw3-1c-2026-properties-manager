@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using ProgramacionWeb3.PropertiesManager.Core;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
 using ProgramacionWeb3.PropertiesManager.Web;
-using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +16,24 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddScoped<IUnitOfWork>(provider =>
+    provider.GetRequiredService<AppDbContext>());
+
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddCore();
 builder.Services.AddWeb();
 
 builder.Services.AddControllersWithViews();
+// Cookie authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.Name = "PropertiesManager.Auth";
+    });
 
 var app = builder.Build();
 
@@ -33,6 +49,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

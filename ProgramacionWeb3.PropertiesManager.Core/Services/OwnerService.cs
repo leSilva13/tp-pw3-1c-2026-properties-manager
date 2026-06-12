@@ -1,5 +1,6 @@
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
@@ -7,11 +8,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class OwnerService : IOwnerService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IOwnerRepository _ownerRepository;
         //inyectar el uof
 
-        public OwnerService(IOwnerRepository ownerRepository)
+        public OwnerService(IUnitOfWork unitOfWork, IOwnerRepository ownerRepository)
         {
+            _unitOfWork = unitOfWork;
             _ownerRepository = ownerRepository;
         }
 
@@ -68,9 +71,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             };
 
             await _ownerRepository.AddAsync(ownerEntidad);
-            // aca tengo que usar el uof saveChangesAsync
-            await _ownerRepository.SaveAsync();
-
+        
+            await _unitOfWork.SaveChangesAsync();
             return true;
         }
 
@@ -94,9 +96,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             ownerEntidad.Email = ownerDto.Email;
 
             _ownerRepository.Update(ownerEntidad);
-            await _ownerRepository.SaveAsync();
-
-            return true;
+            await _unitOfWork.SaveChangesAsync();
+             return true;
         }
 
         public async Task EliminarOwnerPorIdAsync(int id)
@@ -111,7 +112,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             ownerEntidad.IsActive = false;
 
             _ownerRepository.Update(ownerEntidad);
-            await _ownerRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
 
