@@ -25,8 +25,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                     Id = owner.Id,
                     FullName = owner.FullName,
                     Email = owner.Email,
-                    IsActive = owner.IsActive,
-                    UserId = owner.UserId
+                    IsActive = owner.IsActive
                 });
 
             return ownersDto;
@@ -46,8 +45,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 Id = ownerEntidad.Id,
                 FullName = ownerEntidad.FullName,
                 Email = ownerEntidad.Email,
-                IsActive = ownerEntidad.IsActive,
-                UserId = ownerEntidad.UserId
+                IsActive = ownerEntidad.IsActive
             };
             return ownerDto;
         }
@@ -65,8 +63,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             {
                 FullName = ownerDto.FullName,
                 Email = ownerDto.Email,
-                IsActive = true,
-                UserId = ownerDto.UserId
+                IsActive = true
             };
 
             await _ownerRepository.AddAsync(ownerEntidad);
