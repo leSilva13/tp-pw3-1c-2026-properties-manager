@@ -16,9 +16,6 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
             return await _dbContext.Owners.FirstOrDefaultAsync(owner => owner.Email == email);
         }
 
-        public async Task SaveAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
+        //esto poner en el uof
     }
 }

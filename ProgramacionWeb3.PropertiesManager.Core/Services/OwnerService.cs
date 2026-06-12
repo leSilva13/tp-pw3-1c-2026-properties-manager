@@ -8,6 +8,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
     public class OwnerService : IOwnerService
     {
         private readonly IOwnerRepository _ownerRepository;
+        //inyectar el uof
 
         public OwnerService(IOwnerRepository ownerRepository)
         {
@@ -67,6 +68,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             };
 
             await _ownerRepository.AddAsync(ownerEntidad);
+            // aca tengo que usar el uof saveChangesAsync
             await _ownerRepository.SaveAsync();
 
             return true;
