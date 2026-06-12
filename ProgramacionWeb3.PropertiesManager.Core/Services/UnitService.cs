@@ -1,4 +1,5 @@
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
@@ -6,10 +7,12 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class UnitService : IUnitService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IUnitRepository _unitRepository;
 
-        public UnitService(IUnitRepository unitRepository)
+        public UnitService(IUnitOfWork unitOfWork, IUnitRepository unitRepository)
         {
+            _unitOfWork = unitOfWork;
             _unitRepository = unitRepository;
         }
 
@@ -26,13 +29,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
         public async Task CrearUnidadAsync(Unit unit)
         {
             await _unitRepository.AddAsync(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task ActualizarUnidadAsync(Unit unit)
         {
             _unitRepository.Update(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task EliminarUnidadAsync(int unitId)
@@ -45,7 +48,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             }
 
             _unitRepository.Delete(unit);
-            await _unitRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

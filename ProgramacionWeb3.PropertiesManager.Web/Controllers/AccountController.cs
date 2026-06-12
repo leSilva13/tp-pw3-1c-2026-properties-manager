@@ -63,6 +63,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             }
 
             // map role id to role name (adjust to your seeded roles)
+            //TODO
             var roleName = user.Role?.Name ?? (user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Owner" : "User");
 
             var claims = new List<Claim>

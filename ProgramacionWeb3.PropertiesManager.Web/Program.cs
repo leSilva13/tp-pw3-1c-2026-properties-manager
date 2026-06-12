@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using ProgramacionWeb3.PropertiesManager.Core;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Infrastructure;
 using ProgramacionWeb3.PropertiesManager.Web;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,9 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IUnitOfWork>(provider =>
+    provider.GetRequiredService<AppDbContext>());
 
 builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddCore();
