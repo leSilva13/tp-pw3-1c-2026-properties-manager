@@ -1,15 +1,7 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
-
-namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces
+﻿namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
-        IUserRepository Users { get; }
-        IExpenseRepository Expenses { get; }
-        IExpenseDistributionRepository ExpenseDistributions { get; }
-        IUnitRepository Units { get; }
-        IExpenseTypeRepository ExpenseTypes { get; }
-        IOwnerRepository Owners { get; }
-        Task<int> SaveAsync();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

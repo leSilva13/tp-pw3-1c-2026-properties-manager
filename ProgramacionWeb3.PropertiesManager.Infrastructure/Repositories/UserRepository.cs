@@ -1,4 +1,5 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 
 namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
@@ -9,7 +10,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
 
         public Task<User?> GetByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
     }
 }

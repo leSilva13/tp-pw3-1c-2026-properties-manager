@@ -115,7 +115,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             viewModel.SelectedBuildingId = gasto.BuildingId;
             viewModel.BuildingLabel = edificio != null ? $"{edificio.Address.Street} {edificio.Address.Number}" : $"Consorcio #{gasto.BuildingId}";
             viewModel.SelectedUnitIds = gasto.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new();
-            viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(gasto.BuildingId);
+            //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(gasto.BuildingId);
             return View(viewModel);
         }
 
@@ -146,7 +146,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                     {
                         ModelState.AddModelError("receiptFile", ex.Message);
                         viewModel = await ConstruirViewModelAsync(viewModel);
-                        viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
+                        //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
                         viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
                         return View(viewModel);
                     }
@@ -161,7 +161,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             }
 
             viewModel = await ConstruirViewModelAsync(viewModel);
-            viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
+            //viewModel.AvailableUnits = await _uow.Units.GetByBuildingIdAsync(viewModel.SelectedBuildingId);
             viewModel.BuildingLabel = $"Consorcio #{viewModel.SelectedBuildingId}";
             return View(viewModel);
         }
@@ -219,15 +219,16 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
         {
-            var unidades = await _uow.Units.GetByBuildingIdAsync(buildingId);
-            return Json(unidades.Select(u => new { u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
+            //var unidades = await _uow.Units.GetByBuildingIdAsync(buildingId);
+            //return Json(unidades.Select(u => new { u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
+            return null;
         }
 
         private async Task<ExpenseFormViewModel> ConstruirViewModelAsync(ExpenseFormViewModel? viewModel = null)
         {
-            var tipos = await _uow.ExpenseTypes.GetAllAsync();
-            viewModel ??= new ExpenseFormViewModel();
-            viewModel.ExpenseTypes = new SelectList(tipos, "Id", "Name");
+            //var tipos = await _uow.ExpenseTypes.GetAllAsync();
+            //viewModel ??= new ExpenseFormViewModel();
+            //viewModel.ExpenseTypes = new SelectList(tipos, "Id", "Name");
             return viewModel;
         }
     }

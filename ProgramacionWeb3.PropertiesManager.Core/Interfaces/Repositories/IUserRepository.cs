@@ -6,5 +6,6 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
     {
         Task<User?> GetByEmailAsync(string email);
         Task<IEnumerable<User>> GetAllAsync();
+        Task AddAsync(User user);
     }
 }

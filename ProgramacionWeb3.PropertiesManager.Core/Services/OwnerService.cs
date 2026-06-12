@@ -1,4 +1,5 @@
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
@@ -6,10 +7,12 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class OwnerService : IOwnerService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IOwnerRepository _ownerRepository;
 
-        public OwnerService(IOwnerRepository ownerRepository)
+        public OwnerService(IUnitOfWork unitOfWork, IOwnerRepository ownerRepository)
         {
+            _unitOfWork = unitOfWork;
             _ownerRepository = ownerRepository;
         }
 
@@ -26,13 +29,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
         public async Task CrearOwnerAsync(Owner owner)
         {
             await _ownerRepository.AddAsync(owner);
-            await _ownerRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task ActualizarOwnerAsync(Owner owner)
         {
             _ownerRepository.Update(owner);
-            await _ownerRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task EliminarOwnerPorIdAsync(int id)
@@ -45,7 +48,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             }
 
             _ownerRepository.Delete(owner);
-            await _ownerRepository.SaveAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

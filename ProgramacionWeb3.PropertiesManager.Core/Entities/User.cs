@@ -18,7 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public string Password { get; set; }
 
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
