@@ -49,7 +49,7 @@
                         <td>
                             <a asp-action="Edit" asp-route-id="@gasto.Id">@gasto.Description</a>
                         </td>
-                        <td>@(gasto.ExpenseType?.Name ?? "-")</td>
+                        <td>@(gasto.ExpenseTypeName ?? "-")</td>
                         <td>@gasto.BillingDate.ToString("dd/MM/yyyy")</td>
                         <td>$@gasto.Amount.ToString("N2")</td>
                         <td>

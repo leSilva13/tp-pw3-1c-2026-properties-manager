@@ -19,7 +19,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
-builder.Services.AddInfrastructure(connectionString);
+string filesBasePath = builder.Environment.ContentRootPath;
+
+builder.Services.AddInfrastructure(connectionString, filesBasePath);
 builder.Services.AddCore();
 builder.Services.AddWeb();
 

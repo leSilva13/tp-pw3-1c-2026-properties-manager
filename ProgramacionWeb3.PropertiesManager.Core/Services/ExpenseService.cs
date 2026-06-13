@@ -1,3 +1,5 @@
+using System.IO;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
@@ -10,73 +12,156 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
         private readonly IUnitOfWork _uow;
         private readonly IExpenseRepository _expenseRepository;
         private readonly IExpenseDistributionRepository _expenseDistributionRepository;
+        private readonly IFileService _fileService;
 
-        public ExpenseService(IUnitOfWork uow, IExpenseRepository expenseRepository, IExpenseDistributionRepository expenseDistributionRepository)
+        public ExpenseService(IUnitOfWork uow, IExpenseRepository expenseRepository, IExpenseDistributionRepository expenseDistributionRepository, IFileService fileService)
         {
             _uow = uow;
             _expenseRepository = expenseRepository;
             _expenseDistributionRepository = expenseDistributionRepository;
+            _fileService = fileService;
         }
 
-        public async Task<IEnumerable<Expense>> ObtenerGastosPorEdificioAsync(int buildingId)
+        public async Task<IEnumerable<ExpenseDto>> ObtenerGastosPorEdificioAsync(int buildingId)
         {
-            return await _expenseRepository.GetByBuildingIdAsync(buildingId);
+            var gastos = await _expenseRepository.GetByBuildingIdAsync(buildingId);
+            return gastos.Select(MapearADto).ToList();
         }
 
-        public async Task<Expense?> ObtenerGastoPorIdAsync(int id)
+        public async Task<ExpenseDto?> ObtenerGastoPorIdAsync(int id)
         {
-            return await _expenseRepository.GetByIdWithRelationshipsAsync(id);
+            var gasto = await _expenseRepository.GetByIdWithRelationshipsAsync(id);
+            return gasto == null ? null : MapearADto(gasto);
         }
 
-        public async Task CrearGastoAsync(Expense expense, List<int>? unitIds = null)
+        public async Task CrearGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName)
         {
-            expense.CreationDate = DateTime.Now;
-            await _expenseRepository.AddAsync(expense);
-            await _uow.SaveChangesAsync();
+            string? comprobanteNuevo = null;
+            if (receiptContent != null)
+                comprobanteNuevo = await _fileService.SaveReceiptAsync(receiptContent, receiptFileName!);
 
-            if (!expense.IsGlobal && unitIds != null && unitIds.Any())
+            var expense = new Expense
             {
-                foreach (var unitId in unitIds)
-                {
-                    await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
-                    {
-                        ExpenseId = expense.Id,
-                        UnitId = unitId
-                    });
-                }
+                Description = expenseDto.Description,
+                Amount = expenseDto.Amount,
+                ExpenseMonth = expenseDto.ExpenseMonth,
+                ExpenseYear = expenseDto.ExpenseYear,
+                IsGlobal = expenseDto.IsGlobal,
+                BillingDate = expenseDto.BillingDate,
+                ReceiptPath = comprobanteNuevo ?? expenseDto.ReceiptPath,
+                ExpenseTypeId = expenseDto.ExpenseTypeId,
+                BuildingId = expenseDto.BuildingId,
+                CreationDate = DateTime.Now
+            };
+
+            if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+                expense.ExpenseDistributions = expenseDto.UnitIds
+                    .Select(unitId => new ExpenseDistribution { UnitId = unitId })
+                    .ToList();
+
+            try
+            {
+                await _expenseRepository.AddAsync(expense);
                 await _uow.SaveChangesAsync();
             }
+            catch
+            {
+                if (comprobanteNuevo != null)
+                    _fileService.DeleteReceipt(comprobanteNuevo);
+                throw;
+            }
         }
 
-        public async Task ActualizarGastoAsync(Expense expense, List<int>? unitIds = null)
+        public async Task ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName)
         {
-            _expenseRepository.Update(expense);
+            var expense = await _expenseRepository.GetByIdAsync(expenseDto.Id);
+            if (expense == null) return;
 
-            await _expenseDistributionRepository.DeleteByExpenseIdAsync(expense.Id);
+            var comprobanteAnterior = expense.ReceiptPath;
+            string? comprobanteNuevo = null;
+            if (receiptContent != null)
+                comprobanteNuevo = await _fileService.SaveReceiptAsync(receiptContent, receiptFileName!);
 
-            if (!expense.IsGlobal && unitIds != null && unitIds.Any())
+            expense.Description = expenseDto.Description;
+            expense.Amount = expenseDto.Amount;
+            expense.ExpenseMonth = expenseDto.ExpenseMonth;
+            expense.ExpenseYear = expenseDto.ExpenseYear;
+            expense.IsGlobal = expenseDto.IsGlobal;
+            expense.BillingDate = expenseDto.BillingDate;
+            expense.ExpenseTypeId = expenseDto.ExpenseTypeId;
+
+            if (comprobanteNuevo != null)
+                expense.ReceiptPath = comprobanteNuevo;
+
+            try
             {
-                foreach (var unitId in unitIds)
+                await _expenseDistributionRepository.DeleteByExpenseIdAsync(expense.Id);
+
+                if (!expense.IsGlobal && expenseDto.UnitIds.Any())
                 {
-                    await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
+                    foreach (var unitId in expenseDto.UnitIds)
                     {
-                        ExpenseId = expense.Id,
-                        UnitId = unitId
-                    });
+                        await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
+                        {
+                            ExpenseId = expense.Id,
+                            UnitId = unitId
+                        });
+                    }
                 }
+
+                await _uow.SaveChangesAsync();
+            }
+            catch
+            {
+                if (comprobanteNuevo != null)
+                    _fileService.DeleteReceipt(comprobanteNuevo);
+                throw;
             }
 
-            await _uow.SaveChangesAsync();
+            if (comprobanteNuevo != null && !string.IsNullOrEmpty(comprobanteAnterior))
+                _fileService.DeleteReceipt(comprobanteAnterior);
         }
 
         public async Task EliminarGastoAsync(int id)
         {
             var expense = await _expenseRepository.GetByIdAsync(id);
-            if (expense != null)
+            if (expense == null) return;
+
+            var comprobante = expense.ReceiptPath;
+            _expenseRepository.Delete(expense);
+            await _uow.SaveChangesAsync();
+
+            _fileService.DeleteReceipt(comprobante);
+        }
+
+        public async Task<string?> ObtenerRutaComprobanteAsync(int id)
+        {
+            var expense = await _expenseRepository.GetByIdAsync(id);
+            if (expense == null || string.IsNullOrEmpty(expense.ReceiptPath))
+                return null;
+
+            var fullPath = _fileService.GetReceiptPhysicalPath(expense.ReceiptPath);
+            return fullPath != null && File.Exists(fullPath) ? fullPath : null;
+        }
+
+        private static ExpenseDto MapearADto(Expense expense)
+        {
+            return new ExpenseDto
             {
-                _expenseRepository.Delete(expense);
-                await _uow.SaveChangesAsync();
-            }
+                Id = expense.Id,
+                Description = expense.Description,
+                Amount = expense.Amount,
+                ExpenseMonth = expense.ExpenseMonth,
+                ExpenseYear = expense.ExpenseYear,
+                IsGlobal = expense.IsGlobal,
+                BillingDate = expense.BillingDate,
+                ReceiptPath = expense.ReceiptPath,
+                CreationDate = expense.CreationDate,
+                ExpenseTypeId = expense.ExpenseTypeId,
+                ExpenseTypeName = expense.ExpenseType?.Name,
+                BuildingId = expense.BuildingId,
+                UnitIds = expense.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new()
+            };
         }
     }
 }
