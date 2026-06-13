@@ -27,12 +27,17 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         public async Task<IActionResult> Index(int buildingId)
         {
+            var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
+            if (edificio == null) return NotFound();
+
             var gastos = await _expenseService.ObtenerGastosPorEdificioAsync(buildingId);
             var viewModel = new ExpenseIndexViewModel
             {
                 Gastos = gastos,
                 BuildingId = buildingId,
-                BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId)
+                BuildingLabel = edificio.Address != null
+                    ? $"{edificio.Address.Street} {edificio.Address.Number}"
+                    : $"Consorcio #{buildingId}"
             };
             return View(viewModel);
         }
