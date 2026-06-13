@@ -34,10 +34,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Services
             var nuevoNombre = $"{Guid.NewGuid()}{extension}";
             var fullPath = Path.Combine(uploadsPath, nuevoNombre);
 
-            using var stream = new FileStream(fullPath, FileMode.Create);
+            using var stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, useAsync: true);
             await content.CopyToAsync(stream);
 
-            return $"/{ReceiptsFolder}/{nuevoNombre}";
+            return $"{ReceiptsFolder}/{nuevoNombre}";
         }
 
         public void DeleteReceipt(string? relativePath)

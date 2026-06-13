@@ -54,23 +54,15 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 CreationDate = DateTime.Now
             };
 
+            if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+                expense.ExpenseDistributions = expenseDto.UnitIds
+                    .Select(unitId => new ExpenseDistribution { UnitId = unitId })
+                    .ToList();
+
             try
             {
                 await _expenseRepository.AddAsync(expense);
                 await _uow.SaveChangesAsync();
-
-                if (!expense.IsGlobal && expenseDto.UnitIds.Any())
-                {
-                    foreach (var unitId in expenseDto.UnitIds)
-                    {
-                        await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
-                        {
-                            ExpenseId = expense.Id,
-                            UnitId = unitId
-                        });
-                    }
-                    await _uow.SaveChangesAsync();
-                }
             }
             catch
             {

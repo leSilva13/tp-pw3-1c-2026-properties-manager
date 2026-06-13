@@ -18,7 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         [Range(1, 12, ErrorMessage = "El mes debe estar entre 1 y 12.")]
         public int ExpenseMonth { get; set; }
 
-        [Range(2000, int.MaxValue, ErrorMessage = "El año no es válido.")]
+        [Range(2000, 2100, ErrorMessage = "El año no es válido.")]
         public int ExpenseYear { get; set; }
 
         public bool IsGlobal { get; set; } = true;

@@ -32,7 +32,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             {
                 Gastos = gastos,
                 BuildingId = buildingId,
-                BuildingLabel = await ObtenerEtiquetaEdificioAsync(buildingId)
+                BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId)
             };
             return View(viewModel);
         }
@@ -155,7 +155,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var viewModel = new ExpenseDeleteViewModel
             {
                 Expense = gasto,
-                BuildingLabel = await ObtenerEtiquetaEdificioAsync(gasto.BuildingId)
+                BuildingLabel = await ObtenerNombreConsorcioAsync(gasto.BuildingId)
             };
             return View(viewModel);
         }
@@ -231,10 +231,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
             viewModel.AvailableUnits = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
-            viewModel.BuildingLabel = await ObtenerEtiquetaEdificioAsync(buildingId);
+            viewModel.BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId);
         }
 
-        private async Task<string> ObtenerEtiquetaEdificioAsync(int buildingId)
+        private async Task<string> ObtenerNombreConsorcioAsync(int buildingId)
         {
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
             return edificio?.Address != null
