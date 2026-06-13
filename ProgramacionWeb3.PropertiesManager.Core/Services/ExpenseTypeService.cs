@@ -1,4 +1,4 @@
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 
@@ -13,9 +13,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             _expenseTypeRepository = expenseTypeRepository;
         }
 
-        public async Task<IEnumerable<ExpenseType>> ObtenerTiposDeGastoAsync()
+        public async Task<IEnumerable<ExpenseTypeDto>> ObtenerTiposDeGastoAsync()
         {
-            return await _expenseTypeRepository.GetAllAsync();
+            var tipos = await _expenseTypeRepository.GetAllAsync();
+            return tipos.Select(t => new ExpenseTypeDto { Id = t.Id, Name = t.Name }).ToList();
         }
     }
 }

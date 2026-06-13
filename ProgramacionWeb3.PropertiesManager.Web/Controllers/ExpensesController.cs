@@ -13,8 +13,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         private readonly IExpenseTypeService _expenseTypeService;
         private readonly IUnitService _unitService;
 
-        private const long MaxReceiptBytes = 5 * 1024 * 1024;
-
         public ExpensesController(
             IExpenseService expenseService,
             IBuildingService buildingService,
@@ -164,11 +162,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int buildingId)
         {
-            var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
-            int buildingId = gasto?.BuildingId ?? 0;
-
             await _expenseService.EliminarGastoAsync(id);
 
             return RedirectToAction(nameof(Index), new { buildingId });
@@ -201,15 +196,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         private void ValidarComprobante(IFormFile? receiptFile, bool requerido)
         {
-            if (receiptFile == null || receiptFile.Length == 0)
-            {
-                if (requerido)
-                    ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
-                return;
-            }
-
-            if (receiptFile.Length > MaxReceiptBytes)
-                ModelState.AddModelError("receiptFile", "El comprobante supera el tamaño máximo permitido (5 MB).");
+            if (requerido && (receiptFile == null || receiptFile.Length == 0))
+                ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
         }
 
         private static ExpenseDto MapearADto(ExpenseFormViewModel viewModel, int buildingId)
@@ -226,7 +214,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 ReceiptPath = viewModel.ReceiptPath,
                 ExpenseTypeId = viewModel.SelectedExpenseTypeId,
                 BuildingId = buildingId,
-                UnitIds = viewModel.IsGlobal ? new List<int>() : viewModel.SelectedUnitIds
+                UnitIds = viewModel.SelectedUnitIds
             };
         }
 
