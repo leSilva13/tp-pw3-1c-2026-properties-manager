@@ -47,7 +47,9 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             var viewModel = await ConstruirViewModelAsync();
             viewModel.SelectedBuildingId = buildingId;
-            viewModel.BuildingLabel = $"{edificio.Address.Street} {edificio.Address.Number}";
+            viewModel.BuildingLabel = edificio.Address != null
+                ? $"{edificio.Address.Street} {edificio.Address.Number}"
+                : $"Consorcio #{buildingId}";
             return View(viewModel);
         }
 
@@ -247,7 +249,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         private async Task<string> ObtenerEtiquetaEdificioAsync(int buildingId)
         {
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
-            return edificio != null
+            return edificio?.Address != null
                 ? $"{edificio.Address.Street} {edificio.Address.Number}"
                 : $"Consorcio #{buildingId}";
         }

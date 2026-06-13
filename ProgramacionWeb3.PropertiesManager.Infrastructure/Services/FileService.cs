@@ -16,6 +16,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Services
 
         public async Task<string> SaveReceiptAsync(Stream content, string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                throw new InvalidOperationException("El nombre del archivo del comprobante no es válido.");
+
             var extension = Path.GetExtension(fileName).ToLowerInvariant();
             if (!_allowedExtensions.Contains(extension))
                 throw new InvalidOperationException("Tipo de archivo no permitido. Use: PDF, JPG o PNG.");

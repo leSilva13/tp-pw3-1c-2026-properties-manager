@@ -36,9 +36,9 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
         public async Task CrearGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName)
         {
-            var receiptPath = expenseDto.ReceiptPath;
+            string? comprobanteNuevo = null;
             if (receiptContent != null)
-                receiptPath = await _fileService.SaveReceiptAsync(receiptContent, receiptFileName!);
+                comprobanteNuevo = await _fileService.SaveReceiptAsync(receiptContent, receiptFileName!);
 
             var expense = new Expense
             {
@@ -48,26 +48,35 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 ExpenseYear = expenseDto.ExpenseYear,
                 IsGlobal = expenseDto.IsGlobal,
                 BillingDate = expenseDto.BillingDate,
-                ReceiptPath = receiptPath,
+                ReceiptPath = comprobanteNuevo ?? expenseDto.ReceiptPath,
                 ExpenseTypeId = expenseDto.ExpenseTypeId,
                 BuildingId = expenseDto.BuildingId,
                 CreationDate = DateTime.Now
             };
 
-            await _expenseRepository.AddAsync(expense);
-            await _uow.SaveChangesAsync();
-
-            if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+            try
             {
-                foreach (var unitId in expenseDto.UnitIds)
-                {
-                    await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
-                    {
-                        ExpenseId = expense.Id,
-                        UnitId = unitId
-                    });
-                }
+                await _expenseRepository.AddAsync(expense);
                 await _uow.SaveChangesAsync();
+
+                if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+                {
+                    foreach (var unitId in expenseDto.UnitIds)
+                    {
+                        await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
+                        {
+                            ExpenseId = expense.Id,
+                            UnitId = unitId
+                        });
+                    }
+                    await _uow.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+                if (comprobanteNuevo != null)
+                    _fileService.DeleteReceipt(comprobanteNuevo);
+                throw;
             }
         }
 
@@ -88,26 +97,34 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             expense.IsGlobal = expenseDto.IsGlobal;
             expense.BillingDate = expenseDto.BillingDate;
             expense.ExpenseTypeId = expenseDto.ExpenseTypeId;
-            expense.BuildingId = expenseDto.BuildingId;
 
             if (comprobanteNuevo != null)
                 expense.ReceiptPath = comprobanteNuevo;
 
-            await _expenseDistributionRepository.DeleteByExpenseIdAsync(expense.Id);
-
-            if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+            try
             {
-                foreach (var unitId in expenseDto.UnitIds)
-                {
-                    await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
-                    {
-                        ExpenseId = expense.Id,
-                        UnitId = unitId
-                    });
-                }
-            }
+                await _expenseDistributionRepository.DeleteByExpenseIdAsync(expense.Id);
 
-            await _uow.SaveChangesAsync();
+                if (!expense.IsGlobal && expenseDto.UnitIds.Any())
+                {
+                    foreach (var unitId in expenseDto.UnitIds)
+                    {
+                        await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
+                        {
+                            ExpenseId = expense.Id,
+                            UnitId = unitId
+                        });
+                    }
+                }
+
+                await _uow.SaveChangesAsync();
+            }
+            catch
+            {
+                if (comprobanteNuevo != null)
+                    _fileService.DeleteReceipt(comprobanteNuevo);
+                throw;
+            }
 
             if (comprobanteNuevo != null && !string.IsNullOrEmpty(comprobanteAnterior))
                 _fileService.DeleteReceipt(comprobanteAnterior);
