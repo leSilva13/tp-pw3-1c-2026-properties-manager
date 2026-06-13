@@ -9,20 +9,16 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class ExpenseService : IExpenseService
     {
+        private readonly IUnitOfWork _uow;
         private readonly IExpenseRepository _expenseRepository;
         private readonly IExpenseDistributionRepository _expenseDistributionRepository;
-        private readonly IUnitOfWork _uow;
         private readonly IFileService _fileService;
 
-        public ExpenseService(
-            IExpenseRepository expenseRepository,
-            IExpenseDistributionRepository expenseDistributionRepository,
-            IUnitOfWork uow,
-            IFileService fileService)
+        public ExpenseService(IUnitOfWork uow, IExpenseRepository expenseRepository, IExpenseDistributionRepository expenseDistributionRepository, IFileService fileService)
         {
+            _uow = uow;
             _expenseRepository = expenseRepository;
             _expenseDistributionRepository = expenseDistributionRepository;
-            _uow = uow;
             _fileService = fileService;
         }
 
