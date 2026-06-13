@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
@@ -6,8 +7,7 @@ using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
-    //[Authorize]
-    //TODO: Llevar todo al servicio
+    [Authorize(Roles = "Properties Administrator")]
     public class BuildingsController : Controller
     {
         private readonly IBuildingService _buildingService;
@@ -19,7 +19,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             _provinceService = provinceService;
         }
 
-        // GET: /Buildings o /Buildings/Index
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Index()
         {
             // TODO: Reemplazar por el ID real del usuario administrador logueado (desde Claims/Sesión)
@@ -32,6 +32,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name");
@@ -39,6 +40,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BuildingFormViewModel viewModel)
         {
@@ -67,6 +69,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             if (id <= 0) return BadRequest("ID inválido.");
@@ -95,6 +98,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BuildingFormViewModel viewModel)
         {
@@ -139,6 +143,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
@@ -159,8 +164,4 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-
-
-
-
 }

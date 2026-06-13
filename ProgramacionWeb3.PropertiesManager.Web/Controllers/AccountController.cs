@@ -16,32 +16,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View(new RegisterViewModel());
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var (success, error) = await _accountService.RegisterOwnerAsync(model.FullName, model.Email, model.Password);
-            if (!success)
-            {
-                ModelState.AddModelError(string.Empty, error ?? "Registration failed.");
-                return View(model);
-            }
-
-            TempData["Message"] = "Registration successful. You can now log in.";
-            return RedirectToAction("Login");
-        }
-
-        [HttpGet]
-        [AllowAnonymous]
         public IActionResult Login()
         {
             return View(new LoginViewModel());
@@ -62,15 +36,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 return View(model);
             }
 
-            // map role id to role name (adjust to your seeded roles)
-            //TODO
-            var roleName = user.Role?.Name ?? (user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Owner" : "User");
-
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Email),
-                new(ClaimTypes.Role, roleName)
+                new(ClaimTypes.Role, user.Role.Name)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -86,12 +56,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login");
         }
     }
 }

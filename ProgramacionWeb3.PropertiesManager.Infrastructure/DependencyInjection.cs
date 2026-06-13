@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories;
@@ -25,6 +24,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IUnitRepository, UnitRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
+            services.AddScoped<IEmailService, SmtpEmailService>();
             services.AddScoped<IFileService>(_ => new FileService(filesBasePath));
 
             return services;

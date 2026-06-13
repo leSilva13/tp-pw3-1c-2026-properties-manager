@@ -1,9 +1,14 @@
-﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.UserViewModel
+﻿@using ProgramacionWeb3.PropertiesManager.Core.Common.Enums
+@model ProgramacionWeb3.PropertiesManager.Web.Models.UserViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     var roles = ViewBag.Roles as IEnumerable<SelectListItem>;
     ViewData["Title"] = "Nuevo Usuario";
+
+    bool isAdmin = User.IsInRole("Admin");
+    string containerClass = isAdmin ? "d-none" : "";
+    int ownerRoleId = (int)UserRoleEnum.Owner;
 }
 
 <div class="container mt-4">
@@ -24,24 +29,36 @@
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                         </div>
+                        @if (isAdmin)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Rol</label>
+                                    <select asp-for="RoleId" asp-items="roles" class="form-select" id="roleSelect" required>
+                                        <option value="">-- Seleccione un Rol --</option>
+                                    </select>
+                                </div>
+                            </div> 
+                        }
+                        else
+                        {
+                            <input type="hidden" asp-for="RoleId" value="@ownerRoleId" />
+                        }
 
-                        <div class="row">
+                        <div class="row d-none" id="ownerNameContainer">
                             <div class="col-md-8 mb-3">
                                 <label asp-for="OwnerFullName" class="form-label">Nombre Completo</label>
-                                <input asp-for="OwnerFullName" class="form-control" type="text" required />
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OwnerFullName" class="form-control" type="text" id="OwnerFullName" />
+                                }
+                                else
+                                {
+                                    <input asp-for="OwnerFullName" class="form-control" type="text" id="OwnerFullName" required />
+                                }
                                 <span asp-validation-for="OwnerFullName" class="text-danger"></span>
                             </div>
                         </div>
-
-                        @* <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Rol</label>
-                                <select asp-for="RoleId" asp-items="roles" class="form-select" id="" required>
-                                    <option value="">-- Seleccione un Rol --</option>
-                                </select>
-                            </div>
-                        </div> *@
-
                         <div class="d-flex justify-content-end mt-4">
                             <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Guardar Usuario</button>
@@ -52,3 +69,44 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Grab our elements
+            const roleSelect = document.getElementById("roleSelect");
+            const ownerNameContainer = document.getElementById("ownerNameContainer");
+            const ownerNameInput = document.getElementById("OwnerFullName");
+
+            // 2. Define the specific Role ID that triggers the input
+            // REPLACE "3" WITH YOUR ACTUAL TARGET ROLE ID (e.g., the ID for 'Owner' or 'Agent')
+            const targetRoleId = "3";
+
+            function toggleOwnerName() {
+                // Safety check: if the user isn't an Admin, the dropdown doesn't exist!
+                if (!roleSelect) return;
+
+                if (roleSelect.value === targetRoleId) {
+                    // Show the field and make it required
+                    ownerNameContainer.classList.remove("d-none");
+                    ownerNameInput.setAttribute("required", "required");
+                } else {
+                    // Hide the field, remove required, and clear any typed text
+                    ownerNameContainer.classList.add("d-none");
+                    ownerNameInput.removeAttribute("required");
+                    ownerNameInput.value = "";
+                }
+            }
+
+            // 3. Attach the event listener to the dropdown
+            if (roleSelect) {
+                roleSelect.addEventListener("change", toggleOwnerName);
+
+                // 4. Run it once immediately on page load
+                // This is crucial in case a server validation fails and returns
+                // the user to this view with the dropdown already selected.
+                toggleOwnerName();
+            }
+        });
+    </script>
+}
