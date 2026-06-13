@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
@@ -6,6 +7,7 @@ using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
+    [Authorize(Roles = "Properties Administrator")]
     public class ExpensesController : Controller
     {
         private readonly IExpenseService _expenseService;
@@ -25,6 +27,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             _unitService = unitService;
         }
 
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Index(int buildingId)
         {
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
@@ -43,6 +46,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Create(int buildingId)
         {
             var edificio = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
@@ -57,6 +61,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int buildingId, ExpenseFormViewModel viewModel, IFormFile? receiptFile, string? submitAction)
         {
@@ -93,6 +98,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
@@ -117,6 +123,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ExpenseFormViewModel viewModel, IFormFile? receiptFile)
         {
@@ -152,6 +159,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             var gasto = await _expenseService.ObtenerGastoPorIdAsync(id);
@@ -166,6 +174,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, int buildingId)
         {
@@ -175,6 +184,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> DescargarComprobante(int id)
         {
             var filePath = await _expenseService.ObtenerRutaComprobanteAsync(id);
@@ -193,6 +203,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
         {
             var unidades = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);

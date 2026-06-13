@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.Common.Enums;
 using ProgramacionWeb3.PropertiesManager.Core.Common.Helpers;
@@ -8,6 +9,7 @@ using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
+    [Authorize(Roles = "Admin,Properties Administrator")]
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
@@ -19,7 +21,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             _roleService = roleService;
         }
 
-        // GET: /Users/Index
+        [HttpGet]
+        [Authorize(Roles = "Admin,Properties Administrator")]
         public async Task<IActionResult> Index()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -35,6 +38,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Properties Administrator")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Roles = new SelectList(await _roleService.GetAllAsync(), "Id", "Name");
@@ -42,6 +46,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Properties Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel viewModel)
         {
@@ -50,15 +55,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 var userDto = new UserDto
                 {
                     Email = viewModel.Email,
-                    RoleId = (int)UserRoleEnum.Owner,
-                    //DESARROLLAR LOGICA DEPENDIENDO SI ES EL ADMIN EL LOGUEADO
-                    //SI ES ADMIN SE HABILITAN LOS ROLES, SINO SOLO SE PUEDEN CREAR USUARIOS OWNERS
-                    OwnerDto = new OwnerDto { FullName = viewModel.OwnerFullName, Email = viewModel.Email },
+                    RoleId = User.IsInRole(UserRoleEnum.Admin.ToEnumMemberString()) ? viewModel.RoleId : (int)UserRoleEnum.Owner,
+                    OwnerDto = viewModel.RoleId == (int)UserRoleEnum.Owner 
+                        ? new OwnerDto { FullName = viewModel.OwnerFullName, Email = viewModel.Email } 
+                        : null,
                 };
 
                 await _userService.CreateUserAsync(userDto);
-
-                //NOTIFICACION POR EMAIL PARA QUE EL USUARIO PUEDA INGRESAR Y CAMBIAR O CREAR SU CONTRASEÑA
 
                 return RedirectToAction(nameof(Index));
             }

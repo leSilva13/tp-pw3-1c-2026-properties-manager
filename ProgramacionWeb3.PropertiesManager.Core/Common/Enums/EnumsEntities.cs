@@ -4,7 +4,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Common.Enums
 {
     public enum UserRoleEnum
     {
-        [EnumMember(Value = "System Admin")]
+        [EnumMember(Value = "Admin")]
         Admin = 1,
         [EnumMember(Value = "Administrador de Edificios")]
         PropertiesAdministrator = 2,

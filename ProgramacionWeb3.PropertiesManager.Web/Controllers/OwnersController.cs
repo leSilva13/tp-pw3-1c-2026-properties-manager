@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
+    [Authorize(Roles = "Properties Administrator")]
     public class OwnersController : Controller
     {
 
@@ -16,6 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
 
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Index()
         {
             var owners = await _ownerService.ObtenerOwnersAsync();
@@ -24,12 +27,14 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public IActionResult Crear()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Crear(OwnerFormViewModel ownerFVM)
         {
             if (!ModelState.IsValid)
@@ -49,6 +54,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Editar(int id)
         {
             var ownerObtenido = await _ownerService.ObtenerOwnerPorIdAsync(id);
@@ -69,6 +75,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Editar(OwnerFormViewModel ownerFVM)
         {
             if (!ModelState.IsValid)
@@ -87,7 +94,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
-       public async Task<IActionResult> Eliminar(int id)
+        [Authorize(Roles = "Properties Administrator")]
+        public async Task<IActionResult> Eliminar(int id)
         {
             var owner = await _ownerService.ObtenerOwnerPorIdAsync(id);
 
@@ -100,6 +108,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ActionName("Eliminar")]
         public async Task<IActionResult> EliminarConfirmado(int id)
         {
