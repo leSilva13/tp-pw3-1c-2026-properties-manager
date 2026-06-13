@@ -13,7 +13,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         private readonly IExpenseTypeService _expenseTypeService;
         private readonly IUnitService _unitService;
 
-        private const long MaxReceiptBytes = 5 * 1024 * 1024; // 5 MB
+        private const long MaxReceiptBytes = 5 * 1024 * 1024;
 
         public ExpensesController(
             IExpenseService expenseService,

@@ -428,5 +428,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Comprobantes subidos en runtime (no versionar)
 uploads/
