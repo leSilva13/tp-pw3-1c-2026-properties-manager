@@ -34,11 +34,12 @@
                         <dd class="col-sm-8">@Model.Expense.ExpenseMonth/@Model.Expense.ExpenseYear</dd>
 
                         <dt class="col-sm-4">Tipo</dt>
-                        <dd class="col-sm-8">@(Model.Expense.ExpenseType?.Name ?? "-")</dd>
+                        <dd class="col-sm-8">@(Model.Expense.ExpenseTypeName ?? "-")</dd>
                     </dl>
 
                     <form asp-action="Delete" method="post">
                         <input type="hidden" name="id" value="@Model.Expense.Id" />
+                        <input type="hidden" name="buildingId" value="@Model.Expense.BuildingId" />
                         <div class="d-flex justify-content-end mt-3">
                             <a asp-action="Index" asp-route-buildingId="@Model.Expense.BuildingId" class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-danger">Eliminar</button>

@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Http;
+using System.IO;
 
-namespace ProgramacionWeb3.PropertiesManager.Web.Services
+namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
     public interface IFileService
     {
-        Task<string> SaveReceiptAsync(IFormFile file);
+        Task<string> SaveReceiptAsync(Stream content, string fileName);
         void DeleteReceipt(string? relativePath);
         string? GetReceiptPhysicalPath(string? relativePath);
     }

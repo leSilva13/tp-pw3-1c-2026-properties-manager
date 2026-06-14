@@ -18,7 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             _ownerRepository = ownerRepository;
         }
 
-        public async Task<(bool Success, string? Error)> RegisterOwnerAsync(string fullName, string email, string password)
+        public async Task<(bool Success, string? Error)> RegisterAsync(string fullName, string email, string password)
         {
             try
             {
@@ -39,12 +39,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             if (existingUser != null)
                 return (false, "A user with that email already exists.");
 
-            var hashed = BCryptPasswordHasher.HashPassword(password);
-
             var user = new User
             {
                 Email = email,
-                Password = hashed,
+                Password = BCrypt.Net.BCrypt.EnhancedHashPassword(password),
                 IsActive = true,
                 CreationDate = DateTime.Now,
                 LastLoginDate = null,
@@ -69,12 +67,11 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
         public async Task<User?> LogicAsync(string email, string password)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetActiveUserByEmailAsync(email);
             if (user == null)
                 return null;
 
-            var valid = BCryptPasswordHasher.Verify(password, user.Password);
-            if (!valid)
+            if (!BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password))
                 return null;
 
             user.LastLoginDate = DateTime.Now;

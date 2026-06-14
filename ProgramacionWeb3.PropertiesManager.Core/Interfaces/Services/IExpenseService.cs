@@ -1,13 +1,15 @@
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using System.IO;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
     public interface IExpenseService
     {
-        Task<IEnumerable<Expense>> ObtenerGastosPorEdificioAsync(int buildingId);
-        Task<Expense?> ObtenerGastoPorIdAsync(int id);
-        Task CrearGastoAsync(Expense expense, List<int>? unitIds = null);
-        Task ActualizarGastoAsync(Expense expense, List<int>? unitIds = null);
+        Task<IEnumerable<ExpenseDto>> ObtenerGastosPorEdificioAsync(int buildingId);
+        Task<ExpenseDto?> ObtenerGastoPorIdAsync(int id);
+        Task CrearGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName);
+        Task ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName);
         Task EliminarGastoAsync(int id);
+        Task<string?> ObtenerRutaComprobanteAsync(int id);
     }
 }

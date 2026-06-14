@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
@@ -8,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
+    [Authorize(Roles = "Properties Administrator")]
     public class UnitsController : Controller
     {
 
@@ -23,7 +25,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             this._buildingService = buildingService;
         }
 
-
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Index(int id)
         {
             var buildingId = id;    
@@ -38,6 +40,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Create(int id)
         {
             var buildingId = id;
@@ -55,6 +58,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Create(UnitFormViewModel unitFVM, string accion)
         {
             if (unitFVM.CrearNuevoOwner)
@@ -124,6 +128,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Edit(int id)
         {
             var unitDto = await _unitService.ObtenerUnidadParaEditarAsync(id);
@@ -151,6 +156,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Edit(UnitFormViewModel unitFVM)
         {
             if (!unitFVM.OwnerId.HasValue)
@@ -188,6 +194,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Properties Administrator")]
         public async Task<IActionResult> Delete(int id)
         {
             var unitDto = await _unitService.ObtenerUnidadParaEditarAsync(id);
@@ -213,6 +220,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

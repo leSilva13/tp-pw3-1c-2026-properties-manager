@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
+using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories;
+using ProgramacionWeb3.PropertiesManager.Infrastructure.Services;
 
 namespace ProgramacionWeb3.PropertiesManager.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString, string filesBasePath)
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -22,6 +23,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUnitRepository, UnitRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IEmailService, SmtpEmailService>();
+            services.AddScoped<IFileService>(_ => new FileService(filesBasePath));
 
             return services;
         }
