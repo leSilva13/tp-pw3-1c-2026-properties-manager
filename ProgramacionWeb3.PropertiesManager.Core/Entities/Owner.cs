@@ -13,6 +13,9 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public string FullName { get; set; } //se podria poner name y surname pero tambien ta bien full
 
         [Required]
+        public bool IsActive { get; set; } = true;
+
+        [Required]
         [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; }

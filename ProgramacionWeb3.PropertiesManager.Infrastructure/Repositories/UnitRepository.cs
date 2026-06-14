@@ -12,15 +12,16 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             return await _dbContext.Units
                 .Include(unidad => unidad.Owner)
-                .Include(unidad => unidad.Building)
-                .FirstOrDefaultAsync(unidad => unidad.Id == id);
+                .Include(unidad => unidad.Building).ThenInclude(building => building.Address)
+                .FirstOrDefaultAsync(unidad => unidad.Id == id && unidad.IsActive);
         }
 
         public async Task<IEnumerable<Unit>> GetByBuildingIdAsync(int buildingId)
         {
             return await _dbContext.Units
                 .Include(unidad => unidad.Owner)
-                .Where(unidad => unidad.BuildingId == buildingId)
+                .Include(unidad => unidad.Building).ThenInclude(building => building.Address)
+                .Where(unidad => unidad.BuildingId == buildingId && unidad.IsActive)
                 .OrderBy(unidad => unidad.Floor)
                 .ThenBy(unidad => unidad.ApartmentNumber)
                 .ToListAsync();

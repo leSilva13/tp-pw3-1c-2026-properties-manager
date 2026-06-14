@@ -282,6 +282,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
@@ -495,6 +498,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("OwnerId")
                         .HasColumnType("int");

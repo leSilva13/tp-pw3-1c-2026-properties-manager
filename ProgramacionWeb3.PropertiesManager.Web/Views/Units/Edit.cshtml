@@ -2,7 +2,21 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <h1>Editar Unidad</h1>
+<nav>
+    <a asp-controller="Buildings" asp-action="Index">
+        Mis Consorcios
+    </a>
+    &gt;
 
+    <a asp-controller="Units"
+           asp-action="Index"
+           asp-route-id="@Model.BuildingId">
+        @Model.BuildingName
+    </a>
+    &gt;
+
+    <span>Editar Unidad</span>
+</nav>
 <form asp-controller="Units" asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="BuildingId" />
@@ -40,7 +54,7 @@
 
     <button type="submit">Guardar</button>
 
-    <a asp-controller="Units" asp-action="Index" asp-route-buildingId="@Model.BuildingId">
+    <a asp-controller="Units" asp-action="Index" asp-route-id="@Model.BuildingId">
         Cancelar
     </a>
 </form>
