@@ -19,8 +19,19 @@
     <span>Nueva Unidad</span>
 </nav>
 
+@if (TempData["Mensaje"] != null)
+{
+    <div>
+        @TempData["Mensaje"]
+    </div>
+}
+
+
 <form asp-controller="Units" asp-action="Create" method="post">
+
     <input type="hidden" asp-for="BuildingId" />
+
+    <div asp-validation-summary="ModelOnly"></div>
 
     <div>
         <label>Consorcio</label>
@@ -46,16 +57,79 @@
     </div>
 
     <div>
-        <label asp-for="OwnerId">Dueño</label>
-        <select asp-for="OwnerId" asp-items="Model.Owners">
-            <option value="">Seleccione un dueño</option>
-        </select>
-        <span asp-validation-for="OwnerId"></span>
+    <label>
+        <input asp-for="CrearNuevoOwner" id="crearNuevoOwner" />
+        Crear un dueño nuevo
+    </label>
+</div>
+
+<div id="ownerExistente">
+    <label asp-for="OwnerId">Dueño existente</label>
+
+    <select asp-for="OwnerId" asp-items="Model.Owners">
+        <option value="">Seleccione un dueño</option>
+    </select>
+
+    <span asp-validation-for="OwnerId"></span>
+</div>
+
+<div id="nuevoOwner">
+    <div>
+        <label asp-for="NuevoOwner.FullName">Nombre completo</label>
+        <input asp-for="NuevoOwner.FullName" />
+        <span asp-validation-for="NuevoOwner.FullName"></span>
     </div>
 
-    <button type="submit">Guardar</button>
+    <div>
+        <label asp-for="NuevoOwner.Email">Email</label>
+        <input asp-for="NuevoOwner.Email" type="email" />
+        <span asp-validation-for="NuevoOwner.Email"></span>
+    </div>
+</div>
+
+<button type="submit" name="accion" value="guardar">
+    Guardar
+</button>
+
+<button type="submit" name="accion" value="guardarOtro">
+    Guardar y crear otra unidad
+</button>
 
     <a asp-controller="Units" asp-action="Index" asp-route-id="@Model.BuildingId">
         Cancelar
     </a>
 </form>
+
+<script>
+    const checkboxCrearNuevoDuenio = document.getElementById("crearNuevoOwner");
+    const bloqueDuenioExistente = document.getElementById("ownerExistente");
+    const bloqueNuevoDuenio = document.getElementById("nuevoOwner");
+
+    function actualizarFormularioDuenio() {
+        const quiereCrearNuevoDuenio = checkboxCrearNuevoDuenio.checked;
+        const selectorDuenios = bloqueDuenioExistente.querySelector("select");
+        const camposNuevoDuenio = bloqueNuevoDuenio.querySelectorAll("input");
+
+        if (quiereCrearNuevoDuenio) {
+            bloqueDuenioExistente.style.display = "none";
+            bloqueNuevoDuenio.style.display = "block";
+            selectorDuenios.disabled = true;
+
+            camposNuevoDuenio.forEach(campo => {
+                campo.disabled = false;
+            });
+        } else {
+            bloqueDuenioExistente.style.display = "block";
+            bloqueNuevoDuenio.style.display = "none";
+            selectorDuenios.disabled = false;
+
+            camposNuevoDuenio.forEach(campo => {
+                campo.disabled = true;
+            });
+        }
+    }
+
+    checkboxCrearNuevoDuenio.addEventListener("change", actualizarFormularioDuenio);
+
+    actualizarFormularioDuenio();
+</script>

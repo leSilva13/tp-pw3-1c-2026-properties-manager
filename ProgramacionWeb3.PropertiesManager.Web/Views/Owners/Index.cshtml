@@ -14,7 +14,7 @@ else
 {
     <a asp-controller="Owners" asp-action="Crear">Agregar Owner</a>
 
-    <table>
+    <table id="tablaUnidades" class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>Id</th>
@@ -38,4 +38,18 @@ else
             }
         </tbody>
     </table>
+}
+@section Styles {
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        new DataTable("#tablaUnidades");
+    </script>
+}
 }

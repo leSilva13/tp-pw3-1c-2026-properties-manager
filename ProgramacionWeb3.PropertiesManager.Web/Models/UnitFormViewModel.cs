@@ -24,9 +24,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         [Range(1, 1000000, ErrorMessage = "La superficie debe ser mayor a cero")]
         public decimal AreaInMeters { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un dueño")]
-        public int OwnerId { get; set; }
-
         public SelectList? Owners { get; set; }
+
+        //puedo agregar el ownerfvm y esto puedo enviarlo a controller owner
+        public bool CrearNuevoOwner { get; set; }
+
+        public int? OwnerId { get; set; }
+
+        public OwnerFormViewModel? NuevoOwner { get; set; }
     }
 }

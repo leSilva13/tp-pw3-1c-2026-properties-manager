@@ -10,11 +10,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUnitRepository _unitRepository;
+        private readonly IOwnerRepository _ownerRepository;
 
-        public UnitService(IUnitOfWork unitOfWork, IUnitRepository unitRepository)
+        public UnitService(IUnitOfWork unitOfWork, IUnitRepository unitRepository,IOwnerRepository ownerRepository)
         {
             _unitOfWork = unitOfWork;
             _unitRepository = unitRepository;
+            _ownerRepository = ownerRepository;
         }
 
         public async Task<IEnumerable<UnitDto>> ObtenerUnidadesPorConsorcioAsync(int buildingId)
@@ -59,20 +61,50 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 OwnerId = unitEntity.OwnerId
             };
         }
-        public async Task CrearUnidadAsync(UnitDto unitDto)
+        public async Task<(bool Success, string? Error)> CrearUnidadAsync(UnitDto unitDto)
         {
-
             var unit = new Unit
             {
                 BuildingId = unitDto.BuildingId,
                 Floor = unitDto.Floor,
                 ApartmentNumber = unitDto.ApartmentNumber,
-                AreaInMeters = unitDto.AreaInMeters,
-                OwnerId = unitDto.OwnerId
+                AreaInMeters = unitDto.AreaInMeters
             };
+
+            if (unitDto.NuevoOwner != null)
+            {
+                var ownerExistente = await _ownerRepository.GetByEmailAsync(unitDto.NuevoOwner.Email);
+
+                if (ownerExistente != null)
+                {
+                    return (false, "Ya existe un Owner con ese email");
+                }
+
+                var nuevoOwner = new Owner
+                {
+                    FullName = unitDto.NuevoOwner.FullName,
+                    Email = unitDto.NuevoOwner.Email,
+                    IsActive = true
+                };
+
+                await _ownerRepository.AddAsync(nuevoOwner);
+
+                unit.Owner = nuevoOwner;
+            }
+            else
+            {
+                if (!unitDto.OwnerId.HasValue)
+                {
+                    return (false, "Debe seleccionar o crear un dueño");
+                }
+
+                unit.OwnerId = unitDto.OwnerId;
+            }
 
             await _unitRepository.AddAsync(unit);
             await _unitOfWork.SaveChangesAsync();
+
+            return (true, null);
         }
 
         public async Task ActualizarUnidadAsync(UnitDto unitDto)

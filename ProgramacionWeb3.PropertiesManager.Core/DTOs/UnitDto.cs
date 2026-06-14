@@ -17,5 +17,6 @@
         public int? OwnerId { get; set; }
         public string? OwnerFullName { get; set; }
         public string? OwnerEmail { get; set; }
+        public OwnerDto? NuevoOwner { get; set; }
     }
 }

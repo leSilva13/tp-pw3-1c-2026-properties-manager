@@ -8,7 +8,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 
         Task<UnitDto?> ObtenerUnidadParaEditarAsync(int unitId);
 
-        Task CrearUnidadAsync(UnitDto unitDto);
+        Task<(bool Success, string? Error)> CrearUnidadAsync(UnitDto unitDto);
 
         Task ActualizarUnidadAsync(UnitDto unitDto);
 

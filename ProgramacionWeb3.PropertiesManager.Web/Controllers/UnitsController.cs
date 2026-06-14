@@ -4,6 +4,7 @@ using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
@@ -21,6 +22,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             this._ownerService = ownerService;
             this._buildingService = buildingService;
         }
+
 
         public async Task<IActionResult> Index(int id)
         {
@@ -53,16 +55,31 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UnitFormViewModel unitFVM)
+        public async Task<IActionResult> Create(UnitFormViewModel unitFVM, string accion)
         {
+            if (unitFVM.CrearNuevoOwner)
+            {
+                if (string.IsNullOrWhiteSpace(unitFVM.NuevoOwner?.FullName))
+                {
+                    ModelState.AddModelError("NuevoOwner.FullName","El nombre es obligatorio");
+                }
+
+                if (string.IsNullOrWhiteSpace(unitFVM.NuevoOwner?.Email))
+                {
+                    ModelState.AddModelError("NuevoOwner.Email","El email es obligatorio");
+                }
+                else if (!new EmailAddressAttribute().IsValid(unitFVM.NuevoOwner?.Email))
+                {
+                    ModelState.AddModelError("NuevoOwner.Email","El email no es válido");
+                }
+            } else if (!unitFVM.OwnerId.HasValue)
+            {
+                ModelState.AddModelError( "OwnerId","Debe seleccionar un dueño");
+            }
+
             if (!ModelState.IsValid)
             {
-                var building = await _buildingService.ObtenerEdificioPorIdAsync(unitFVM.BuildingId);
-
-                unitFVM.BuildingName = ObtenerBuildingName(building, unitFVM.BuildingId);
-
-                unitFVM.Owners = await ObtenerOwnersSelectListAsync(unitFVM.OwnerId);
-
+                await PrepararFormularioAsync(unitFVM);
                 return View(unitFVM);
             }
 
@@ -75,9 +92,35 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 OwnerId = unitFVM.OwnerId
             };
 
-            await _unitService.CrearUnidadAsync(unitDto);
+            if (unitFVM.CrearNuevoOwner)
+            {
+                unitDto.OwnerId = null;
 
-            return RedirectToAction("Index", new { id = unitDto.BuildingId });
+                unitDto.NuevoOwner = new OwnerDto
+                {
+                    FullName = unitFVM.NuevoOwner?.FullName!,
+                    Email = unitFVM.NuevoOwner?.Email!
+                };
+            }
+
+            var resultado = await _unitService.CrearUnidadAsync(unitDto);
+
+            if (!resultado.Success)
+            {
+                ModelState.AddModelError(string.Empty, resultado.Error!);
+                await PrepararFormularioAsync(unitFVM);
+
+                return View(unitFVM);
+            }
+
+            if (accion == "guardarOtro")
+            {
+                TempData["Mensaje"] = $"Unidad {unitFVM.Floor}{unitFVM.ApartmentNumber} creada con éxito";
+
+                return RedirectToAction("Create",new { id = unitFVM.BuildingId });
+            }
+
+            return RedirectToAction("Index",new { id = unitFVM.BuildingId });
         }
 
         [HttpGet]
@@ -102,6 +145,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 Owners = await ObtenerOwnersSelectListAsync(unitDto.OwnerId)
             };
 
+
             return View(unitViewModel);
         }
 
@@ -109,6 +153,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UnitFormViewModel unitFVM)
         {
+            if (!unitFVM.OwnerId.HasValue)
+            {
+                ModelState.AddModelError(
+                    "OwnerId",
+                    "Debe seleccionar un dueño");
+            }
+
             if (!ModelState.IsValid)
             {
                 var building = await _buildingService.ObtenerEdificioPorIdAsync(unitFVM.BuildingId);
@@ -201,6 +252,15 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             }
 
             return "Edificio #" + buildingId;
+        }
+
+        private async Task PrepararFormularioAsync(UnitFormViewModel unitFVM)
+        {
+            var building = await _buildingService.ObtenerEdificioPorIdAsync(unitFVM.BuildingId);
+
+            unitFVM.BuildingName = ObtenerBuildingName( building,unitFVM.BuildingId);
+
+            unitFVM.Owners = await ObtenerOwnersSelectListAsync(unitFVM.OwnerId);
         }
     }
 }
