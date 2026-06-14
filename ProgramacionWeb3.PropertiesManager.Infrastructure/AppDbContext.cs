@@ -13,6 +13,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseDistribution> ExpenseDistributions { get; set; }
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
+        public DbSet<MultipurposeRoom> MultipurposeRooms { get; set; }
+        public DbSet<MultipurposeRoomReservation> MultipurposeRoomReservations { get; set; }
         public DbSet<Owner> Owners{ get; set; }
         public DbSet<Province> Provinces{ get; set; }
         public DbSet<Role> Roles{ get; set; }

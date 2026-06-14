@@ -61,6 +61,12 @@
                                    class="btn btn-info btn-sm text-white">
                                     Ver unidades
                                 </a>
+                                <a asp-controller="MultipurposeRooms"
+                                   asp-action="Index"
+                                   asp-route-buildingId="@edificio.Id"
+                                   class="btn btn-info btn-sm text-white">
+                                    Ver SUMs
+                                </a>
 
                                 <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil"></i> Editar

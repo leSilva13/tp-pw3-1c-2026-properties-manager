@@ -18,6 +18,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IExpenseDistributionRepository, ExpenseDistributionRepository>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IExpenseTypeRepository, ExpenseTypeRepository>();
+            services.AddScoped<IMultipurposeRoomRepository, MultipurposeRoomRepository>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();

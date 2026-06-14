@@ -193,6 +193,74 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BuildingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Floor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId");
+
+                    b.ToTable("MultipurposeRooms");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoomReservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MultipurposeRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ReservationDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Shift")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("WasWellDelivered")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MultipurposeRoomId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("MultipurposeRoomReservations");
+                });
+
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
                 {
                     b.Property<int>("Id")
@@ -588,6 +656,36 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Expense");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Building");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoomReservation", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", "MultipurposeRoom")
+                        .WithMany()
+                        .HasForeignKey("MultipurposeRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MultipurposeRoom");
 
                     b.Navigation("Unit");
                 });
