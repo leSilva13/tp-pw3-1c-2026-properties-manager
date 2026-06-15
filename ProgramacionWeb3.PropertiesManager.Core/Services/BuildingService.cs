@@ -48,8 +48,27 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             await _buildingRepository.SaveAsync();
         }
 
-        public async Task ActualizarEdificioAsync(Building building)
+        public async Task ActualizarEdificioAsync(BuildingDto buildingDto, int addressId)
         {
+            var building = new Building
+            {
+                Id = buildingDto.Id, // Le dice a EF qué edificio editar
+                ExpensesDueDate = buildingDto.ExpensesDueDate,
+                TotalSurfaceArea = buildingDto.TotalSurfaceArea,
+                UserId = buildingDto.AdministratorUserId,
+                IsActive = buildingDto.IsActive,
+
+                AddressId = addressId, // Clave foránea del edificio
+                Address = new Address
+                {
+                    Id = addressId,   //Clave primaria de la dirección. ¡Evita el duplicado!
+                    Street = buildingDto.AddressDto.Street,
+                    Number = buildingDto.AddressDto.Number,
+                    ProvinceId = buildingDto.AddressDto.ProvinceId
+                }
+            };
+
+            // Le avisamos al repositorio/DbContext que el objeto cambió
             _buildingRepository.Update(building);
             await _buildingRepository.SaveAsync();
         }

@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
 
+        public int AddressId { get; set; }
+
         public int ExpensesDueDate { get; set; }
         
         public decimal TotalSurfaceArea { get; set; }
