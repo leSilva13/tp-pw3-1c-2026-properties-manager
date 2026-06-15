@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Models
@@ -36,6 +37,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public string BuildingLabel { get; set; } = string.Empty;
 
         public SelectList? ExpenseTypes { get; set; }
-        public IEnumerable<Unit> AvailableUnits { get; set; } = new List<Unit>();
+        public IEnumerable<UnitDto> AvailableUnits { get; set; } = new List<UnitDto>(); //Esto esperaba Unit Entidad --> pasarlo a dto
     }
 }

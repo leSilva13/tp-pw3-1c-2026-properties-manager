@@ -26,9 +26,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         }
 
         [Authorize(Roles = "Properties Administrator")]
-        public async Task<IActionResult> Index(int id)
-        {
-            var buildingId = id;    
+        public async Task<IActionResult> Index(int buildingId)
+        {   
             var building = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
 
             ViewBag.BuildingId = buildingId;
@@ -41,9 +40,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Properties Administrator")]
-        public async Task<IActionResult> Create(int id)
+        public async Task<IActionResult> Create(int buildingId)
         {
-            var buildingId = id;
 
             var building = await _buildingService.ObtenerEdificioPorIdAsync(buildingId);
 
@@ -121,10 +119,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             {
                 TempData["Mensaje"] = $"Unidad {unitFVM.Floor}{unitFVM.ApartmentNumber} creada con éxito";
 
-                return RedirectToAction("Create",new { id = unitFVM.BuildingId });
+                return RedirectToAction("Create", new { buildingId = unitFVM.BuildingId });
             }
 
-            return RedirectToAction("Index",new { id = unitFVM.BuildingId });
+            return RedirectToAction("Index", new { buildingId = unitFVM.BuildingId });
         }
 
         [HttpGet]
@@ -189,7 +187,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             await _unitService.ActualizarUnidadAsync(unitDto);
 
-            return RedirectToAction("Index", new { id = unitDto.BuildingId });
+            return RedirectToAction("Index", new { buildingId = unitDto.BuildingId });
 
         }
 
@@ -235,7 +233,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             await _unitService.EliminarUnidadAsync(id);
 
-            return RedirectToAction("Index", new { id = buildingId });
+            return RedirectToAction("Index", new { buildingId });
         }
 
 
