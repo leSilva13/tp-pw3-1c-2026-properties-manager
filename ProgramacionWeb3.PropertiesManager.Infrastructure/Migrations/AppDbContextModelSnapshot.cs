@@ -33,6 +33,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Property<decimal>("Latitude")
                         .HasColumnType("decimal(18, 10)");
 
+                    b.Property<int>("LocalityId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Longitude")
                         .HasColumnType("decimal(18, 10)");
 
@@ -50,6 +53,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocalityId");
 
                     b.HasIndex("ProvinceId");
 
@@ -190,6 +195,67 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         {
                             Id = 2,
                             Name = "Extraordinary"
+                        });
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProvinceId");
+
+                    b.ToTable("Localities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ciudad de Buenos Aires",
+                            ProvinceId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "La Plata",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "San Fernando",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Mar del Plata",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Rosario",
+                            ProvinceId = 21
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "San Justo",
+                            ProvinceId = 2
                         });
                 });
 
@@ -525,18 +591,26 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                             CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@propertiesmanager.com",
                             IsActive = true,
-                            Password = "123",
-                            RoleId = 2
+                            Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2",
+                            RoleId = 1
                         });
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Address", b =>
                 {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", "Locality")
+                        .WithMany()
+                        .HasForeignKey("LocalityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", "Province")
                         .WithMany()
                         .HasForeignKey("ProvinceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Locality");
 
                     b.Navigation("Province");
                 });
@@ -596,6 +670,17 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Expense");
 
                     b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", "Province")
+                        .WithMany()
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>

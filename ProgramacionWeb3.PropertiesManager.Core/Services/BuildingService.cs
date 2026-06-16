@@ -29,7 +29,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             return await _buildingRepository.GetBuildingByIdWithRelationshipsAsync(id);
         }
 
-        public async Task CrearEdificioAsync(BuildingDto buildingDto)
+        public async Task<int> CrearEdificioAsync(BuildingDto buildingDto)
         {
             var building = new Building
             {
@@ -41,15 +41,42 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                     Street = buildingDto.AddressDto.Street,
                     Number = buildingDto.AddressDto.Number,
                     ProvinceId = buildingDto.AddressDto.ProvinceId,
+                    LocalityId = buildingDto.AddressDto.LocalityId,
+                    Latitude = buildingDto.AddressDto.Latitude,   
+                    Longitude = buildingDto.AddressDto.Longitude
                 }
             };
 
             await _buildingRepository.AddAsync(building);
             await _buildingRepository.SaveAsync();
+
+            return building.Id; // EF popula el Id tras el SaveChangesAsync
         }
 
-        public async Task ActualizarEdificioAsync(Building building)
+        public async Task ActualizarEdificioAsync(BuildingDto buildingDto, int addressId)
         {
+            var building = new Building
+            {
+                Id = buildingDto.Id, // Le dice a EF qué edificio editar
+                ExpensesDueDate = buildingDto.ExpensesDueDate,
+                TotalSurfaceArea = buildingDto.TotalSurfaceArea,
+                UserId = buildingDto.AdministratorUserId,
+                IsActive = buildingDto.IsActive,
+
+                AddressId = addressId, // Clave foránea del edificio
+                Address = new Address
+                {
+                    Id = addressId,   //Clave primaria de la dirección. ¡Evita el duplicado!
+                    Street = buildingDto.AddressDto.Street,
+                    Number = buildingDto.AddressDto.Number,
+                    ProvinceId = buildingDto.AddressDto.ProvinceId,
+                    LocalityId = buildingDto.AddressDto.LocalityId,
+                    Latitude = buildingDto.AddressDto.Latitude,
+                    Longitude = buildingDto.AddressDto.Longitude
+                }
+            };
+
+            // Le avisamos al repositorio/DbContext que el objeto cambió
             _buildingRepository.Update(building);
             await _buildingRepository.SaveAsync();
         }
