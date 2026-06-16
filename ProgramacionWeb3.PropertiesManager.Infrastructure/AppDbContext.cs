@@ -13,6 +13,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseDistribution> ExpenseDistributions { get; set; }
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
+        public DbSet<MultipurposeRoom> MultipurposeRooms { get; set; }
+        public DbSet<MultipurposeRoomReservation> MultipurposeRoomReservations { get; set; }
         public DbSet<Owner> Owners{ get; set; }
         public DbSet<Province> Provinces{ get; set; }
         public DbSet<Role> Roles{ get; set; }
@@ -133,10 +135,28 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 {
                     Id = 1,
                     Email = "admin@propertiesmanager.com",
-                    Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2", // TODO: En el futuro acá irá la contraseña hacheada
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
                     IsActive = true,
-                    CreationDate = new DateTime(2026, 1, 1), // Es mejor fijar una fecha en el seed para evitar migraciones cambiantes
-                    RoleId = 1 // Acorde a tus roles, 1 es "Admin"
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 1
+                },
+                new User
+                {
+                    Id = 2,
+                    Email = "propertiesmanager@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 2
+                },
+                new User
+                {
+                    Id = 3,
+                    Email = "owner@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 3
                 }
             );
         }

@@ -115,6 +115,64 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task<OwnerDto?> GetByUserId(int userId)
+        {
+            var ownerEntidad = await _ownerRepository.GetByUserIdAsync(userId);
 
+            if (ownerEntidad == null)
+                return null;
+
+            return new OwnerDto
+            {
+                Id = ownerEntidad.Id,
+                FullName = ownerEntidad.FullName,
+                Email = ownerEntidad.Email,
+                IsActive = ownerEntidad.IsActive,
+                UnitDtos = ownerEntidad.Units.Select(u => 
+                    new UnitDto
+                    {
+                        Id = u.Id,
+                        ApartmentNumber = u.ApartmentNumber,
+                        Floor = u.Floor,
+                        BuildingDto = new BuildingDto
+                        {
+                            Id = u.BuildingId,
+                            AddressDto = new AddressDto
+                            {
+                                Street = u.Building.Address.Street,
+                                Number = u.Building.Address.Number,
+                                ProvinceName = u.Building.Address.Province.Name
+                            },
+                            MultipurposeRoomDtos = u.Building.MultipurposeRooms.Select(m =>
+                                new MultipurposeRoomDto
+                                {
+                                    Floor = m.Floor,
+                                    Name = m.Name,
+                                    Id = m.Id,
+                                    IsActive = m.IsActive
+                                })
+                        },
+                    }),
+                MultipurposeRoomReservationDtos = ownerEntidad.Units
+                    .SelectMany(u => u.MultipurposeRoomReservations
+                    .Select(m =>
+                        new MultipurposeRoomReservationDto
+                        {
+                            Id = m.Id,
+                            Comments = m.Comments,
+                            ReservationDate = m.ReservationDate,
+                            Shift = m.Shift,
+                            WasWellDelivered = m.WasWellDelivered,
+                            UnitId = m.UnitId,
+                            MultipurposeRoomDto = new MultipurposeRoomDto
+                            {
+                                Id = m.MultipurposeRoom.Id,
+                                Name = m.MultipurposeRoom.Name
+                            }
+                        }))
+                    .OrderByDescending(r => r.ReservationDate)
+                    .ToList()
+            };
+        }
     }
 }

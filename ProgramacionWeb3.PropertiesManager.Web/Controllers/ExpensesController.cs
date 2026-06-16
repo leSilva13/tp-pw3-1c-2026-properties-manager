@@ -246,7 +246,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         {
             await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
-            viewModel.AvailableUnits = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+            //viewModel.AvailableUnits = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
             viewModel.BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId);
         }
 
