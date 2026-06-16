@@ -36,6 +36,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public string BuildingLabel { get; set; } = string.Empty;
 
         public SelectList? ExpenseTypes { get; set; }
-        public IEnumerable<Unit> AvailableUnits { get; set; } = new List<Unit>();
+        public IEnumerable<UnitFormViewModel> AvailableUnits { get; set; } = new List<UnitFormViewModel>();
     }
 }

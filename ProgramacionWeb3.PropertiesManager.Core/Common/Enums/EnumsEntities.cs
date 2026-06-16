@@ -6,9 +6,17 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Common.Enums
     {
         [EnumMember(Value = "Admin")]
         Admin = 1,
-        [EnumMember(Value = "Administrador de Edificios")]
+        [EnumMember(Value = "Properties Administrator")]
         PropertiesAdministrator = 2,
-        [EnumMember(Value = "Dueño")]
+        [EnumMember(Value = "Owner")]
         Owner = 3,
+    }
+
+    public enum MultipurposeRoomShiftEnum
+    {
+        [EnumMember(Value = "Mediodía")]
+        MidDay = 1,
+        [EnumMember(Value = "Noche")]
+        Night = 2,
     }
 }

@@ -267,9 +267,6 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdNotificacion"));
 
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -294,6 +291,74 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.HasIndex("IdBuilding");
 
                     b.ToTable("Notificacion");
+                });
+                    
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BuildingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Floor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId");
+
+                    b.ToTable("MultipurposeRooms");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoomReservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MultipurposeRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ReservationDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Shift")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("WasWellDelivered")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MultipurposeRoomId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("MultipurposeRoomReservations");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
@@ -628,8 +693,26 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                             CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@propertiesmanager.com",
                             IsActive = true,
-                            Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2",
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
                             RoleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "propertiesmanager@propertiesmanager.com",
+                            IsActive = true,
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "owner@propertiesmanager.com",
+                            IsActive = true,
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
+                            RoleId = 3
                         });
                 });
 
@@ -726,9 +809,36 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("IdBuilding")
                         .OnDelete(DeleteBehavior.Restrict)
+                });
+                
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
+                        .WithMany("MultipurposeRooms")
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Building");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoomReservation", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", "MultipurposeRoom")
+                        .WithMany()
+                        .HasForeignKey("MultipurposeRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", "Unit")
+                        .WithMany("MultipurposeRoomReservations")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MultipurposeRoom");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
@@ -783,6 +893,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
                 {
+                    b.Navigation("MultipurposeRooms");
+
                     b.Navigation("Units");
                 });
 
@@ -799,6 +911,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", b =>
                 {
                     b.Navigation("ExpenseDistributions");
+
+                    b.Navigation("MultipurposeRoomReservations");
                 });
 #pragma warning restore 612, 618
         }

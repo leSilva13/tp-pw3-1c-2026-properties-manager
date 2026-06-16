@@ -1,3 +1,5 @@
+@using ProgramacionWeb3.PropertiesManager.Core.Common.Enums
+@using ProgramacionWeb3.PropertiesManager.Core.Common.Helpers
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,20 +21,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Buildings" asp-action="Index">Mis Consorcios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Users" asp-action="Index">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Account" asp-action="Logout">Salir</a>
-                        </li>
-                    </ul>
+                    @if (User.IsInRole(UserRoleEnum.Admin.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarAdmin" />
+                    }
+                    else if (User.IsInRole(UserRoleEnum.Owner.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarOwner" />
+                    }
+                    else if (User.IsInRole(UserRoleEnum.PropertiesAdministrator.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarPropertiesAdministrator" />
+                    }
                 </div>
             </div>
         </nav>
@@ -40,6 +40,7 @@
 
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_AlertMessages" />
             @RenderBody()
         </main>
     </div>
