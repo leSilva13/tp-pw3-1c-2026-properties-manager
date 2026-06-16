@@ -68,6 +68,17 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "notificationsIndex",
+    pattern: "Notifications/Index/{buildingId:int?}",
+    defaults: new { controller = "Notifications", action = "Index" });
+
+app.MapControllerRoute(
+    name: "notificationsCreate",
+    pattern: "Notifications/Create/{buildingId:int?}",
+    defaults: new { controller = "Notifications", action = "Create" });
+
+
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();

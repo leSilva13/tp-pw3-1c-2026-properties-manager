@@ -21,6 +21,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public DbSet<Unit> Units { get; set; }
         public DbSet<UnitBill> UnitBills { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         public DbSet<Locality> Localities { get; set; }
 
@@ -75,6 +76,11 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 .HasForeignKey(u => u.BuildingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Building)
+                .WithMany()
+                .HasForeignKey(n => n.IdBuilding) 
+                .OnDelete(DeleteBehavior.Restrict);
 
             OnSeeding(modelBuilder);
         }
