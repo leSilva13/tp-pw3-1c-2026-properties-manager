@@ -230,13 +230,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         private void ValidarComprobante(IFormFile? receiptFile, bool requerido)
         {
             if (requerido && (receiptFile == null || receiptFile.Length == 0))
-                ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
+                ModelState.AddModelError(string.Empty, "El comprobante es requerido.");
         }
 
         private void ValidarUnidades(ExpenseFormViewModel viewModel)
         {
             if (!viewModel.IsGlobal && (viewModel.SelectedUnitIds == null || viewModel.SelectedUnitIds.Count == 0))
-                ModelState.AddModelError(nameof(viewModel.SelectedUnitIds),
+                ModelState.AddModelError(string.Empty,
                     "Seleccione al menos una unidad para un gasto específico.");
         }
 
@@ -266,9 +266,9 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             {
                 Id = viewModel.Id,
                 Description = viewModel.Description ?? string.Empty,
-                Amount = viewModel.Amount,
-                ExpenseMonth = viewModel.ExpenseMonth,
-                ExpenseYear = viewModel.ExpenseYear,
+                Amount = viewModel.Amount ?? 0,
+                ExpenseMonth = viewModel.ExpenseMonth ?? 0,
+                ExpenseYear = viewModel.ExpenseYear ?? 0,
                 IsGlobal = viewModel.IsGlobal,
                 BillingDate = viewModel.BillingDate,
                 ReceiptPath = viewModel.ReceiptPath,

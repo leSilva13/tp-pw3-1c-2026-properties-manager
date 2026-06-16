@@ -35,9 +35,10 @@
 
                         <div class="mb-3">
                             <label class="form-label">Tipo de Gasto</label>
-                            <select asp-for="SelectedExpenseTypeId" asp-items="Model.ExpenseTypes" class="form-select" required>
+                            <select asp-for="SelectedExpenseTypeId" asp-items="Model.ExpenseTypes" class="form-select">
                                 <option value="">-- Seleccione un tipo --</option>
                             </select>
+                            <span asp-validation-for="SelectedExpenseTypeId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">

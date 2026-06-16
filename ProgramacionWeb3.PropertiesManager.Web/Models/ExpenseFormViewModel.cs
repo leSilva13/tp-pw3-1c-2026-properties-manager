@@ -12,14 +12,17 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         [StringLength(200, ErrorMessage = "La descripción no puede superar los 200 caracteres.")]
         public string? Description { get; set; }
 
+        [Required(ErrorMessage = "El monto es requerido.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a cero.")]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
+        [Required(ErrorMessage = "El mes es requerido.")]
         [Range(1, 12, ErrorMessage = "El mes debe estar entre 1 y 12.")]
-        public int ExpenseMonth { get; set; }
+        public int? ExpenseMonth { get; set; }
 
+        [Required(ErrorMessage = "El año es requerido.")]
         [Range(2000, 2100, ErrorMessage = "El año no es válido.")]
-        public int ExpenseYear { get; set; }
+        public int? ExpenseYear { get; set; }
 
         public bool IsGlobal { get; set; } = true;
 
