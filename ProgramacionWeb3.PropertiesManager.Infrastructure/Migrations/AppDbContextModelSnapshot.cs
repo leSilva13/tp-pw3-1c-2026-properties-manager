@@ -198,6 +198,67 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProvinceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProvinceId");
+
+                    b.ToTable("Localities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ciudad de Buenos Aires",
+                            ProvinceId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "La Plata",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "San Fernando",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Mar del Plata",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Rosario",
+                            ProvinceId = 21
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "San Justo",
+                            ProvinceId = 2
+                        });
+                });
+
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
                 {
                     b.Property<int>("Id")
@@ -264,65 +325,6 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.HasIndex("UnitId");
 
                     b.ToTable("MultipurposeRoomReservations");
-                });
-                    
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b => 
-            {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-                        
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ProvinceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProvinceId");
-
-                    b.ToTable("Localities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Ciudad de Buenos Aires",
-                            ProvinceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "La Plata",
-                            ProvinceId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "San Fernando",
-                            ProvinceId = 2
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Mar del Plata",
-                            ProvinceId = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Rosario",
-                            ProvinceId = 21
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "San Justo",
-                            ProvinceId = 2
-                        });
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
@@ -657,8 +659,26 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                             CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@propertiesmanager.com",
                             IsActive = true,
-                            Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2",
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
                             RoleId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "propertiesmanager@propertiesmanager.com",
+                            IsActive = true,
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreationDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "owner@propertiesmanager.com",
+                            IsActive = true,
+                            Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu",
+                            RoleId = 3
                         });
                 });
 
@@ -738,10 +758,21 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Unit");
                 });
 
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", "Province")
+                        .WithMany()
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Province");
+                });
+
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
                 {
                     b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
-                        .WithMany()
+                        .WithMany("MultipurposeRooms")
                         .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -758,7 +789,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", "Unit")
-                        .WithMany()
+                        .WithMany("MultipurposeRoomReservations")
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -766,17 +797,6 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("MultipurposeRoom");
 
                     b.Navigation("Unit");
-                });
-                
-            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Locality", b =>
-                {
-                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Province", "Province")
-                        .WithMany()
-                        .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Province");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
@@ -831,6 +851,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", b =>
                 {
+                    b.Navigation("MultipurposeRooms");
+
                     b.Navigation("Units");
                 });
 
@@ -847,6 +869,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Unit", b =>
                 {
                     b.Navigation("ExpenseDistributions");
+
+                    b.Navigation("MultipurposeRoomReservations");
                 });
 #pragma warning restore 612, 618
         }

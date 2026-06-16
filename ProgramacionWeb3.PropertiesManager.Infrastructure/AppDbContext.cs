@@ -135,10 +135,28 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 {
                     Id = 1,
                     Email = "admin@propertiesmanager.com",
-                    Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2", // 568eb345-08b3-4e0e-b8b5-9c1fea764583
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
                     IsActive = true,
                     CreationDate = new DateTime(2026, 1, 1),
                     RoleId = 1
+                },
+                new User
+                {
+                    Id = 2,
+                    Email = "propertiesmanager@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 2
+                },
+                new User
+                {
+                    Id = 3,
+                    Email = "owner@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 3
                 }
             );
         }
