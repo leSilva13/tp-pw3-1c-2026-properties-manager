@@ -31,6 +31,7 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <input type="hidden" asp-for="UnitId" />
+                        <input type="hidden" asp-for="BuildingId" />
 
                         <div class="mb-3">
                             <label asp-for="MultipurposeRoomId" class="form-label fw-bold">SUM que reserva</label>
@@ -65,7 +66,7 @@
                         <input type="hidden" asp-for="WasWellDelivered" value="false" />
 
                         <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="/Owner/Dashboard" class="btn btn-outline-secondary">Cancelar</a>
+                            <a href="/Owners/Dashboard" class="btn btn-outline-secondary">Cancelar</a>
                             <button type="submit" class="btn btn-primary px-4">Confirmar Reserva</button>
                         </div>
                     </form>

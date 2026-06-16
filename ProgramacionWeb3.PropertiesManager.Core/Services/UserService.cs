@@ -26,7 +26,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
         {
             try
             {
-                if (_userRepository.GetByEmailAsync(userDto.Email) == null)
+                if (await _userRepository.GetByEmailAsync(userDto.Email) != null)
                     return new BaseResponseDto() { IsSuccess = false, Message = "Ya existe un usuario con el email ingresado." };
 
                 string password = Guid.NewGuid().ToString();
@@ -42,14 +42,22 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
                 if (userDto.RoleId == (int)UserRoleEnum.Owner)
                 {
-                    var owner = new Owner
+                    var owner = await _ownerRepository.GetByEmailAsync(userDto.Email);
+                    if (owner != null)
                     {
-                        Email = userDto.Email,
-                        FullName = userDto.OwnerDto?.FullName ?? string.Empty,
-                        User = user
-                    };
-
-                    await _ownerRepository.AddAsync(owner);
+                        owner.User = user;
+                        _ownerRepository.Update(owner);
+                    }
+                    else
+                    {
+                        owner = new Owner
+                        {
+                            Email = userDto.Email,
+                            FullName = userDto.OwnerDto?.FullName ?? string.Empty,
+                            User = user
+                        };
+                        await _ownerRepository.AddAsync(owner);
+                    }
                 }
 
                 await _unitOfWork.SaveChangesAsync();

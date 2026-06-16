@@ -19,5 +19,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public MultipurposeRoomViewModel MultipurposeRoomViewModel { get; set; }
 
         public int UnitId { get; set; }
+
+        public int BuildingId { get; set; }
     }
 }

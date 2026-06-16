@@ -11,5 +11,9 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task<IEnumerable<MultipurposeRoomReservationDto>> GetAllByBuildingAsync(int buildingId);
 
         Task<BaseResponseDto> UpdateAsync(MultipurposeRoomReservationDto multipurposeRoomReservationDto);
+
+        Task<KeyHandoverInstructionsDto> GetKeyHandoverInstructionsAsync(int currentMultipurposeRoomReservationId);
+
+        Task<BaseResponseDto> DeleteAsync(int multipurposeRoomReservationId);
     }
 }

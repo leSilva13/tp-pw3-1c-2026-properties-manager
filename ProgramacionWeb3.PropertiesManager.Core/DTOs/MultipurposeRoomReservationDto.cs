@@ -17,5 +17,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.DTOs
         public virtual MultipurposeRoomDto MultipurposeRoomDto { get; set; }
 
         public int UnitId { get; set; }
+
+        public int BuildingId { get; set; }
     }
 }

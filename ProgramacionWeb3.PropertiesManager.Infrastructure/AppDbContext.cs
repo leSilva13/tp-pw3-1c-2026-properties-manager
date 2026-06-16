@@ -135,10 +135,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 {
                     Id = 1,
                     Email = "admin@propertiesmanager.com",
-                    Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2", // TODO: En el futuro acá irá la contraseña hacheada
+                    Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2", // 568eb345-08b3-4e0e-b8b5-9c1fea764583
                     IsActive = true,
-                    CreationDate = new DateTime(2026, 1, 1), // Es mejor fijar una fecha en el seed para evitar migraciones cambiantes
-                    RoleId = 1 // Acorde a tus roles, 1 es "Admin"
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 1
                 }
             );
         }

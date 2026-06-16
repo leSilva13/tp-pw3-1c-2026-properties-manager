@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
-using ProgramacionWeb3.PropertiesManager.Core.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
@@ -33,30 +32,40 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Create(int unitId, int buildingId)
         {
             ViewBag.MultipurposeRooms = new SelectList(await _multipurposeRoomService.GetAllByBuildingAsync(buildingId), "Id", "Name");
-            return View(new MultipurposeRoomReservationViewModel { UnitId = unitId });
+            return View(new MultipurposeRoomReservationViewModel { UnitId = unitId, BuildingId = buildingId });
         }
 
         [HttpPost]
         [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> Create(MultipurposeRoomReservationViewModel multipurpuseRoomReservationViewModel)
+        public async Task<IActionResult> Create(MultipurposeRoomReservationViewModel multipurposeRoomReservationViewModel)
         {
             var multipurposeRoomReservationDto = new MultipurposeRoomReservationDto
             {
-                Id = multipurpuseRoomReservationViewModel.Id,
-                Comments = multipurpuseRoomReservationViewModel.Comments,
-                ReservationDate = multipurpuseRoomReservationViewModel.ReservationDate,
-                Shift = multipurpuseRoomReservationViewModel.Shift,
-                UnitId = multipurpuseRoomReservationViewModel.UnitId,
-                WasWellDelivered = multipurpuseRoomReservationViewModel.WasWellDelivered,
+                Id = multipurposeRoomReservationViewModel.Id,
+                Comments = multipurposeRoomReservationViewModel.Comments,
+                ReservationDate = multipurposeRoomReservationViewModel.ReservationDate,
+                Shift = multipurposeRoomReservationViewModel.Shift,
+                UnitId = multipurposeRoomReservationViewModel.UnitId,
+                WasWellDelivered = multipurposeRoomReservationViewModel.WasWellDelivered,
                 MultipurposeRoomDto = new MultipurposeRoomDto
                 {
-                    Id = multipurpuseRoomReservationViewModel.MultipurposeRoomId
+                    Id = multipurposeRoomReservationViewModel.MultipurposeRoomId
                 }
             };
 
-            await _multipurposeRoomReservationService.CreateAsync(multipurposeRoomReservationDto);
+            var response = await _multipurposeRoomReservationService.CreateAsync(multipurposeRoomReservationDto);
 
-            return RedirectToAction("Dashboard", "Owners");
+            if (response.IsSuccess)
+            {
+                TempData["SuccessMessage"] = response.Message ?? "¡Reserva confirmada con éxito!";
+                return RedirectToAction("Dashboard", "Owners");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = response.Message ?? "Ocurrio un error!";
+                ViewBag.MultipurposeRooms = new SelectList(await _multipurposeRoomService.GetAllByBuildingAsync(multipurposeRoomReservationViewModel.BuildingId), "Id", "Name");
+                return View("Create", multipurposeRoomReservationViewModel);
+            }
         }
 
         [HttpGet]
@@ -64,9 +73,22 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Edit(int multipurposeRoomReservationId)
         {
             var multipurposeRoomReservationDto = await _multipurposeRoomReservationService.GetByIdAsync(multipurposeRoomReservationId);
+            ViewBag.MultipurposeRooms = new SelectList(await _multipurposeRoomService.GetAllByBuildingAsync(multipurposeRoomReservationDto.BuildingId), "Id", "Name");
+
             return View(new MultipurposeRoomReservationViewModel 
             { 
                 Id = multipurposeRoomReservationDto.Id,
+                Comments = multipurposeRoomReservationDto.Comments,
+                ReservationDate = multipurposeRoomReservationDto.ReservationDate,
+                Shift = multipurposeRoomReservationDto.Shift,
+                UnitId = multipurposeRoomReservationDto.UnitId,
+                WasWellDelivered = multipurposeRoomReservationDto.WasWellDelivered,
+                BuildingId = multipurposeRoomReservationDto.BuildingId,
+                MultipurposeRoomId = multipurposeRoomReservationDto.MultipurposeRoomDto.Id,
+                MultipurposeRoomViewModel = new MultipurposeRoomViewModel
+                {
+                    Id = multipurposeRoomReservationDto.MultipurposeRoomDto.Id,
+                }
             });
         }
 
@@ -77,9 +99,43 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var multipurposeRoomReservationDto = new MultipurposeRoomReservationDto
             {
                 Id = multipurposeRoomReservationViewModel.Id,
+                Comments = multipurposeRoomReservationViewModel.Comments,
+                ReservationDate = multipurposeRoomReservationViewModel.ReservationDate,
+                Shift = multipurposeRoomReservationViewModel.Shift,
+                UnitId = multipurposeRoomReservationViewModel.UnitId,
+                WasWellDelivered = multipurposeRoomReservationViewModel.WasWellDelivered,
+                MultipurposeRoomDto = new MultipurposeRoomDto
+                {
+                    Id = multipurposeRoomReservationViewModel.MultipurposeRoomId
+                }
             };
 
-            await _multipurposeRoomReservationService.UpdateAsync(multipurposeRoomReservationDto);
+            var response = await _multipurposeRoomReservationService.UpdateAsync(multipurposeRoomReservationDto);
+
+            if (response.IsSuccess)
+            {
+                TempData["SuccessMessage"] = response.Message ?? "¡Reserva confirmada con éxito!";
+                return RedirectToAction("Dashboard", "Owners");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = response.Message ?? "Ocurrio un error!";
+                ViewBag.MultipurposeRooms = new SelectList(await _multipurposeRoomService.GetAllByBuildingAsync(multipurposeRoomReservationViewModel.BuildingId), "Id", "Name");
+                return View("Edit", multipurposeRoomReservationViewModel);
+            }
+        }
+
+
+        [HttpPost]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> Delete(int multipurposeRoomReservationId)
+        {
+            var response = await _multipurposeRoomReservationService.DeleteAsync(multipurposeRoomReservationId);
+
+            if (response.IsSuccess)
+                TempData["SuccessMessage"] = response.Message;
+            else
+                TempData["ErrorMessage"] = response.Message;
 
             return RedirectToAction("Dashboard", "Owners");
         }
