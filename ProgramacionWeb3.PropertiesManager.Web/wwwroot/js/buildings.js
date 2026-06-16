@@ -1,73 +1,131 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
-    // 1. Coordenadas por defecto (Centro de Argentina o San Justo por ejemplo)
-    const defaultLat = -34.6686;
-    const defaultLng = -58.5678;
+﻿/**
+ * buildings.js
+ *
+ * Contiene la lógica JS para las vistas de Buildings:
+ *
+ * [Create / Edit]
+ *   - Geolocalización automática via Nominatim al enviar el formulario.
+ *   - Manejo del hidden `redirectAction` para los botones de guardado múltiple.
+ *   Requiere en el DOM: txtCalle, txtNumero, comboProvincia, hfLatitud, hfLongitud.
+ *   Opcional: comboLocalidad.
+ *
+ * [Index]
+ *   - Modal de confirmación de eliminación (deleteModal).
+ *   - Mapa Leaflet con marcadores de consorcios (mapaModal).
+ */
 
-    // 2. Inicializar el mapa de Leaflet apuntando al div 'mapaConsorcio'
-    const map = L.map('mapaConsorcio').setView([defaultLat, defaultLng], 13);
+document.addEventListener('DOMContentLoaded', function () {
 
-    // 3. Cargar las imágenes del mapa (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    // ─── CREATE / EDIT: Geolocalización ──────────────────────────────────────
 
-    // 4. Crear un marcador arrastrable (Marker)
-    let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+    const form = document.querySelector('form');
+    if (form && document.getElementById('txtCalle')) {
 
-    // Función auxiliar para actualizar los inputs ocultos de C#
-    function actualizarCoordenadas(lat, lng) {
-        document.getElementById("hfLatitude").value = lat.toFixed(6);
-        document.getElementById("hfLongitude").value = lng.toFixed(6);
+        // Hidden que transporta qué botón fue presionado al controller
+        const hfRedirect = document.createElement('input');
+        hfRedirect.type = 'hidden';
+        hfRedirect.name = 'redirectAction';
+        hfRedirect.value = 'index';
+        form.appendChild(hfRedirect);
+
+        // Capturamos el value de cada botón submit antes de que el evento submit se dispare
+        form.querySelectorAll('button[type="submit"][name="redirectAction"]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                hfRedirect.value = btn.value;
+            });
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const calle = document.getElementById('txtCalle').value.trim();
+            const numero = document.getElementById('txtNumero').value.trim();
+            const comboProv = document.getElementById('comboProvincia');
+            const provincia = comboProv?.options[comboProv.selectedIndex]?.text || 'Buenos Aires';
+            const comboLoc = document.getElementById('comboLocalidad');
+            const localidad = comboLoc?.options[comboLoc.selectedIndex]?.text || '';
+
+            // Si faltan datos mínimos, enviamos sin coordenadas
+            if (!calle || !numero) {
+                form.submit();
+                return;
+            }
+
+            const localidadQuery = localidad ? `${localidad}, ` : '';
+            const query = `${calle} ${numero}, ${localidadQuery}${provincia}, Argentina`;
+            const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
+
+            console.log('Geocodificando:', url);
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        document.getElementById('hfLatitud').value = data[0].lat;
+                        document.getElementById('hfLongitud').value = data[0].lon;
+                        console.log('Coordenadas obtenidas:', data[0].lat, data[0].lon);
+                    } else {
+                        console.warn('Nominatim no encontró la dirección. Asignando 0.');
+                        document.getElementById('hfLatitud').value = '0.0000000000';
+                        document.getElementById('hfLongitud').value = '0.0000000000';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de red al geolocalizar:', error);
+                    document.getElementById('hfLatitud').value = '0.0000000000';
+                    document.getElementById('hfLongitud').value = '0.0000000000';
+                })
+                .finally(() => {
+                    form.submit();
+                });
+        });
     }
 
-    // Inicializamos los inputs con el valor por defecto
-    actualizarCoordenadas(defaultLat, defaultLng);
+    // ─── INDEX: Modal de eliminación ─────────────────────────────────────────
 
-    // 5. Evento: Capturar cuando el usuario arrastra el marcador
-    marker.on('dragend', function (event) {
-        const position = marker.getLatLng();
-        actualizarCoordenadas(position.lat, position.lng);
-    });
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const btn = event.relatedTarget;
+            const buildingId = btn.getAttribute('data-building-id');
+            const address = btn.getAttribute('data-building-address');
 
-    // 6. Evento: Capturar cuando el usuario hace clic en cualquier punto del mapa
-    map.on('click', function (event) {
-        const lat = event.latlng.lat;
-        const lng = event.latlng.lng;
+            document.getElementById('deleteModalAddress').textContent = address;
+            document.getElementById('deleteForm').action = '/Buildings/Delete/' + buildingId;
+        });
+    }
 
-        marker.setLatLng([lat, lng]); // Mueve el pin al lugar del click
-        actualizarCoordenadas(lat, lng);
-    });
+    // ─── INDEX: Mapa Leaflet ──────────────────────────────────────────────────
 
-    // 7. Opcional/Requisito: Geocodificación simple si hacen clic en "Ubicar por Dirección"
-    document.getElementById("btnBuscarDireccion").addEventListener("click", function () {
-        const calle = document.getElementById("txtCalle").value;
-        const numero = document.getElementById("txtNumero").value;
-        const comboLoc = document.getElementById("comboLocalidad");
-        const localidad = comboLoc.options[comboLoc.selectedIndex]?.text || "";
+    const mapaEl = document.getElementById('mapaConsorcios');
+    if (mapaEl) {
+        const map = L.map('mapaConsorcios').setView([-34.6037, -58.3816], 12);
 
-        if (!calle || !numero) {
-            alert("Por favor, ingrese calle y número para buscar en el mapa.");
-            return;
-        }
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-        const query = `${calle} ${numero}, ${localidad}, Argentina`;
+        document.getElementById('mapaModal').addEventListener('shown.bs.modal', function () {
+            map.invalidateSize();
+        });
 
-        // Consumimos la API pública y gratuita de Nominatim (OpenStreetMap) para buscar la lat/long
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lon = parseFloat(data[0].lon);
-
-                    map.setView([lat, lon], 16);
-                    marker.setLatLng([lat, lon]);
-                    actualizarCoordenadas(lat, lon);
-                } else {
-                    alert("No se pudo encontrar la dirección exacta en el mapa. Por favor, márquela manualmente.");
-                }
+        fetch('/api/consorcios/listado-mapa')
+            .then(response => {
+                if (!response.ok) throw new Error('Error fetching map data');
+                return response.json();
             })
-            .catch(error => console.error("Error en geocodificación:", error));
-    });
+            .then(data => {
+                data.forEach(consorcio => {
+                    if (consorcio.latitud && consorcio.longitud) {
+                        const marker = L.marker([consorcio.latitud, consorcio.longitud]).addTo(map);
+                        marker.bindPopup(`
+                            <strong>${consorcio.direccion}</strong><br>
+                            <a href="/Buildings/Details/${consorcio.id}" class="btn btn-sm btn-outline-primary mt-2">Ver Detalles</a>
+                        `);
+                    }
+                });
+            })
+            .catch(error => console.error('Map Error:', error));
+    }
+
 });

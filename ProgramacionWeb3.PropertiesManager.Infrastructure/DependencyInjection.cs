@@ -27,6 +27,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IEmailService, SmtpEmailService>();
             services.AddScoped<IFileService>(_ => new FileService(filesBasePath));
             services.AddScoped<INotificacionRepository, NotificacionRepository>();
+            services.AddScoped<ILocalityRepository, LocalityRepository>();
 
             return services;
         }

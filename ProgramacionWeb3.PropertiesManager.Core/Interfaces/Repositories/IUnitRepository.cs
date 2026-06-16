@@ -1,3 +1,4 @@
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories
