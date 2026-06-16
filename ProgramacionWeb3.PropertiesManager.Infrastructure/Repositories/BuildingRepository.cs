@@ -19,7 +19,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
             // Requisito: Ordenado por nombre ascendentemente
             return await _dbContext.Buildings
                 .Include(b => b.Address)
-                    //.ThenInclude(a => a.Locality)
+                    .ThenInclude(a => a.Locality)
                         .ThenInclude(l => l.Province)
                 .Where(b => b.UserId == userId && b.IsActive) // Solo edificios activos
                 .OrderBy(b => b.Id)
@@ -30,6 +30,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
         {
             return await _dbContext.Buildings
                 .Include(b => b.Address)
+                    .ThenInclude(a => a.Locality)
                     .ThenInclude(l => l.Province)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }

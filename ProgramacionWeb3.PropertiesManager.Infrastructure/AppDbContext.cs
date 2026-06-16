@@ -22,6 +22,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public DbSet<UnitBill> UnitBills { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Locality> Localities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -30,6 +32,12 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 .HasOne(b => b.AdministratorUser)
                 .WithMany()
                 .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(a => a.Locality)
+                .WithMany()
+                .HasForeignKey(a => a.LocalityId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Expense>()
@@ -66,6 +74,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 .WithMany(b => b.Units)
                 .HasForeignKey(u => u.BuildingId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             OnSeeding(modelBuilder);
         }
@@ -105,6 +114,15 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 new Province { Id = 24, Name = "Tucumán" }
             );
 
+            modelBuilder.Entity<Locality>().HasData(
+                new Locality { Id = 1, Name = "Ciudad de Buenos Aires", ProvinceId = 1 },
+                new Locality { Id = 2, Name = "La Plata", ProvinceId = 2 },
+                new Locality { Id = 3, Name = "San Fernando", ProvinceId = 2 },
+                new Locality { Id = 4, Name = "Mar del Plata", ProvinceId = 2 },
+                new Locality { Id = 5, Name = "Rosario", ProvinceId = 21 },
+                new Locality { Id = 6, Name = "San Justo", ProvinceId = 2 }
+            );
+
             // This type of expenses ???
             modelBuilder.Entity<ExpenseType>().HasData(
                 new ExpenseType { Id = 1, Name = "Ordinary" },
@@ -117,10 +135,10 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 {
                     Id = 1,
                     Email = "admin@propertiesmanager.com",
-                    Password = "123", // TODO: En el futuro acá irá la contraseña hacheada
+                    Password = "$2a$11$gavlfviBbYC2cqZXK3xZ4uJarljrpHMwBveXLtYz5FHlp3cJhz4S2", // TODO: En el futuro acá irá la contraseña hacheada
                     IsActive = true,
                     CreationDate = new DateTime(2026, 1, 1), // Es mejor fijar una fecha en el seed para evitar migraciones cambiantes
-                    RoleId = 2 // Acorde a tus roles, 2 es "Properties Administrator"
+                    RoleId = 1 // Acorde a tus roles, 1 es "Admin"
                 }
             );
         }

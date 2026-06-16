@@ -28,10 +28,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         [ForeignKey("ProvinceId")]
         public virtual Province Province { get; set; }
 
-        //[Required]
-       // public int LocalityId { get; set; }
+        [Required]
+        public int LocalityId { get; set; }
 
-        //[ForeignKey("LocalityId")]
-       // public virtual Locality Locality { get; set; }
+        [ForeignKey("LocalityId")]
+        public virtual Locality Locality { get; set; }
     }
 }
