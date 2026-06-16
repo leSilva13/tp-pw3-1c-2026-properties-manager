@@ -65,6 +65,9 @@
                                 <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil"></i> Editar
                                 </a>
+                                <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@edificio.Id" class="btn btn-secondary btn-sm">
+                                    <i class="bi bi-bell"></i> Notificaciones
+                                </a>
                                 <form asp-action="Delete" asp-route-id="@edificio.Id" method="post" onsubmit="return confirm('¿Está seguro de que desea eliminar este consorcio?');" style="display:inline;">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-danger btn-sm">

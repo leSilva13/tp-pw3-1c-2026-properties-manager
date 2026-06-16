@@ -193,6 +193,43 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Notificacion", b =>
+                {
+                    b.Property<int>("IdNotificacion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdNotificacion"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("IdBuilding")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdConsorcio")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SendDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdNotificacion");
+
+                    b.HasIndex("IdBuilding");
+
+                    b.ToTable("Notificacion");
+                });
+
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>
                 {
                     b.Property<int>("Id")
@@ -590,6 +627,17 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.Navigation("Expense");
 
                     b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Notificacion", b =>
+                {
+                    b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("IdBuilding")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Building");
                 });
 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.Owner", b =>

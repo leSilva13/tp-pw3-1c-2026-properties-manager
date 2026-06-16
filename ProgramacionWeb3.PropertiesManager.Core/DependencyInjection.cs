@@ -17,6 +17,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IExpenseTypeService, ExpenseTypeService>();
+            services.AddScoped<INotificacionService, NotificacionService>();
+            services.AddScoped<IMasiveEmailService, MasiveEmailService>();
 
             return services;
         }
