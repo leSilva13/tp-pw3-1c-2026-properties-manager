@@ -8,8 +8,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task<IEnumerable<ExpenseDto>> ObtenerGastosPorEdificioAsync(int buildingId);
         Task<ExpenseDto?> ObtenerGastoPorIdAsync(int id);
         Task CrearGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName);
-        Task ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName);
-        Task EliminarGastoAsync(int id);
+        Task<bool> ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName);
+        Task<bool> EliminarGastoAsync(int id);
         Task<string?> ObtenerRutaComprobanteAsync(int id);
     }
 }

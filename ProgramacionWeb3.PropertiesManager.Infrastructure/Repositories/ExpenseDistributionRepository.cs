@@ -14,14 +14,5 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                 .Where(ed => ed.ExpenseId == expenseId)
                 .ToListAsync();
         }
-
-        public async Task DeleteByExpenseIdAsync(int expenseId)
-        {
-            var distribuciones = await _dbContext.ExpenseDistributions
-                .Where(ed => ed.ExpenseId == expenseId)
-                .ToListAsync();
-
-            _dbContext.ExpenseDistributions.RemoveRange(distribuciones);
-        }
     }
 }

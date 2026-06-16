@@ -28,6 +28,12 @@ async function cargarUnidades() {
     const lista = document.getElementById('listaUnidades');
     if (!lista) return;
 
+    // Conserva las unidades ya tildadas (renderizadas por el server en Edit
+    // o seleccionadas por el usuario) para no perderlas al refrescar la lista.
+    const seleccionadosPrevios = Array.from(
+        lista.querySelectorAll('input[name="SelectedUnitIds"]:checked')
+    ).map(i => i.value);
+
     try {
         const response = await fetch(`/Expenses/ObtenerUnidadesPorEdificio?buildingId=${buildingId}`);
         if (!response.ok) throw new Error();
@@ -53,6 +59,7 @@ async function cargarUnidades() {
             input.name = 'SelectedUnitIds';
             input.value = u.id;
             input.id = `unit_${u.id}`;
+            input.checked = seleccionadosPrevios.includes(String(u.id));
 
             const label = document.createElement('label');
             label.className = 'form-check-label';

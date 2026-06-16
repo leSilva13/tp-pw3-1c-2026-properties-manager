@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Unit;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Models
 {
@@ -36,6 +36,6 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public string BuildingLabel { get; set; } = string.Empty;
 
         public SelectList? ExpenseTypes { get; set; }
-        public IEnumerable<UnitFormViewModel> AvailableUnits { get; set; } = new List<UnitFormViewModel>();
+        public IEnumerable<UnitViewModel> AvailableUnits { get; set; } = new List<UnitViewModel>();
     }
 }

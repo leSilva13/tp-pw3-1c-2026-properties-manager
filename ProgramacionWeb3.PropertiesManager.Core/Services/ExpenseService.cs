@@ -51,7 +51,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 ReceiptPath = comprobanteNuevo ?? expenseDto.ReceiptPath,
                 ExpenseTypeId = expenseDto.ExpenseTypeId,
                 BuildingId = expenseDto.BuildingId,
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.UtcNow
             };
 
             if (!expense.IsGlobal && expenseDto.UnitIds.Any())
@@ -72,10 +72,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             }
         }
 
-        public async Task ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName)
+        public async Task<bool> ActualizarGastoAsync(ExpenseDto expenseDto, Stream? receiptContent, string? receiptFileName)
         {
             var expense = await _expenseRepository.GetByIdAsync(expenseDto.Id);
-            if (expense == null) return;
+            if (expense == null) return false;
 
             var comprobanteAnterior = expense.ReceiptPath;
             string? comprobanteNuevo = null;
@@ -95,19 +95,26 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
             try
             {
-                await _expenseDistributionRepository.DeleteByExpenseIdAsync(expense.Id);
+                // Sincronización por diferencia: solo se borran las unidades que dejan de aplicar
+                // y solo se insertan las nuevas. Evita el patrón borrar-todo + reinsertar, que con el
+                // índice único (ExpenseId, UnitId) podría chocar al re-crear una clave existente.
+                var distribucionesActuales = (await _expenseDistributionRepository.GetByExpenseIdAsync(expense.Id)).ToList();
 
-                if (!expense.IsGlobal && expenseDto.UnitIds.Any())
-                {
-                    foreach (var unitId in expenseDto.UnitIds)
+                var unidadesDeseadas = !expense.IsGlobal
+                    ? expenseDto.UnitIds.Distinct().ToHashSet()
+                    : new HashSet<int>();
+
+                var unidadesActuales = distribucionesActuales.Select(d => d.UnitId).ToHashSet();
+
+                foreach (var distribucion in distribucionesActuales.Where(d => !unidadesDeseadas.Contains(d.UnitId)))
+                    _expenseDistributionRepository.Delete(distribucion);
+
+                foreach (var unitId in unidadesDeseadas.Where(id => !unidadesActuales.Contains(id)))
+                    await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
                     {
-                        await _expenseDistributionRepository.AddAsync(new ExpenseDistribution
-                        {
-                            ExpenseId = expense.Id,
-                            UnitId = unitId
-                        });
-                    }
-                }
+                        ExpenseId = expense.Id,
+                        UnitId = unitId
+                    });
 
                 await _uow.SaveChangesAsync();
             }
@@ -120,18 +127,22 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
             if (comprobanteNuevo != null && !string.IsNullOrEmpty(comprobanteAnterior))
                 _fileService.DeleteReceipt(comprobanteAnterior);
+
+            return true;
         }
 
-        public async Task EliminarGastoAsync(int id)
+        public async Task<bool> EliminarGastoAsync(int id)
         {
             var expense = await _expenseRepository.GetByIdAsync(id);
-            if (expense == null) return;
+            if (expense == null) return false;
 
             var comprobante = expense.ReceiptPath;
             _expenseRepository.Delete(expense);
             await _uow.SaveChangesAsync();
 
             _fileService.DeleteReceipt(comprobante);
+
+            return true;
         }
 
         public async Task<string?> ObtenerRutaComprobanteAsync(int id)
