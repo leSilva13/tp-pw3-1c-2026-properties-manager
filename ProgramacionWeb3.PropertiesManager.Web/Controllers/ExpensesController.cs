@@ -6,6 +6,7 @@ using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Unit;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
@@ -290,6 +291,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
             viewModel.BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId);
+            var unidades = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
+            viewModel.AvailableUnits = unidades.Select(u => new UnitViewModel
+            {
+                Id = u.Id,
+                Floor = u.Floor,
+                ApartmentNumber = u.ApartmentNumber
+            });
         }
 
         private async Task<string> ObtenerNombreConsorcioAsync(int buildingId)

@@ -9,7 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "La descripción es requerida.")]
-        [StringLength(200)]
+        [StringLength(200, ErrorMessage = "La descripción no puede superar los 200 caracteres.")]
         public string? Description { get; set; }
 
         [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a cero.")]
