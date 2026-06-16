@@ -13,5 +13,9 @@
         public int AdministratorUserId { get; set; }
 
         public AddressDto AddressDto { get; set; }
+
+        public IEnumerable<UnitDto> UnitDtos { get; set; }
+
+        public IEnumerable<MultipurposeRoomDto> MultipurposeRoomDtos { get; set; }
     }
 }

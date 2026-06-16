@@ -9,5 +9,7 @@
         public string Email { get; set; }
 
         public bool IsActive { get; set; }
+
+        public IEnumerable<UnitDto> UnitDtos { get; set; }
     }
 }

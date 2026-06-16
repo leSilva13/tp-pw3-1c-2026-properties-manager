@@ -1,0 +1,74 @@
+﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.Owner.OwnerDashboardViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+        <div>
+            <h2 class="mb-0 text-primary">Mis Propiedades</h2>
+            <p class="text-muted">Resumen de tus unidades y espacios comunes disponibles.</p>
+        </div>
+        <a href="/Buildings/Mapa" class="btn btn-outline-secondary">
+            <i class="bi bi-map"></i> Ver en Mapa
+        </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        @foreach (var building in Model.BuildingViewModels)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h5 class="card-title mb-1">
+                            <i class="bi bi-building me-2"></i>@building.FullAddress
+                        </h5>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="bg-light px-3 py-2 border-bottom fw-bold text-secondary">
+                            Mis Unidades
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var unit in building.UnitViewModels)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Unidad @unit.Floor @unit.ApartmentNumber</span>
+                                    <span class="badge bg-success rounded-pill">Activa</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="card-footer bg-white border-top-0 pt-3 pb-4">
+                        <div class="text-secondary fw-bold mb-2 small text-uppercase">
+                            Reservas (SUM)
+                        </div>
+
+                        @if (building.MultipurposeRoomViewModels.Any())
+                        {
+                            <div class="d-grid gap-2">
+                                @foreach (var sum in building.MultipurposeRoomViewModels)
+                                {
+                                    <a href="/Reservations/Create?sumId=@sum.Id" class="btn btn-sm btn-primary text-start">
+                                        <i class="bi bi-calendar-plus me-2"></i>Reservar @sum.Name
+                                    </a>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-light text-muted border mb-0 p-2 text-center small">
+                                <i class="bi bi-info-circle me-1"></i> No hay SUMs disponibles.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

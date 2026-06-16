@@ -1,21 +1,26 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Building;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Owner;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Unit;
+using ProgramacionWeb3.PropertiesManager.Web.Security;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
-    [Authorize(Roles = "Properties Administrator")]
+    [Authorize(Roles = "Properties Administrator, Owner")]
     public class OwnersController : Controller
     {
 
         private IOwnerService _ownerService;
+        private IOwnerDashboardService _ownerDashboardService;
 
-        public OwnersController(IOwnerService ownerService) 
+        public OwnersController(IOwnerService ownerService, IOwnerDashboardService ownerDashboardService) 
         {
-            this._ownerService = ownerService;
+            _ownerService = ownerService;
+            _ownerDashboardService = ownerDashboardService;
         }
 
 
@@ -144,6 +149,41 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             await _ownerService.EliminarOwnerPorIdAsync(id);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> Dashboard()
+        {
+            var ownerDashboardDto = await _ownerDashboardService.GetDashboardDataAsync(User.GetUserId());
+
+            var ownerDashboardViewModel = new OwnerDashboardViewModel
+            {
+                BuildingViewModels = ownerDashboardDto.BuildingDtos
+                    .Select(b => 
+                        new BuildingViewModel
+                        {
+                            ExpensesDueDate = b.ExpensesDueDate,
+                            FullAddress = string.Format("{0} {1}, {2}", 
+                                b.AddressDto.Street, b.AddressDto.Number, b.AddressDto.ProvinceName),
+                            MultipurposeRoomViewModels = b.MultipurposeRoomDtos.Select(mr =>
+                                new MultipurposeRoomViewModel
+                                {
+                                    Floor = mr.Floor,
+                                    IsActive = mr.IsActive,
+                                    Name = mr.Name,
+                                    Id = mr.Id,
+                                }),
+                            UnitViewModels = b.UnitDtos.Select(u =>
+                                new UnitViewModel
+                                {
+                                    ApartmentNumber = u.ApartmentNumber,
+                                    Floor = u.Floor,
+                                })
+                        })
+            };
+
+            return View(ownerDashboardViewModel);
         }
     }
 }

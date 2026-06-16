@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ProgramacionWeb3.PropertiesManager.Infrastructure\ProgramacionWeb3.PropertiesManager.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Home\" />
-  </ItemGroup>
-
 </Project>

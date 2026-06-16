@@ -7,6 +7,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
     {
         Task<IEnumerable<OwnerDto>> ObtenerOwnersAsync();
 
+        Task<OwnerDto?> GetByUserId(int userId);
+
         Task<OwnerDto?> ObtenerOwnerPorIdAsync(int id);
 
         Task<bool> CrearOwnerAsync(OwnerDto ownerDto);
