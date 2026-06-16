@@ -21,6 +21,9 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                     .ThenInclude(u => u.Building)
                     .ThenInclude(b => b.Address)
                     .ThenInclude(a => a.Province)
+                .Include(o => o.Units)
+                    .ThenInclude(u => u.MultipurposeRoomReservations)
+                    .ThenInclude(mrr => mrr.MultipurposeRoom)
                 .FirstOrDefaultAsync(o => o.UserId == userId);
         }
     }

@@ -37,11 +37,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                             UnitDtos = g.Select(u => 
                                 new  UnitDto
                                 {
+                                    Id = u.Id,
                                     ApartmentNumber = u.ApartmentNumber,
                                     Floor = u.Floor,
                                 })
                         })
-                    .ToList()
+                    .ToList(),
+                MultipurposeRoomReservationDtos = owner.MultipurposeRoomReservationDtos
             };
         }
     }

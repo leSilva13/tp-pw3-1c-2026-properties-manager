@@ -11,5 +11,7 @@
         public bool IsActive { get; set; }
 
         public IEnumerable<UnitDto> UnitDtos { get; set; }
+
+        public IEnumerable<MultipurposeRoomReservationDto> MultipurposeRoomReservationDtos { get; set; }
     }
 }

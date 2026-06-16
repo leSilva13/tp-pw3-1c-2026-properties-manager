@@ -3,5 +3,7 @@
     public class OwnerDashboardDto
     {
         public IEnumerable<BuildingDto> BuildingDtos { get; set; }
+
+        public IEnumerable<MultipurposeRoomReservationDto> MultipurposeRoomReservationDtos {  get; set; }
     }
 }

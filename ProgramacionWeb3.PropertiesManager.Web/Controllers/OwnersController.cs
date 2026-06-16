@@ -163,6 +163,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                     .Select(b => 
                         new BuildingViewModel
                         {
+                            Id = b.Id,
                             ExpensesDueDate = b.ExpensesDueDate,
                             FullAddress = string.Format("{0} {1}, {2}", 
                                 b.AddressDto.Street, b.AddressDto.Number, b.AddressDto.ProvinceName),
@@ -177,9 +178,25 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                             UnitViewModels = b.UnitDtos.Select(u =>
                                 new UnitViewModel
                                 {
+                                    Id = u.Id,
                                     ApartmentNumber = u.ApartmentNumber,
                                     Floor = u.Floor,
                                 })
+                        }),
+                MultipurposeRoomReservationViewModels = ownerDashboardDto.MultipurposeRoomReservationDtos
+                    .Select(mrr =>
+                        new MultipurposeRoomReservationViewModel
+                        {
+                            Id = mrr.Id,
+                            ReservationDate = mrr.ReservationDate,
+                            Comments = mrr.Comments,
+                            Shift = mrr.Shift,
+                            WasWellDelivered = mrr.WasWellDelivered,
+                            MultipurposeRoomViewModel = new MultipurposeRoomViewModel
+                            {
+                                Id = mrr.MultipurposeRoomDto.Id,
+                                Name = mrr.MultipurposeRoomDto.Name
+                            }
                         })
             };
 

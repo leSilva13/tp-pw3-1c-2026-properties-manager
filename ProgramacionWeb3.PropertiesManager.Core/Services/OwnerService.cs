@@ -131,6 +131,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 UnitDtos = ownerEntidad.Units.Select(u => 
                     new UnitDto
                     {
+                        Id = u.Id,
                         ApartmentNumber = u.ApartmentNumber,
                         Floor = u.Floor,
                         BuildingDto = new BuildingDto
@@ -151,7 +152,26 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                                     IsActive = m.IsActive
                                 })
                         },
-                    })
+                    }),
+                MultipurposeRoomReservationDtos = ownerEntidad.Units
+                    .SelectMany(u => u.MultipurposeRoomReservations
+                    .Select(m =>
+                        new MultipurposeRoomReservationDto
+                        {
+                            Id = m.Id,
+                            Comments = m.Comments,
+                            ReservationDate = m.ReservationDate,
+                            Shift = m.Shift,
+                            WasWellDelivered = m.WasWellDelivered,
+                            UnitId = m.UnitId,
+                            MultipurposeRoomDto = new MultipurposeRoomDto
+                            {
+                                Id = m.MultipurposeRoom.Id,
+                                Name = m.MultipurposeRoom.Name
+                            }
+                        }))
+                    .OrderByDescending(r => r.ReservationDate)
+                    .ToList()
             };
         }
     }

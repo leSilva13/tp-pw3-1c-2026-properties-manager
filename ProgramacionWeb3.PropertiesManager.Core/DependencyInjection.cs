@@ -13,6 +13,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core
             services.AddScoped<IExpenseService, ExpenseService>();
             services.AddScoped<IExpenseTypeService, ExpenseTypeService>();
             services.AddScoped<IMultipurposeRoomService, MultipurposeRoomService>();
+            services.AddScoped<IMultipurposeRoomReservationService, MultipurposeRoomReservationService>();
             services.AddScoped<IOwnerService, OwnerService>();
             services.AddScoped<IOwnerDashboardService, OwnerDashboardService>();
             services.AddScoped<IProvinceService, ProvinceService>();
