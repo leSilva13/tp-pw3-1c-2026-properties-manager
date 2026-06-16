@@ -7,7 +7,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
     {
         Task<IEnumerable<Building>> ObtenerEdificiosPorUsuarioAsync(int userId);
         Task<Building?> ObtenerEdificioPorIdAsync(int id);
-        Task CrearEdificioAsync(BuildingDto buildingDto);
+        Task<int> CrearEdificioAsync(BuildingDto buildingDto);
         Task ActualizarEdificioAsync(BuildingDto building, int addressId);
         Task EliminarEdificioAsync(int id);
         Task<bool> BajaDeEdificioAsync(int id);

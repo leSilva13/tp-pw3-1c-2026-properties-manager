@@ -5,6 +5,7 @@ using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 using System.Security.Claims;
+using System.Globalization;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 {
@@ -13,11 +14,13 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
     {
         private readonly IBuildingService _buildingService;
         private readonly IProvinceService _provinceService;
+        private readonly ILocalityService _localityService;
 
-        public BuildingsController(IBuildingService buildingService, IProvinceService provinceService)
+        public BuildingsController(IBuildingService buildingService, IProvinceService provinceService, ILocalityService localityService)
         {
             _buildingService = buildingService;
             _provinceService = provinceService;
+            _localityService = localityService;
         }
 
         [Authorize(Roles = "Properties Administrator")]
@@ -42,38 +45,55 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name");
+            ViewBag.Localities = new SelectList(await _localityService.GetAllAsync(), "Id", "Name");
             return View(new BuildingFormViewModel());
         }
 
         [HttpPost]
         [Authorize(Roles = "Properties Administrator")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BuildingFormViewModel viewModel)
+        public async Task<IActionResult> Create(BuildingFormViewModel viewModel, string redirectAction)
         {
             if (ModelState.IsValid)
             {
                 var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 int userIdLogueado = int.Parse(userIdClaim);
 
+                string latRaw = string.IsNullOrWhiteSpace(viewModel.AddressViewModel.Latitude) ? "0.0" : viewModel.AddressViewModel.Latitude;
+                string lonRaw = string.IsNullOrWhiteSpace(viewModel.AddressViewModel.Longitude) ? "0.0" : viewModel.AddressViewModel.Longitude;
+
+                // Parseamos usando la cultura invariable (fuerza a leer el punto decimal)
+                decimal latitudConvertida = decimal.Parse(latRaw, CultureInfo.InvariantCulture);
+                decimal longitudConvertida = decimal.Parse(lonRaw, CultureInfo.InvariantCulture);
+
                 var buildingDto = new BuildingDto
                 {
                     TotalSurfaceArea = viewModel.TotalSurfaceArea,
                     ExpensesDueDate = viewModel.ExpensesDueDate,
-                    AdministratorUserId = userIdLogueado, 
+                    AdministratorUserId = userIdLogueado,
                     AddressDto = new AddressDto
                     {
                         Street = viewModel.AddressViewModel.Street,
                         Number = viewModel.AddressViewModel.Number,
                         ProvinceId = viewModel.AddressViewModel.ProvinceId,
+                        LocalityId = viewModel.AddressViewModel.LocalityId,
+                        Latitude = latitudConvertida,
+                        Longitude = longitudConvertida
                     }
                 };
 
-                await _buildingService.CrearEdificioAsync(buildingDto);
+                int newBuildingId = await _buildingService.CrearEdificioAsync(buildingDto);
 
-                return RedirectToAction(nameof(Index));
+                return redirectAction switch
+                {
+                    "createAnother" => RedirectToAction(nameof(Create)),
+                    "createUnits"   => RedirectToAction("Create", "Units", new { id = newBuildingId }),
+                    _               => RedirectToAction(nameof(Index))
+                };
             }
 
             ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name");
+            ViewBag.Localities = new SelectList(await _localityService.GetAllAsync(), "Id", "Name");
             return View(viewModel);
         }
 
@@ -94,6 +114,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             // 2. Cargamos el combo de provincias en el ViewBag (igual que en Create)
             ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name", edificio.Address?.ProvinceId);
+            ViewBag.Localities = new SelectList(await _localityService.GetAllAsync(), "Id", "Name", edificio.Address?.LocalityId);
 
             // 3. Armamos el ViewModel mapeando los datos de la Entidad hacia el modelo plano
             var viewModel = new BuildingFormViewModel
@@ -107,7 +128,9 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 {
                     Street = edificio.Address?.Street,
                     Number = edificio.Address?.Number ?? "0",
-                    ProvinceId = edificio.Address?.ProvinceId ?? 0
+                    ProvinceId = edificio.Address?.ProvinceId ?? 0,
+                    LocalityId = edificio.Address?.LocalityId ?? 0
+                    
                 }
             };
 
@@ -141,6 +164,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                             Street = viewModel.AddressViewModel.Street,
                             Number = viewModel.AddressViewModel.Number,
                             ProvinceId = viewModel.AddressViewModel.ProvinceId,
+                            LocalityId = viewModel.AddressViewModel.LocalityId
                         }
                     };
 
@@ -157,6 +181,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
             // Si algo falló, recargamos las provincias en el ViewBag para no romper la vista
             ViewBag.Provinces = new SelectList(await _provinceService.GetAllAsync(), "Id", "Name", viewModel.AddressViewModel?.ProvinceId);
+            ViewBag.Localities = new SelectList(await _localityService.GetAllAsync(), "Id", "Name", viewModel.AddressViewModel?.LocalityId);
             return View(viewModel);
         }
 

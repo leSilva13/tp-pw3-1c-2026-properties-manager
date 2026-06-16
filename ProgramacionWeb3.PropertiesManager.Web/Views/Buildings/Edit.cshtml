@@ -2,6 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     var provinces = ViewBag.Provinces as IEnumerable<SelectListItem>;
+    var localities = ViewBag.Localities as IEnumerable<SelectListItem>;
     ViewData["Title"] = "Modificar Edificio";
 }
 
@@ -15,11 +16,14 @@
                 <div class="card-body">
                     <form asp-action="Edit" method="post">
                         @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="AddressId" />
                         <input type="hidden" asp-for="IsActive" />
+                        <input type="hidden" id="hfLatitud" name="AddressViewModel.Latitude" />
+                        <input type="hidden" id="hfLongitud" name="AddressViewModel.Longitude" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <h4 class="mb-3 text-secondary border-bottom pb-2">Datos Generales</h4>
 
@@ -41,12 +45,12 @@
                         <div class="row">
                             <div class="col-md-8 mb-3">
                                 <label asp-for="AddressViewModel.Street" class="form-label">Calle</label>
-                                <input asp-for="AddressViewModel.Street" class="form-control" placeholder="Ej: Arieta" required />
+                                <input asp-for="AddressViewModel.Street" id="txtCalle" class="form-control" placeholder="Ej: Arieta" required />
                                 <span asp-validation-for="AddressViewModel.Street" class="text-danger"></span>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label asp-for="AddressViewModel.Number" class="form-label">Número</label>
-                                <input asp-for="AddressViewModel.Number" type="number" class="form-control" placeholder="Ej: 2100" required />
+                                <input asp-for="AddressViewModel.Number" type="number" id="txtNumero" class="form-control" placeholder="Ej: 2100" required />
                                 <span asp-validation-for="AddressViewModel.Number" class="text-danger"></span>
                             </div>
                         </div>
@@ -56,6 +60,15 @@
                                 <label class="form-label">Provincia</label>
                                 <select asp-for="AddressViewModel.ProvinceId" asp-items="provinces" class="form-select" id="comboProvincia" required>
                                     <option value="">-- Seleccione una Provincia --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Localidad</label>
+                                <select asp-for="AddressViewModel.LocalityId" asp-items="localities" class="form-select" id="comboLocalidad" required>
+                                    <option value="">-- Seleccione una Localidad --</option>
                                 </select>
                             </div>
                         </div>
@@ -70,3 +83,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/buildings.js"></script>
+}

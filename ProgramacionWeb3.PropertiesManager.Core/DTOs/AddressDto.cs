@@ -9,5 +9,10 @@
         public string Number { get; set; }
 
         public int ProvinceId { get; set; }
+
+        public int LocalityId { get; set; }
+
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             return await _buildingRepository.GetBuildingByIdWithRelationshipsAsync(id);
         }
 
-        public async Task CrearEdificioAsync(BuildingDto buildingDto)
+        public async Task<int> CrearEdificioAsync(BuildingDto buildingDto)
         {
             var building = new Building
             {
@@ -41,11 +41,16 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                     Street = buildingDto.AddressDto.Street,
                     Number = buildingDto.AddressDto.Number,
                     ProvinceId = buildingDto.AddressDto.ProvinceId,
+                    LocalityId = buildingDto.AddressDto.LocalityId,
+                    Latitude = buildingDto.AddressDto.Latitude,   
+                    Longitude = buildingDto.AddressDto.Longitude
                 }
             };
 
             await _buildingRepository.AddAsync(building);
             await _buildingRepository.SaveAsync();
+
+            return building.Id; // EF popula el Id tras el SaveChangesAsync
         }
 
         public async Task ActualizarEdificioAsync(BuildingDto buildingDto, int addressId)
@@ -64,7 +69,10 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                     Id = addressId,   //Clave primaria de la dirección. ¡Evita el duplicado!
                     Street = buildingDto.AddressDto.Street,
                     Number = buildingDto.AddressDto.Number,
-                    ProvinceId = buildingDto.AddressDto.ProvinceId
+                    ProvinceId = buildingDto.AddressDto.ProvinceId,
+                    LocalityId = buildingDto.AddressDto.LocalityId,
+                    Latitude = buildingDto.AddressDto.Latitude,
+                    Longitude = buildingDto.AddressDto.Longitude
                 }
             };
 
