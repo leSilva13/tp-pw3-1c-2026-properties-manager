@@ -1,0 +1,56 @@
+@using ProgramacionWeb3.PropertiesManager.Core.Common.Enums
+@using ProgramacionWeb3.PropertiesManager.Core.Common.Helpers
+@{
+    Layout = "_BaseLayout";
+}
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/Home">PropertiesManager</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    @if (User.IsInRole(UserRoleEnum.Admin.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarAdmin" />
+                    }
+                    else if (User.IsInRole(UserRoleEnum.Owner.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarOwner" />
+                    }
+                    else if (User.IsInRole(UserRoleEnum.PropertiesAdministrator.ToEnumMemberString()))
+                    {
+                        <partial name="Navbar/_NavbarPropertiesAdministrator" />
+                    }
+                </ul>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> @User.Identity.Name
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">Salir</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main role="main" class="container flex-grow-1 py-4">
+    @RenderBody()
+</main>
+
+@* Pass scripts down to the Base Layout *@
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

@@ -40,10 +40,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // Shows the raw code crash when you are testing locally
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // Catches the error and silently redirects the user to the Error page
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 

@@ -156,6 +156,12 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var ownerDashboardDto = await _ownerDashboardService.GetDashboardDataAsync(User.GetUserId());
+            if (ownerDashboardDto == null)
+                return View(new OwnerDashboardViewModel
+                {
+                    BuildingViewModels = new List<BuildingViewModel>(),
+                    MultipurposeRoomReservationViewModels = new List<MultipurposeRoomReservationViewModel>()
+                });
 
             var ownerDashboardViewModel = new OwnerDashboardViewModel
             {
