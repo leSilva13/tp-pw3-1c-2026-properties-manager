@@ -1,16 +1,17 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.Entities;
+﻿using ProgramacionWeb3.PropertiesManager.Core.DTOs;
+using ProgramacionWeb3.PropertiesManager.Core.Entities;
 
 namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
 {
     public interface IOwnerService
     {
-        Task<IEnumerable<Owner>> ObtenerOwnersAsync();
+        Task<IEnumerable<OwnerDto>> ObtenerOwnersAsync();
 
-        Task<Owner?> ObtenerOwnerPorIdAsync(int id);
+        Task<OwnerDto?> ObtenerOwnerPorIdAsync(int id);
 
-        Task CrearOwnerAsync(Owner owner);
+        Task<bool> CrearOwnerAsync(OwnerDto ownerDto);
 
-        Task ActualizarOwnerAsync(Owner owner);
+        Task<bool> ActualizarOwnerAsync(OwnerDto ownerDto);
 
         Task EliminarOwnerPorIdAsync(int id);
 

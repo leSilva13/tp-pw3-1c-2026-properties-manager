@@ -13,6 +13,9 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public string Floor { get; set; }
 
         [Required]
+        public bool IsActive { get; set; } = true;
+
+        [Required]
         [StringLength(10)]
         public string ApartmentNumber { get; set; }
 
