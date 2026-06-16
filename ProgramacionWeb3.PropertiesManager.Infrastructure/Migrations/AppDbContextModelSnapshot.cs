@@ -808,7 +808,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Migrations
                     b.HasOne("ProgramacionWeb3.PropertiesManager.Core.Entities.Building", "Building")
                         .WithMany()
                         .HasForeignKey("IdBuilding")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
                 
             modelBuilder.Entity("ProgramacionWeb3.PropertiesManager.Core.Entities.MultipurposeRoom", b =>
