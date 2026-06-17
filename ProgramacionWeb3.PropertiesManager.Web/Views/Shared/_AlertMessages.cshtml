@@ -1,19 +1,21 @@
-﻿<div class="position-fixed top-0 end-0 p-3 alert-stack">
+﻿<div class="position-fixed top-0 end-0 p-3 alert-stack" style="z-index: 1100;">
+    
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm auto-dismiss-alert mb-2" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
             @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    @if (@TempData["ErrorMessage"] != null)
+    @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm auto-dismiss-alert mb-2" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
+    
 </div>
