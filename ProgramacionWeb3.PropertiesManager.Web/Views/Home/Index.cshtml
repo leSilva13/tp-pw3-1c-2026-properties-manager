@@ -1,3 +1,5 @@
+@using ProgramacionWeb3.PropertiesManager.Core.Common.Enums
+
 @{
     ViewData["Title"] = "Inicio";
 }
@@ -17,6 +19,14 @@
     else
     {
         <p class="lead">Bienvenido, @User.Identity.Name.</p>
-        <a asp-controller="Buildings" asp-action="Index" class="btn btn-primary btn-lg px-4">Mis Consorcios</a>
+
+            @if (User.IsInRole("Owner"))
+                {
+                 <a asp-controller="Owners" asp-action="Dashboard" class="btn btn-primary btn-lg px-4">Mi Dashboard</a>
+                    }
+                        else
+                            {
+                                <a asp-controller="Buildings" asp-action="Index" class="btn btn-primary btn-lg px-4">Mis Consorcios</a>
+                            }
     }
 </div>

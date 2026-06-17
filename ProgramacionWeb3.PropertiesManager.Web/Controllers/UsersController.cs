@@ -69,5 +69,23 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             ViewBag.Roles = new SelectList(await _roleService.GetAllAsync(), "Id", "Name");
             return View(viewModel);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Properties Administrator")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _userService.DeleteUserAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,Properties Administrator")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Activate(int id)
+        {
+            await _userService.ActivateUserAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

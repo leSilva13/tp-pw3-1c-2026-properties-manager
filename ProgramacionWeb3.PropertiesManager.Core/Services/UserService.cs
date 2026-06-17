@@ -87,5 +87,35 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                     RoleId = u.RoleId
                 }).ToList();
         }
+
+        public async Task DeleteUserAsync(int id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            user.IsActive = false;
+
+            _userRepository.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task ActivateUserAsync(int id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            user.IsActive = true;
+
+            _userRepository.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

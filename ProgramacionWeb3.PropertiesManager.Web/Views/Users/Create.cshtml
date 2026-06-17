@@ -29,7 +29,7 @@
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                         </div>
-                        @if (true)
+                        @if (isAdmin) @*Solo si es admin que se muestre esto*@
                         {
                             <div class="row">
                                 <div class="col-md-6 mb-3">
