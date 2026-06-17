@@ -25,5 +25,22 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                     .ThenInclude(ed => ed.Unit)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        public async Task<IEnumerable<Expense>> GetByOwnerAsync(int ownerId)
+        {
+            return await _dbContext.Expenses
+                .Include(e => e.ExpenseType)
+                .Include(e => e.Building)
+                    .ThenInclude(b => b.Address)
+                        .ThenInclude(a => a.Locality)
+                .Include(e => e.Building)
+                    .ThenInclude(b => b.Address)
+                        .ThenInclude(a => a.Province)
+                .Where(expense => _dbContext.Units.Any(unit =>
+                    unit.OwnerId == ownerId &&
+                    unit.BuildingId == expense.BuildingId))
+                .OrderByDescending(e => e.BillingDate)
+                .ToListAsync();
+        }
     }
 }

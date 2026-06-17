@@ -4,6 +4,7 @@ using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 using ProgramacionWeb3.PropertiesManager.Web.Models.Building;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Expenses;
 using ProgramacionWeb3.PropertiesManager.Web.Models.Owner;
 using ProgramacionWeb3.PropertiesManager.Web.Models.Unit;
 using ProgramacionWeb3.PropertiesManager.Web.Security;
@@ -203,6 +204,21 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                                 Id = mrr.MultipurposeRoomDto.Id,
                                 Name = mrr.MultipurposeRoomDto.Name
                             }
+                        }),
+                ExpenseViewModels = ownerDashboardDto.ExpenseDtos
+                    .Select(e => 
+                        new ExpenseViewModel
+                        {
+                            Id = e.Id,
+                            Amount = e.Amount,
+                            BillingDate = e.BillingDate,
+                            Description = e.Description,
+                            ExpenseMonth = e.ExpenseMonth,
+                            ExpenseTypeName = e.ExpenseTypeName,
+                            ExpenseYear = e.ExpenseYear,
+                            IsGlobal = e.IsGlobal,
+                            ReceiptPath = e.ReceiptPath,
+                            BuildingName = e.BuildingName ?? string.Empty
                         })
             };
 

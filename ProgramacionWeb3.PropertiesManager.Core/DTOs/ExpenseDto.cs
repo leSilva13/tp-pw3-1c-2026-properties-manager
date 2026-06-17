@@ -26,6 +26,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.DTOs
 
         public int BuildingId { get; set; }
 
+        public string? BuildingName { get; set; }
+
         public List<int> UnitIds { get; set; } = new();
     }
 }

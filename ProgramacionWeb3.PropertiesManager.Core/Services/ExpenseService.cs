@@ -171,8 +171,21 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 ExpenseTypeId = expense.ExpenseTypeId,
                 ExpenseTypeName = expense.ExpenseType?.Name,
                 BuildingId = expense.BuildingId,
+                BuildingName = expense.Building?.Address != null ? BuildingName(expense.Building.Address) : string.Empty,
                 UnitIds = expense.ExpenseDistributions?.Select(ed => ed.UnitId).ToList() ?? new()
             };
+        }
+
+        private static string BuildingName(Address address)
+        {
+            return string.Format("{0} {1}, {2}, {3}",
+                address.Street, address.Number, address.Locality.Name, address.Province.Name);
+        }
+
+        public async Task<IEnumerable<ExpenseDto>> GetAllByOwner(int ownerId)
+        {
+            var expenses = await _expenseRepository.GetByOwnerAsync(ownerId);
+            return expenses.Select(e => MapearADto(e));
         }
     }
 }
