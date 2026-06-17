@@ -31,8 +31,8 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
 
         public string? ReceiptPath { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Seleccione un tipo de gasto.")]
-        public int SelectedExpenseTypeId { get; set; }
+        [Required(ErrorMessage = "Seleccione un tipo de gasto.")]
+        public int? SelectedExpenseTypeId { get; set; }
 
         public int SelectedBuildingId { get; set; }
         public List<int> SelectedUnitIds { get; set; } = new();

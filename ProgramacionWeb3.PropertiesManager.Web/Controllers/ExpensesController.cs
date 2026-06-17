@@ -54,6 +54,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             var viewModel = await ConstruirViewModelAsync();
             viewModel.SelectedBuildingId = buildingId;
             viewModel.BuildingLabel = ConstruirEtiqueta(edificio);
+            await CargarUnidadesDisponiblesAsync(viewModel, buildingId);
             return View(viewModel);
         }
 
@@ -218,19 +219,10 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             return PhysicalFile(filePath, contentType, Path.GetFileName(filePath));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ObtenerUnidadesPorEdificio(int buildingId)
-        {
-            if (!await EsEdificioPropioAsync(buildingId)) return NotFound();
-
-            var unidades = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
-            return Json(unidades.Select(u => new { id = u.Id, nombre = $"Piso {u.Floor} - Depto {u.ApartmentNumber}" }));
-        }
-
         private void ValidarComprobante(IFormFile? receiptFile, bool requerido)
         {
             if (requerido && (receiptFile == null || receiptFile.Length == 0))
-                ModelState.AddModelError(string.Empty, "El comprobante es requerido.");
+                ModelState.AddModelError("receiptFile", "El comprobante es requerido.");
         }
 
         private void ValidarUnidades(ExpenseFormViewModel viewModel)
@@ -272,7 +264,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                 IsGlobal = viewModel.IsGlobal,
                 BillingDate = viewModel.BillingDate,
                 ReceiptPath = viewModel.ReceiptPath,
-                ExpenseTypeId = viewModel.SelectedExpenseTypeId,
+                ExpenseTypeId = viewModel.SelectedExpenseTypeId ?? 0,
                 BuildingId = buildingId,
                 UnitIds = viewModel.SelectedUnitIds
             };
@@ -291,6 +283,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             await ConstruirViewModelAsync(viewModel);
             viewModel.SelectedBuildingId = buildingId;
             viewModel.BuildingLabel = await ObtenerNombreConsorcioAsync(buildingId);
+            await CargarUnidadesDisponiblesAsync(viewModel, buildingId);
+        }
+
+        private async Task CargarUnidadesDisponiblesAsync(ExpenseFormViewModel viewModel, int buildingId)
+        {
             var unidades = await _unitService.ObtenerUnidadesPorConsorcioAsync(buildingId);
             viewModel.AvailableUnits = unidades.Select(u => new UnitViewModel
             {
