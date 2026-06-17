@@ -21,7 +21,7 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure.Repositories
                 .Include(b => b.Address)
                     .ThenInclude(a => a.Locality)
                         .ThenInclude(l => l.Province)
-                .Where(b => b.UserId == userId && b.IsActive) // Solo edificios activos
+                .Where(b => b.UserId == userId)
                 .OrderBy(b => b.Id)
                 .ToListAsync();
         }

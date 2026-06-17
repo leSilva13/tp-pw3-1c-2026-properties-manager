@@ -95,9 +95,11 @@
                     <a asp-controller="Expenses" asp-action="Index" asp-route-buildingId="@Model.Id" class="btn btn-outline-info">Ver Gastos</a>
                     <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@Model.Id" class="btn btn-outline-secondary">Ver Notificaciones</a>
                     <hr />
-                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" data-confirm="¿Está seguro de que desea eliminar este consorcio?">
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger w-100">Eliminar Consorcio</button>
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-slash-circle"></i> Inhabilitar Edificio
+                        </button>
                     </form>
                 </div>
             </div>

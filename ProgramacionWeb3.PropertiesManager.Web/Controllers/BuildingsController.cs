@@ -191,19 +191,29 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             if (id <= 0)
-            {
                 return BadRequest("ID de edificio inválido.");
-            }
 
-            // Llamamos al servicio para que realice la baja lógica
             bool exito = await _buildingService.BajaDeEdificioAsync(id);
 
             if (!exito)
-            {
-                return NotFound("No se encontró el edificio que desea eliminar.");
-            }
+                return NotFound("No se encontró el edificio que desea inhabilitar.");
 
-            // Redirigimos al Index, donde ahora el edificio ya no debería aparecer
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Properties Administrator")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Enable(int id)
+        {
+            if (id <= 0)
+                return BadRequest("ID de edificio inválido.");
+
+            bool exito = await _buildingService.AltaDeEdificioAsync(id);
+
+            if (!exito)
+                return NotFound("No se encontró el edificio que desea habilitar.");
+
             return RedirectToAction(nameof(Index));
         }
     }
