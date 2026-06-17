@@ -1,21 +1,27 @@
-﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.OwnerFormViewModel
+@model ProgramacionWeb3.PropertiesManager.Web.Models.OwnerFormViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<h1>Crear Owner</h1>
+<div class="container mt-4">
+    <h1 class="mb-3">Crear Owner</h1>
 
-<form asp-controller="Owners" asp-action="Crear" method="post">
-    <div>
-        <label asp-for="FullName">Ingrese su nombre completo</label>
-        <input asp-for="FullName" />
-        <span asp-validation-for="FullName"></span>
-    </div>
+    <form asp-controller="Owners" asp-action="Crear" method="post" class="card card-body shadow-sm">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div>
-        <label asp-for="Email">Ingrese su email</label>
-        <input asp-for="Email" type="email" />
-        <span asp-validation-for="Email"></span>
-    </div>
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label">Nombre completo</label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
 
-    <button type="submit">Guardar</button>
-    <a asp-controller="Owners" asp-action="Index">Cancelar</a>
-</form>
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email</label>
+            <input asp-for="Email" type="email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-controller="Owners" asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

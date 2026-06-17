@@ -1,9 +1,8 @@
 ﻿@model ProgramacionWeb3.PropertiesManager.Web.Models.UnitFormViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<h1>Nueva Unidad</h1>
-
-<nav>
+<div class="container mt-4">
+<nav class="mb-3">
     <a asp-controller="Buildings" asp-action="Index">
         Mis Consorcios
     </a>
@@ -11,7 +10,7 @@
 
     <a asp-controller="Units"
            asp-action="Index"
-           asp-route-id="@Model.BuildingId">
+           asp-route-buildingId="@Model.BuildingId">
         @Model.BuildingName
     </a>
     &gt;
@@ -19,86 +18,92 @@
     <span>Nueva Unidad</span>
 </nav>
 
+<h1 class="mb-3">Nueva Unidad</h1>
+
 @if (TempData["Mensaje"] != null)
 {
-    <div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
         @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
 }
 
 
-<form asp-controller="Units" asp-action="Create" method="post">
+<form asp-controller="Units" asp-action="Create" method="post" class="card card-body shadow-sm">
 
     <input type="hidden" asp-for="BuildingId" />
 
-    <div asp-validation-summary="ModelOnly"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div>
-        <label>Consorcio</label>
-        <input value="@Model.BuildingName" disabled />
+    <div class="mb-3">
+        <label class="form-label">Consorcio</label>
+        <input value="@Model.BuildingName" class="form-control" disabled />
     </div>
 
-    <div>
-        <label asp-for="Floor">Piso</label>
-        <input asp-for="Floor" />
-        <span asp-validation-for="Floor"></span>
+    <div class="mb-3">
+        <label asp-for="Floor" class="form-label">Piso</label>
+        <input asp-for="Floor" class="form-control" />
+        <span asp-validation-for="Floor" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="ApartmentNumber">Departamento</label>
-        <input asp-for="ApartmentNumber" />
-        <span asp-validation-for="ApartmentNumber"></span>
+    <div class="mb-3">
+        <label asp-for="ApartmentNumber" class="form-label">Departamento</label>
+        <input asp-for="ApartmentNumber" class="form-control" />
+        <span asp-validation-for="ApartmentNumber" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="AreaInMeters">Superficie</label>
-        <input asp-for="AreaInMeters" type="number" />
-        <span asp-validation-for="AreaInMeters"></span>
+    <div class="mb-3">
+        <label asp-for="AreaInMeters" class="form-label">Superficie</label>
+        <input asp-for="AreaInMeters" type="number" class="form-control" />
+        <span asp-validation-for="AreaInMeters" class="text-danger"></span>
     </div>
 
-    <div>
+    <div class="form-check mb-3">
     <label>
-        <input asp-for="CrearNuevoOwner" id="crearNuevoOwner" />
+        <input asp-for="CrearNuevoOwner" id="crearNuevoOwner" class="form-check-input" />
         Crear un dueño nuevo
     </label>
 </div>
 
-<div id="ownerExistente">
-    <label asp-for="OwnerId">Dueño existente</label>
+<div id="ownerExistente" class="mb-3">
+    <label asp-for="OwnerId" class="form-label">Dueño existente</label>
 
-    <select asp-for="OwnerId" asp-items="Model.Owners">
+    <select asp-for="OwnerId" asp-items="Model.Owners" class="form-select">
         <option value="">Seleccione un dueño</option>
     </select>
 
-    <span asp-validation-for="OwnerId"></span>
+    <span asp-validation-for="OwnerId" class="text-danger"></span>
 </div>
 
 <div id="nuevoOwner">
-    <div>
-        <label asp-for="NuevoOwner.FullName">Nombre completo</label>
-        <input asp-for="NuevoOwner.FullName" />
-        <span asp-validation-for="NuevoOwner.FullName"></span>
+    <div class="mb-3">
+        <label asp-for="NuevoOwner.FullName" class="form-label">Nombre completo</label>
+        <input asp-for="NuevoOwner.FullName" class="form-control" />
+        <span asp-validation-for="NuevoOwner.FullName" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="NuevoOwner.Email">Email</label>
-        <input asp-for="NuevoOwner.Email" type="email" />
-        <span asp-validation-for="NuevoOwner.Email"></span>
+    <div class="mb-3">
+        <label asp-for="NuevoOwner.Email" class="form-label">Email</label>
+        <input asp-for="NuevoOwner.Email" type="email" class="form-control" />
+        <span asp-validation-for="NuevoOwner.Email" class="text-danger"></span>
     </div>
 </div>
 
-<button type="submit" name="accion" value="guardar">
+<div class="d-flex gap-2">
+<button type="submit" name="accion" value="guardar" class="btn btn-primary">
     Guardar
 </button>
 
-<button type="submit" name="accion" value="guardarOtro">
+<button type="submit" name="accion" value="guardarOtro" class="btn btn-success">
     Guardar y crear otra unidad
 </button>
 
-    <a asp-controller="Units" asp-action="Index" asp-route-id="@Model.BuildingId">
+    <a asp-controller="Units" asp-action="Index" asp-route-buildingId="@Model.BuildingId" class="btn btn-outline-secondary">
         Cancelar
     </a>
+</div>
 </form>
+</div>
 
 <script>
     const checkboxCrearNuevoDuenio = document.getElementById("crearNuevoOwner");

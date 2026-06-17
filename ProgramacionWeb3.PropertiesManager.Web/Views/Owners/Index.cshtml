@@ -1,44 +1,45 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<ProgramacionWeb3.PropertiesManager.Web.Models.OwnerFormViewModel>
 
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Owners</h1>
+        <a asp-controller="Owners" asp-action="Crear" class="btn btn-primary">Agregar Owner</a>
+    </div>
 
-<h1>OWNERS</h1>
-
-@if (Model == null || !Model.Any())
-{
-    <p>No hay owners todavía!</p>
-    <p>Creá uno </p>
-    <a asp-action="crear">Agregar Owner</a>
-}
-else
-{
-    <a asp-controller="Owners" asp-action="Crear">Agregar Owner</a>
-
-    <table id="tablaUnidades" class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nombre completo</th>
-                <th>Email</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var owner in Model)
-            {
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No hay owners registrados todavía.</div>
+    }
+    else
+    {
+        <table id="tablaOwners" class="table table-striped table-hover">
+            <thead>
                 <tr>
-                    <td>@owner.Id</td>
-                    <td>@owner.FullName</td>
-                    <td>@owner.Email</td>
-                    <td>
-                        <a asp-controller="Owners" asp-action="Editar" asp-route-id="@owner.Id">Editar</a>
-                        <a asp-controller="Owners" asp-action="Eliminar" asp-route-id="@owner.Id">Eliminar</a>
-                    </td>
+                    <th>Id</th>
+                    <th>Nombre completo</th>
+                    <th>Email</th>
+                    <th>Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var owner in Model)
+                {
+                    <tr>
+                        <td>@owner.Id</td>
+                        <td>@owner.FullName</td>
+                        <td>@owner.Email</td>
+                        <td>
+                            <a asp-controller="Owners" asp-action="Editar" asp-route-id="@owner.Id" class="btn btn-warning btn-sm">Editar</a>
+                            <a asp-controller="Owners" asp-action="Eliminar" asp-route-id="@owner.Id" class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
 @section Styles {
     <link rel="stylesheet"
           href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
@@ -49,7 +50,6 @@ else
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
-        new DataTable("#tablaUnidades");
+        new DataTable("#tablaOwners");
     </script>
-}
 }
