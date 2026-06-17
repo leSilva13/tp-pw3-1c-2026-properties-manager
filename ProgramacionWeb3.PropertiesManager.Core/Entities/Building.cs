@@ -35,5 +35,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public virtual User AdministratorUser { get; set; }
 
         public virtual ICollection<Unit> Units { get; set; }
+
+        public virtual ICollection<MultipurposeRoom> MultipurposeRooms { get; set; }
     }
 }

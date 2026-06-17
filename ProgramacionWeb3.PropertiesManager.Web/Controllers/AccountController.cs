@@ -16,23 +16,26 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View(new LoginViewModel());
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View(model);
 
             var user = await _accountService.LogicAsync(model.Email, model.Password);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid credentials.");
+                ModelState.AddModelError(string.Empty, "Email y/o Contraseña inválidos");
                 return View(model);
             }
 
@@ -52,6 +55,11 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
             };
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, props);
+
+            // Si el usuario fue redirigido al login desde una pagina protegida,
+            // lo devolvemos a esa pagina luego de autenticarse.
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Home");
         }

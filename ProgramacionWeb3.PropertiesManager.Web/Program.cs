@@ -40,10 +40,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // Shows the raw code crash when you are testing locally
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // Catches the error and silently redirects the user to the Error page
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -64,9 +69,41 @@ app.MapControllerRoute(
     pattern: "Expenses/Create/{buildingId:int}",
     defaults: new { controller = "Expenses", action = "Create" });
 
+// Rutas amigables solicitadas por el TP (sitemap)
+app.MapControllerRoute(
+    name: "consorciosListado",
+    pattern: "Consorcios/listado",
+    defaults: new { controller = "Buildings", action = "Index" });
+
+app.MapControllerRoute(
+    name: "homeIngresar",
+    pattern: "Home/ingresar",
+    defaults: new { controller = "Account", action = "Login" });
+
+app.MapControllerRoute(
+    name: "homeRegistrarse",
+    pattern: "Home/registrarse",
+    defaults: new { controller = "Account", action = "Register" });
+
+app.MapControllerRoute(
+    name: "homeSalir",
+    pattern: "Home/salir",
+    defaults: new { controller = "Account", action = "Logout" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "notificationsIndex",
+    pattern: "Notifications/Index/{buildingId:int?}",
+    defaults: new { controller = "Notifications", action = "Index" });
+
+app.MapControllerRoute(
+    name: "notificationsCreate",
+    pattern: "Notifications/Create/{buildingId:int?}",
+    defaults: new { controller = "Notifications", action = "Create" });
+
 
 app.MapStaticAssets();
 app.MapRazorPages()

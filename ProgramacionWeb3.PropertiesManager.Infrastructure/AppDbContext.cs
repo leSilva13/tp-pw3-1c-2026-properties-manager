@@ -13,12 +13,17 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseDistribution> ExpenseDistributions { get; set; }
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
+        public DbSet<MultipurposeRoom> MultipurposeRooms { get; set; }
+        public DbSet<MultipurposeRoomReservation> MultipurposeRoomReservations { get; set; }
         public DbSet<Owner> Owners{ get; set; }
         public DbSet<Province> Provinces{ get; set; }
         public DbSet<Role> Roles{ get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<UnitBill> UnitBills { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
+
+        public DbSet<Locality> Localities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +33,12 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 .HasOne(b => b.AdministratorUser)
                 .WithMany()
                 .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(a => a.Locality)
+                .WithMany()
+                .HasForeignKey(a => a.LocalityId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Expense>()
@@ -63,6 +74,12 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 .HasOne(u => u.Building)
                 .WithMany(b => b.Units)
                 .HasForeignKey(u => u.BuildingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Building)
+                .WithMany()
+                .HasForeignKey(n => n.IdBuilding) 
                 .OnDelete(DeleteBehavior.Restrict);
 
             OnSeeding(modelBuilder);
@@ -103,6 +120,15 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 new Province { Id = 24, Name = "Tucumán" }
             );
 
+            modelBuilder.Entity<Locality>().HasData(
+                new Locality { Id = 1, Name = "Ciudad de Buenos Aires", ProvinceId = 1 },
+                new Locality { Id = 2, Name = "La Plata", ProvinceId = 2 },
+                new Locality { Id = 3, Name = "San Fernando", ProvinceId = 2 },
+                new Locality { Id = 4, Name = "Mar del Plata", ProvinceId = 2 },
+                new Locality { Id = 5, Name = "Rosario", ProvinceId = 21 },
+                new Locality { Id = 6, Name = "San Justo", ProvinceId = 2 }
+            );
+
             // This type of expenses ???
             modelBuilder.Entity<ExpenseType>().HasData(
                 new ExpenseType { Id = 1, Name = "Ordinary" },
@@ -115,10 +141,28 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
                 {
                     Id = 1,
                     Email = "admin@propertiesmanager.com",
-                    Password = "123", // TODO: En el futuro acá irá la contraseña hacheada
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
                     IsActive = true,
-                    CreationDate = new DateTime(2026, 1, 1), // Es mejor fijar una fecha en el seed para evitar migraciones cambiantes
-                    RoleId = 2 // Acorde a tus roles, 2 es "Properties Administrator"
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 1
+                },
+                new User
+                {
+                    Id = 2,
+                    Email = "propertiesmanager@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 2
+                },
+                new User
+                {
+                    Id = 3,
+                    Email = "owner@propertiesmanager.com",
+                    Password = "$2a$11$r86SfDwts13XN5cd/WbjieGK0xYO1NxhHBt1dQUxNqD.pUqOGVSfu", // unlam
+                    IsActive = true,
+                    CreationDate = new DateTime(2026, 1, 1),
+                    RoleId = 3
                 }
             );
         }

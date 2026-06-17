@@ -1,0 +1,27 @@
+﻿@model ProgramacionWeb3.PropertiesManager.Core.Entities.Notificacion
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Detalle de Notificación";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm col-md-8 offset-md-2">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Notificación Enviada</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Title</h5>
+            <h6 class="card-subtitle mb-3 text-muted">
+                Creada el: @Model.CreationDate.ToString("dd/MM/yyyy HH:mm") |
+                Enviada el: @Model.SendDate?.ToString("dd/MM/yyyy HH:mm")
+            </h6>
+            <hr />
+            <p class="card-text text-prewrap">@Model.Description</p>
+
+            <div class="mt-4">
+                <a asp-action="Index" asp-route-buildingId="@Model.IdBuilding" class="btn btn-secondary">Volver al listado</a>
+            </div>
+        </div>
+    </div>
+</div>

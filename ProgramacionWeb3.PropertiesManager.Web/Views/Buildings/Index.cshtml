@@ -2,13 +2,53 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Mis Consorcios";
+    ViewData["Title"] = "Mis Edificios";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Mis Consorcios</h1>
-        <a asp-action="Create" class="btn btn-primary">Nuevo Consorcio</a>
+        <h1>Mis Edificios</h1>
+        <a asp-action="Create" class="btn btn-primary">Nuevo Edificio</a>
+    </div>
+    
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#mapaModal">
+        <i class="bi bi-map"></i> Ver en mapa
+    </button>
+
+    <div class="modal fade" id="mapaModal" tabindex="-1" aria-labelledby="mapaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="mapaModalLabel">Edificios en el Mapa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="mapaConsorcios" class="map-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea eliminar el edificio
+                    <strong id="deleteModalAddress"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteForm" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <table class="table table-striped table-hover">
@@ -16,16 +56,15 @@
             <tr>
                 <th>Id</th>
                 <th>Dirección</th>
-                <th>Día Vencimiento</th>
+               
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @* 1. Validamos que la lista 'Model' en sí misma no sea nula *@
             @if (Model == null || !Model.Any())
             {
                 <tr>
-                    <td colspan="4" class="text-center text-muted">No tienes consorcios registrados.</td>
+                    <td colspan="4" class="text-center text-muted">No tienes edificios registrados.</td>
                 </tr>
             }
             else
@@ -33,17 +72,13 @@
                 @foreach (var edificio in Model)
                 {
                     <tr>
-                        @* 2. Validamos el id (si es nulo ponemos un texto por defecto) *@
                         <td>@(edificio?.Id)</td>
 
                         <td>
-                            @* 3. Navegación 100% segura paso a paso para la dirección *@
                             @if (edificio?.Address != null)
                             {
                                 <span>
                                     @edificio.Address.Street @edificio.Address.Number, @edificio.Address.Province?.Name
-                                    @*@(edificio.Address.Locality?.Name ?? "Sin Localidad"),
-                                    @(edificio.Address.Locality?.Province?.Name ?? "Sin Provincia")*@
                                 </span>
                             }
                             else
@@ -61,16 +96,33 @@
                                    class="btn btn-info btn-sm text-white">
                                     Ver unidades
                                 </a>
+                                <a asp-controller="Expenses"
+                                   asp-action="Index"
+                                   asp-route-buildingId="@edificio.Id"
+                                   class="btn btn-info btn-sm text-white">
+                                    Ver gastos
+                                </a>
+                                <a asp-controller="MultipurposeRooms"
+                                   asp-action="Index"
+                                   asp-route-buildingId="@edificio.Id"
+                                   class="btn btn-info btn-sm text-white">
+                                    Ver SUMs
+                                </a>
 
                                 <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm">
                                     <i class="bi bi-pencil"></i> Editar
                                 </a>
-                                <form asp-action="Delete" asp-route-id="@edificio.Id" method="post" onsubmit="return confirm('¿Está seguro de que desea eliminar este consorcio?');" style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </form>
+                                <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@edificio.Id" class="btn btn-secondary btn-sm">
+                                    <i class="bi bi-bell"></i> Notificaciones
+                                </a>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-building-id="@edificio.Id"
+                                        data-building-address="@(edificio.Address != null ? $"{edificio.Address.Street} {edificio.Address.Number}, {edificio.Address.Province?.Name}" : "este consorcio")">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
                             }
                         </td>
                     </tr>
@@ -79,3 +131,9 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="~/js/buildings.js"></script>
+}

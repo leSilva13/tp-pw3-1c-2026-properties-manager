@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Error del Sistema";
+    Layout = "_AnonymousLayout";
+}
+
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <i class="bi bi-exclamation-octagon-fill text-danger error-icon"></i>
+
+            <h1 class="display-4 fw-bold mt-3">¡Ups! Algo salió mal.</h1>
+            <p class="lead text-muted mb-4">
+                Ha ocurrido un error inesperado al procesar su solicitud. Nuestro equipo técnico ya ha sido notificado.
+            </p>
+
+            @if (Model.ShowRequestId)
+            {
+                <div class="alert alert-secondary text-start mb-4 shadow-sm">
+                    <strong>Código de Referencia:</strong>
+                    <code class="text-dark fs-6">@Model.RequestId</code>
+                    <div class="small text-muted mt-1">
+                        Si necesita contactar a soporte, por favor brinde este código para ayudar a rastrear el problema.
+                    </div>
+                </div>
+            }
+
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="/Home" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="bi bi-house-door me-2"></i>Volver al Inicio
+                </a>
+                <button type="button" data-history-back class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="bi bi-arrow-left me-2"></i>Regresar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

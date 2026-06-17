@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_BaseLayout";
+}
+
+<main class="container d-flex flex-column justify-content-center align-items-center flex-grow-1 py-5">
+    
+    @RenderBody()
+
+</main>
+
+@* 2. Pass any specific scripts from the View down to the Base Layout *@
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

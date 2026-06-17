@@ -37,5 +37,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Entities
         public virtual Owner? Owner { get; set; }
 
         public virtual ICollection<ExpenseDistribution> ExpenseDistributions { get; set; }
+
+        public virtual ICollection<MultipurposeRoomReservation> MultipurposeRoomReservations { get; set; }
     }
 }

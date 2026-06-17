@@ -39,7 +39,6 @@
 
                     <form asp-action="Delete" method="post">
                         <input type="hidden" name="id" value="@Model.Expense.Id" />
-                        <input type="hidden" name="buildingId" value="@Model.Expense.BuildingId" />
                         <div class="d-flex justify-content-end mt-3">
                             <a asp-action="Index" asp-route-buildingId="@Model.Expense.BuildingId" class="btn btn-outline-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-danger">Eliminar</button>

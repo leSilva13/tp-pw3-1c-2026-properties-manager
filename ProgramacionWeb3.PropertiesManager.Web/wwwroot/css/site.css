@@ -29,3 +29,24 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Contenedor de alertas/toasts apilados en la esquina superior derecha */
+.alert-stack {
+  z-index: 1100;
+}
+
+/* Contenedor del mapa de consorcios (modal) */
+.map-container {
+  height: 450px;
+  width: 100%;
+}
+
+/* Icono grande de la pantalla de Error */
+.error-icon {
+  font-size: 5rem;
+}
+
+/* Respeta saltos de linea en descripciones (ej. detalle de notificacion) */
+.text-prewrap {
+  white-space: pre-wrap;
+}

@@ -18,6 +18,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
             services.AddScoped<IExpenseDistributionRepository, ExpenseDistributionRepository>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IExpenseTypeRepository, ExpenseTypeRepository>();
+            services.AddScoped<IMultipurposeRoomRepository, MultipurposeRoomRepository>();
+            services.AddScoped<IMultipurposeRoomReservationRepository, MultipurposeRoomReservationRepository>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IProvinceRepository, ProvinceRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
@@ -26,6 +28,8 @@ namespace ProgramacionWeb3.PropertiesManager.Infrastructure
 
             services.AddScoped<IEmailService, SmtpEmailService>();
             services.AddScoped<IFileService>(_ => new FileService(filesBasePath));
+            services.AddScoped<INotificacionRepository, NotificacionRepository>();
+            services.AddScoped<ILocalityRepository, LocalityRepository>();
 
             return services;
         }
