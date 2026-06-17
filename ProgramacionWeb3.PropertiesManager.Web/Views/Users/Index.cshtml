@@ -34,23 +34,38 @@
                     <tr>
                         <td>@user.Email</td>
                         <td>
-                            @user.IsActive
+                            @if (user.IsActive)
+                                    {
+                                    <i class="bi bi-check-circle-fill text-success" title="Activo"></i>
+                                    }
+                                    else
+                                     {
+                                      <i class="bi bi-x-circle-fill text-danger" title="Inactivo"></i>
+                                     }
                         </td>
                         <td>
                             @user.RoleName
                         </td>
 
                         <td>
-
-                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </a>
-                            <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline" data-confirm="¿Está seguro de que desea dar de baja al usuario?">
+                            @if (user.IsActive)
+                              {
+                               <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline" data-confirm="¿Está seguro de que desea dar de baja al usuario?">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i> Dar de Baja
+                                <i class="bi bi-trash"></i> Dar de Baja
                                 </button>
-                            </form>
+                                </form>
+                                }
+                             else
+                                {
+                                <form asp-action="Activate" asp-route-id="@user.Id" method="post" class="d-inline" data-confirm="¿Está seguro de que desea activar al usuario?">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-circle"></i> Activar
+                                </button>
+                                </form>
+                                }
                         </td>
                     </tr>
                 }
