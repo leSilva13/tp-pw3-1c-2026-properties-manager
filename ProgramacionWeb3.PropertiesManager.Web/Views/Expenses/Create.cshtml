@@ -17,14 +17,6 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h3 class="card-title mb-0">Registrar Nuevo Gasto</h3>
@@ -43,9 +35,10 @@
 
                         <div class="mb-3">
                             <label class="form-label">Tipo de Gasto</label>
-                            <select asp-for="SelectedExpenseTypeId" asp-items="Model.ExpenseTypes" class="form-select" required>
+                            <select asp-for="SelectedExpenseTypeId" asp-items="Model.ExpenseTypes" class="form-select">
                                 <option value="">-- Seleccione un tipo --</option>
                             </select>
+                            <span asp-validation-for="SelectedExpenseTypeId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
@@ -82,23 +75,41 @@
 
                         <div class="mb-3">
                             <label class="form-label">Comprobante (*) <small class="text-muted">(PDF, JPG o PNG · máx. 5 MB)</small></label>
-                            <input type="file" name="receiptFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
-                            <span asp-validation-for="ReceiptPath" class="text-danger"></span>
+                            <input type="file" name="receiptFile" id="receiptFile" data-comprobante-requerido="true" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
+                            @Html.ValidationMessage("receiptFile", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input asp-for="IsGlobal" class="form-check-input" type="checkbox" id="chkIsGlobal" checked />
+                                <input asp-for="IsGlobal" class="form-check-input" type="checkbox" id="chkIsGlobal" />
                                 <label asp-for="IsGlobal" class="form-check-label">
                                     Gasto Global (aplica a todas las unidades)
                                 </label>
                             </div>
                         </div>
 
-                        <div id="divUnidades" class="mb-3 d-none">
+                        <div id="divUnidades" class="mb-3 @(Model.IsGlobal ? "d-none" : "")">
                             <label class="form-label">Unidades que aplica</label>
                             <div id="listaUnidades" class="border rounded p-2">
-                                <span class="text-muted">Cargando unidades...</span>
+                                @if (Model.AvailableUnits != null && Model.AvailableUnits.Any())
+                                {
+                                    @foreach (var unidad in Model.AvailableUnits)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox"
+                                                   name="SelectedUnitIds" value="@unidad.Id"
+                                                   id="unit_@unidad.Id"
+                                                   @(Model.SelectedUnitIds.Contains(unidad.Id) ? "checked" : "") />
+                                            <label class="form-check-label" for="unit_@unidad.Id">
+                                                Piso @unidad.Floor - Depto @unidad.ApartmentNumber
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Este consorcio no tiene unidades.</span>
+                                }
                             </div>
                         </div>
 
@@ -115,5 +126,6 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/expenses-form.js"></script>
 }

@@ -77,7 +77,7 @@
                         <td>
                             @if (item.SendDate == null)
                             {
-                                <form asp-action="Send" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro de enviar esta notificación a todos los propietarios? Esta acción no se puede deshacer.');">
+                                <form asp-action="Send" method="post" class="d-inline" data-confirm="¿Está seguro de enviar esta notificación a todos los propietarios? Esta acción no se puede deshacer.">
                                     <input type="hidden" name="id" value="@item.IdNotificacion" />
                                     <input type="hidden" name="buildingId" value="@item.IdBuilding" />
                                     <button type="submit" class="btn btn-success btn-sm">
@@ -85,7 +85,7 @@
                                     </button>
                                 </form>
 
-                                <form asp-action="Delete" method="post" style="display:inline;" onsubmit="return confirm('¿Está seguro de que desea eliminar esta notificación?');">
+                                <form asp-action="Delete" method="post" class="d-inline" data-confirm="¿Está seguro de que desea eliminar esta notificación?">
                                     <input type="hidden" name="id" value="@item.IdNotificacion" />
                                     <input type="hidden" name="buildingId" value="@item.IdBuilding" />
                                     <button type="submit" class="btn btn-danger btn-sm">

@@ -45,7 +45,7 @@
                             <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
                                 <i class="bi bi-pencil"></i> Editar
                             </a>
-                            <form asp-action="Delete" asp-route-id="@user.Id" method="post" onsubmit="return confirm('¿Está seguro de que desea dar de baja al usuario?');" style="display:inline;">
+                            <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline" data-confirm="¿Está seguro de que desea dar de baja al usuario?">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger btn-sm">
                                     <i class="bi bi-trash"></i> Dar de Baja

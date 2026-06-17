@@ -69,6 +69,27 @@ app.MapControllerRoute(
     pattern: "Expenses/Create/{buildingId:int}",
     defaults: new { controller = "Expenses", action = "Create" });
 
+// Rutas amigables solicitadas por el TP (sitemap)
+app.MapControllerRoute(
+    name: "consorciosListado",
+    pattern: "Consorcios/listado",
+    defaults: new { controller = "Buildings", action = "Index" });
+
+app.MapControllerRoute(
+    name: "homeIngresar",
+    pattern: "Home/ingresar",
+    defaults: new { controller = "Account", action = "Login" });
+
+app.MapControllerRoute(
+    name: "homeRegistrarse",
+    pattern: "Home/registrarse",
+    defaults: new { controller = "Account", action = "Register" });
+
+app.MapControllerRoute(
+    name: "homeSalir",
+    pattern: "Home/salir",
+    defaults: new { controller = "Account", action = "Logout" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

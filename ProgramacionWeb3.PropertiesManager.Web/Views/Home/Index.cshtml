@@ -1,7 +1,22 @@
-﻿@{
-    ViewData["Title"] = "Home page";
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="text-center py-5">
+    <h1 class="display-4 mb-4">Sistema para la Administracion de Consorcios</h1>
+
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="d-flex flex-column align-items-center gap-2">
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-4">Ingresar</a>
+            @* El registro (Account/Register) todavia no esta implementado: el boton queda
+               deshabilitado para no romper con un 404. Habilitarlo cuando exista la accion. *@
+            <a class="btn btn-outline-primary btn-lg px-4 disabled" aria-disabled="true" tabindex="-1">Registrarse</a>
+        </div>
+    }
+    else
+    {
+        <p class="lead">Bienvenido, @User.Identity.Name.</p>
+        <a asp-controller="Buildings" asp-action="Index" class="btn btn-primary btn-lg px-4">Mis Consorcios</a>
+    }
 </div>

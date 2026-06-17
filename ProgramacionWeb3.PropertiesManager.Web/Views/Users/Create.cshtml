@@ -45,7 +45,7 @@
                             <input type="hidden" asp-for="RoleId" value="@ownerRoleId" />
                         }
 
-                        <div class="row" id="ownerNameContainer">
+                        <div class="row" id="ownerNameContainer" data-owner-role-id="@ownerRoleId">
                             <div class="col-md-8 mb-3">
                                 <label asp-for="OwnerFullName" class="form-label">Nombre Completo</label>
                                 @if (isAdmin)
@@ -71,42 +71,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 1. Grab our elements
-            const roleSelect = document.getElementById("roleSelect");
-            const ownerNameContainer = document.getElementById("ownerNameContainer");
-            const ownerNameInput = document.getElementById("OwnerFullName");
-
-            // 2. Define the specific Role ID that triggers the input
-            // REPLACE "3" WITH YOUR ACTUAL TARGET ROLE ID (e.g., the ID for 'Owner' or 'Agent')
-            const targetRoleId = "3";
-
-            function toggleOwnerName() {
-                // Safety check: if the user isn't an Admin, the dropdown doesn't exist!
-                if (!roleSelect) return;
-
-                if (roleSelect.value === targetRoleId) {
-                    // Show the field and make it required
-                    ownerNameContainer.classList.remove("d-none");
-                    ownerNameInput.setAttribute("required", "required");
-                } else {
-                    // Hide the field, remove required, and clear any typed text
-                    ownerNameContainer.classList.add("d-none");
-                    ownerNameInput.removeAttribute("required");
-                    ownerNameInput.value = "";
-                }
-            }
-
-            // 3. Attach the event listener to the dropdown
-            if (roleSelect) {
-                roleSelect.addEventListener("change", toggleOwnerName);
-
-                // 4. Run it once immediately on page load
-                // This is crucial in case a server validation fails and returns
-                // the user to this view with the dropdown already selected.
-                toggleOwnerName();
-            }
-        });
-    </script>
+    <script src="~/js/users-create.js"></script>
 }

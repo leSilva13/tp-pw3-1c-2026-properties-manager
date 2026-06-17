@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProgramacionWeb3.PropertiesManager.Core.Entities;
+using ProgramacionWeb3.PropertiesManager.Web.Models.Unit;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Models
 {
@@ -9,17 +9,20 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "La descripción es requerida.")]
-        [StringLength(200)]
+        [StringLength(200, ErrorMessage = "La descripción no puede superar los 200 caracteres.")]
         public string? Description { get; set; }
 
+        [Required(ErrorMessage = "El monto es requerido.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a cero.")]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
 
+        [Required(ErrorMessage = "El mes es requerido.")]
         [Range(1, 12, ErrorMessage = "El mes debe estar entre 1 y 12.")]
-        public int ExpenseMonth { get; set; }
+        public int? ExpenseMonth { get; set; }
 
+        [Required(ErrorMessage = "El año es requerido.")]
         [Range(2000, 2100, ErrorMessage = "El año no es válido.")]
-        public int ExpenseYear { get; set; }
+        public int? ExpenseYear { get; set; }
 
         public bool IsGlobal { get; set; } = true;
 
@@ -28,14 +31,14 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Models
 
         public string? ReceiptPath { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Seleccione un tipo de gasto.")]
-        public int SelectedExpenseTypeId { get; set; }
+        [Required(ErrorMessage = "Seleccione un tipo de gasto.")]
+        public int? SelectedExpenseTypeId { get; set; }
 
         public int SelectedBuildingId { get; set; }
         public List<int> SelectedUnitIds { get; set; } = new();
         public string BuildingLabel { get; set; } = string.Empty;
 
         public SelectList? ExpenseTypes { get; set; }
-        public IEnumerable<UnitFormViewModel> AvailableUnits { get; set; } = new List<UnitFormViewModel>();
+        public IEnumerable<UnitViewModel> AvailableUnits { get; set; } = new List<UnitViewModel>();
     }
 }

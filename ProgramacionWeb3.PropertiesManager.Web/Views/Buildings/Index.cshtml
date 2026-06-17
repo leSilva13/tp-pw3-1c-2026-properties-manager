@@ -23,7 +23,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="mapaConsorcios" style="height: 450px; width: 100%;"></div>
+                    <div id="mapaConsorcios" class="map-container"></div>
                 </div>
             </div>
         </div>
@@ -96,6 +96,12 @@
                                    class="btn btn-info btn-sm text-white">
                                     Ver unidades
                                 </a>
+                                <a asp-controller="Expenses"
+                                   asp-action="Index"
+                                   asp-route-buildingId="@edificio.Id"
+                                   class="btn btn-info btn-sm text-white">
+                                    Ver gastos
+                                </a>
                                 <a asp-controller="MultipurposeRooms"
                                    asp-action="Index"
                                    asp-route-buildingId="@edificio.Id"
@@ -109,12 +115,6 @@
                                 <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@edificio.Id" class="btn btn-secondary btn-sm">
                                     <i class="bi bi-bell"></i> Notificaciones
                                 </a>
-                                <form asp-action="Delete" asp-route-id="@edificio.Id" method="post" onsubmit="return confirm('¿Está seguro de que desea eliminar este consorcio?');" style="display:inline;">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </form>
                                 <button type="button"
                                         class="btn btn-danger btn-sm"
                                         data-bs-toggle="modal"
