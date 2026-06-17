@@ -1,4 +1,5 @@
-﻿using ProgramacionWeb3.PropertiesManager.Core.DTOs;
+﻿using ProgramacionWeb3.PropertiesManager.Core.Common.Helpers;
+using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Entities;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Repositories;
@@ -114,6 +115,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                 _multipurposeRoomReservationRepository.Update(multipurposeRoomReservation);
                 await _unitOfWork.SaveChangesAsync();
 
+                await SendEmailNotification(multipurposeRoomReservation.Id);
+
                 return new BaseResponseDto { Id = multipurposeRoomReservation.Id, IsSuccess = true, Message = "Exito." };
             }
             catch (Exception)
@@ -129,18 +132,13 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
             if (currentReservation == null)
                 throw new Exception("No existe la reserva.");
 
-            var previousTask = _multipurposeRoomReservationRepository.GetPreviousReservationAsync(
-                currentReservation.MultipurposeRoomId, currentReservation.ReservationDate, currentReservation.Shift);
-
-            var nextTask = _multipurposeRoomReservationRepository.GetNextReservationAsync(
-                currentReservation.MultipurposeRoomId, currentReservation.ReservationDate, currentReservation.Shift);
-
-            await Task.WhenAll(previousTask, nextTask);
-
-            var prevReservation = previousTask.Result;
-            var nextReservation = nextTask.Result;
-
             var dto = new KeyHandoverInstructionsDto();
+
+            var prevReservation = await _multipurposeRoomReservationRepository.GetPreviousReservationAsync(
+                currentReservation.MultipurposeRoomId, currentReservation.ReservationDate, currentReservation.Shift);
+
+            var nextReservation = await _multipurposeRoomReservationRepository.GetNextReservationAsync(
+                currentReservation.MultipurposeRoomId, currentReservation.ReservationDate, currentReservation.Shift);
 
             if (prevReservation != null)
             {
@@ -193,7 +191,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 
             var keyHandoverInstructionsDto = await GetKeyHandoverInstructionsAsync(multipurposeRoomReservationId);
 
-            var emailBody = $"Reserva del SUM {multipurposeRoomReservation.MultipurposeRoom.Name} para el dia {multipurposeRoomReservation.ReservationDate.ToString()} en el turno {multipurposeRoomReservation.Shift.ToString()}";
+            var emailBody = $"Reserva del SUM {multipurposeRoomReservation.MultipurposeRoom.Name} para el dia {multipurposeRoomReservation.ReservationDate.ToString()} en el turno {multipurposeRoomReservation.Shift.ToEnumMemberString()}";
 
             emailBody += "<br>";
             emailBody += keyHandoverInstructionsDto.PickUpInstructionMessage;

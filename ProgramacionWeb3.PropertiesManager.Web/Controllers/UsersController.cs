@@ -5,6 +5,7 @@ using ProgramacionWeb3.PropertiesManager.Core.Common.Enums;
 using ProgramacionWeb3.PropertiesManager.Core.Common.Helpers;
 using ProgramacionWeb3.PropertiesManager.Core.DTOs;
 using ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services;
+using ProgramacionWeb3.PropertiesManager.Core.Services;
 using ProgramacionWeb3.PropertiesManager.Web.Models;
 
 namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
@@ -61,9 +62,15 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
                         : null,
                 };
 
-                await _userService.CreateUserAsync(userDto);
+                var response = await _userService.CreateUserAsync(userDto);
 
-                return RedirectToAction(nameof(Index));
+                if (response.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = response.Message;
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                    TempData["ErrorMessage"] = response.Message ?? "Ocurrio un error!";
             }
 
             ViewBag.Roles = new SelectList(await _roleService.GetAllAsync(), "Id", "Name");

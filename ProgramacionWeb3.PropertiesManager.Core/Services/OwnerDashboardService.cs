@@ -6,20 +6,19 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
 {
     public class OwnerDashboardService : IOwnerDashboardService
     {
-        private readonly IBuildingService _buildingService;
-        private readonly IUnitService _unitService;
+        private readonly IExpenseService _expenseService;
         private readonly IOwnerService _ownerService;
 
-        public OwnerDashboardService(IBuildingService buildingService, IUnitService unitService, IOwnerService ownerService)
+        public OwnerDashboardService(IExpenseService expenseService, IOwnerService ownerService)
         {
-            _buildingService = buildingService;
-            _unitService = unitService;
+            _expenseService = expenseService;
             _ownerService = ownerService;
         }
 
         public async Task<OwnerDashboardDto> GetDashboardDataAsync(int userId)
         {
             var owner = await _ownerService.GetByUserId(userId);
+            var expenses = await _expenseService.GetAllByOwner(owner.Id);
 
             if (owner == null)
                 return null;
@@ -43,7 +42,8 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Services
                                 })
                         })
                     .ToList(),
-                MultipurposeRoomReservationDtos = owner.MultipurposeRoomReservationDtos
+                MultipurposeRoomReservationDtos = owner.MultipurposeRoomReservationDtos,
+                ExpenseDtos = expenses
             };
         }
     }
