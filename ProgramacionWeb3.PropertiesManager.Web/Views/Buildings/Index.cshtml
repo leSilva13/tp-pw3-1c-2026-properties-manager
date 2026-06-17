@@ -33,25 +33,25 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteModalLabel">Confirmar eliminación</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar inhabilitación</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ¿Está seguro que desea eliminar el edificio
+                    ¿Está seguro que desea inhabilitar el edificio
                     <strong id="deleteModalAddress"></strong>?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <form id="deleteForm" method="post">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <button type="submit" class="btn btn-danger">Inhabilitar</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table id="tablaEdificios" class="table table-striped table-hover">
         <thead>
             <tr>
                 <th>Id</th>
@@ -90,39 +90,51 @@
                         <td>
                             @if (edificio != null)
                             {
-                                <a asp-controller="Units"
-                                   asp-action="Index"
-                                   asp-route-buildingId="@edificio.Id" 
-                                   class="btn btn-info btn-sm text-white">
-                                    Ver unidades
-                                </a>
-                                <a asp-controller="Expenses"
-                                   asp-action="Index"
-                                   asp-route-buildingId="@edificio.Id"
-                                   class="btn btn-info btn-sm text-white">
-                                    Ver gastos
-                                </a>
-                                <a asp-controller="MultipurposeRooms"
-                                   asp-action="Index"
-                                   asp-route-buildingId="@edificio.Id"
-                                   class="btn btn-info btn-sm text-white">
-                                    Ver SUMs
-                                </a>
-
-                                <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@edificio.Id" class="btn btn-secondary btn-sm">
-                                    <i class="bi bi-bell"></i> Notificaciones
-                                </a>
-                                <button type="button"
-                                        class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        data-building-id="@edificio.Id"
-                                        data-building-address="@(edificio.Address != null ? $"{edificio.Address.Street} {edificio.Address.Number}, {edificio.Address.Province?.Name}" : "este consorcio")">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </button>
+                                @if (edificio.IsActive)
+                                {
+                                    <a asp-controller="Units"
+                                       asp-action="Index"
+                                       asp-route-buildingId="@edificio.Id"
+                                       class="btn btn-info btn-sm text-white">
+                                        Ver unidades
+                                    </a>
+                                    <a asp-controller="Expenses"
+                                       asp-action="Index"
+                                       asp-route-buildingId="@edificio.Id"
+                                       class="btn btn-info btn-sm text-white">
+                                        Ver gastos
+                                    </a>
+                                    <a asp-controller="MultipurposeRooms"
+                                       asp-action="Index"
+                                       asp-route-buildingId="@edificio.Id"
+                                       class="btn btn-info btn-sm text-white">
+                                        Ver SUMs
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@edificio.Id" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <a asp-controller="Notifications" asp-action="Index" asp-route-buildingId="@edificio.Id" class="btn btn-secondary btn-sm">
+                                        <i class="bi bi-bell"></i> Notificaciones
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-danger btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-building-id="@edificio.Id"
+                                            data-building-address="@(edificio.Address != null ? $"{edificio.Address.Street} {edificio.Address.Number}, {edificio.Address.Province?.Name}" : "este edificio")">
+                                        <i class="bi bi-slash-circle"></i> Inhabilitar
+                                    </button>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary me-2">Inactivo</span>
+                                    <form asp-action="Enable" asp-route-id="@edificio.Id" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check-circle"></i> Habilitar
+                                        </button>
+                                    </form>
+                                }
                             }
                         </td>
                     </tr>
@@ -132,8 +144,17 @@
     </table>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+}
+
 @section Scripts {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        new DataTable('#tablaEdificios');
+    </script>
     <script src="~/js/buildings.js"></script>
 }

@@ -9,7 +9,7 @@ namespace ProgramacionWeb3.PropertiesManager.Core.Interfaces.Services
         Task<Building?> ObtenerEdificioPorIdAsync(int id);
         Task<int> CrearEdificioAsync(BuildingDto buildingDto);
         Task ActualizarEdificioAsync(BuildingDto building, int addressId);
-        Task EliminarEdificioAsync(int id);
         Task<bool> BajaDeEdificioAsync(int id);
+        Task<bool> AltaDeEdificioAsync(int id);
     }
 }
