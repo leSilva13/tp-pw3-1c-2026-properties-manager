@@ -1,32 +1,30 @@
-Documentación de la Base de Datos
-El diseño de la base de datos se basa en una arquitectura relacional normalizada, diseñada para soportar la gestión multifuncional de consorcios, unidades funcionales y liquidación de expensas.
 
-Entidades Principales
-1. Usuarios y Seguridad
-User: Almacena las credenciales de acceso. Soporta diferentes roles (Admin, Administrador de Propiedades, Propietario).
+¿Qué nota creen que deberían sacar en el tp? (1-10, donde para 7 debe estar toda la funcionalidad pedida) y ¿por qué?
 
-Role: Define los permisos dentro del sistema (RBAC - Role Based Access Control).
+Creemos que una nota justa sería un 8. 
+Realizamos la funcionalidad solicitada en tu totalidad (incluyendo la funcionalidad de notificaciones para el bonus de nota) y agregamos funcionalidades extra como Roles de usuario, vistas particulares según el Rol de usuario y normalización de la base de datos (algo que amplió significativamente el contexto de la aplicación)
 
-Owner: Representa a la persona física dueña de una o más unidades. Puede o no tener un usuario asociado para acceder a la plataforma.
+b. ¿Qué cosas creen que podrían mejorarse?
 
-2. Estructura Edilicia
-Building (Consorcio): Representa el edificio o complejo. Contiene metadatos como la fecha de creación, día de vencimiento de expensas y superficie total.
+MEJORAS DE CODIGO
+  1. Agregar un mapper (como librería de AutoMapper)
+  2. Test Unitarios.
+  3. Diseño y UX unificado.
+  4. Unificar código (hay código duplicado debido al trabajo en paralelo).
 
-Address: Entidad separada para normalizar la ubicación. Incluye soporte para coordenadas geográficas (Latitude, Longitude) con precisión de 10 decimales para integración con mapas.
+VALIDACIONES
+  1. Chequear que no se repitan unidades.
+  2. Que el usuario administrador de propiedades no vea usuarios de jerarquia mayor ni pueda editarlos.
+  3. Mostrar solo localidades relacionadas con provincias en los formularios.
+  4. Mejorar validaciones de cara al usuario.
 
-Province: Tabla maestra que contiene las 24 jurisdicciones de Argentina.
+FEATURES
+  1. Recuperacion de password
+  2. Generacion de password con link seguro
+  3. Varios owners (que pasa si la unidad es alquilada?)
+  4. Datos de usuario y dueño (nombre y apellido)
 
-Unit: Unidades funcionales pertenecientes a un edificio. Incluye superficie propia en metros cuadrados, necesaria para el cálculo proporcional de expensas.
+c. ¿Qué les resultó más complicado?
 
-3. Gestión de Gastos y Expensas
-Expense (Gasto): Registro de los egresos del edificio.
-
-Posee un ExpenseType (Ordinario/Extraordinario).
-
-Incluye un campo IsGlobal para distinguir gastos que afectan a todo el edificio de aquellos específicos.
-
-Almacena la ruta del comprobante físico (ReceiptPath).
-
-ExpenseDistribution: Tabla de resolución muchos-a-muchos que permite asignar un gasto a unidades específicas cuando no es un gasto global del consorcio.
-
-ExpenseType: Clasificación maestra de los gastos.
+Como funcionan bien Razor (por ser nuevo)
+Como se relacionan las capas del MVC
