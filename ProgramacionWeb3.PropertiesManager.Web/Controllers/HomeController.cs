@@ -8,7 +8,7 @@ namespace ProgramacionWeb3.PropertiesManager.Web.Controllers
     public class HomeController : Controller
     {
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
