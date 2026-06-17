@@ -1,8 +1,4 @@
-// Logica del formulario de gasto (alta/edicion).
-// Las unidades del consorcio se renderizan server-side; aca solo mostramos u
-// ocultamos el panel segun el check "Gasto Global". La visibilidad inicial ya
-// la resuelve el server con la clase d-none, asi que solo escuchamos el cambio.
-
+// Muestra/oculta el panel de unidades segun el check "Gasto Global".
 const chkGlobal = document.getElementById('chkIsGlobal');
 const divUnidades = document.getElementById('divUnidades');
 
@@ -12,10 +8,8 @@ if (chkGlobal && divUnidades) {
     });
 }
 
-// Validacion client-side del comprobante.
-// El input file no es propiedad del modelo, asi que jQuery Validate no lo
-// valida por data-val. Agregamos la regla "required" manualmente, pero solo
-// cuando el campo esta marcado como requerido (alta de gasto, no edicion).
+// El comprobante es un IFormFile (no propiedad del modelo), por eso jQuery
+// Validate no lo valida solo: agregamos la regla "required" a mano en el alta.
 (function () {
     if (typeof window.jQuery === 'undefined') return;
     const $ = window.jQuery;
